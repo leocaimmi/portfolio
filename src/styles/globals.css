@@ -175,6 +175,83 @@
 }
 
 /*
+ * Liquid glass.
+ *
+ * Four layers make the material read as glass rather than as a translucent
+ * rectangle: a blurred and saturated backdrop, a faint tint, a specular rim
+ * that catches light from the top-left, and an inner highlight along the top
+ * edge with a dark line at the bottom to suggest thickness.
+ *
+ * The rim is painted by a masked gradient border rather than a plain
+ * `border-color`, because a single flat colour cannot vary around the shape,
+ * and it is the variation that sells the effect.
+ */
+@utility glass {
+  position: relative;
+  isolation: isolate;
+  background-color: --alpha(var(--color-orbit) / 52%);
+  backdrop-filter: blur(22px) saturate(175%);
+  -webkit-backdrop-filter: blur(22px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 0 --alpha(var(--color-starlight) / 14%),
+    inset 0 -1px 0 0 --alpha(var(--color-void) / 45%),
+    0 18px 46px -20px var(--color-void);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      145deg,
+      --alpha(var(--color-starlight) / 30%),
+      --alpha(var(--color-starlight) / 4%) 34%,
+      transparent 62%,
+      --alpha(var(--color-star) / 20%)
+    );
+    /* Paints the padding box only, leaving a one-pixel rim. */
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
+/**
+ * Denser variant for surfaces that float over content — the header and the
+ * docked navigator. Those overlap running text, so the material has to read as
+ * a separate object rather than as a smudge on the paragraph beneath it.
+ */
+@utility glass-raised {
+  background-color: --alpha(var(--color-deep) / 82%);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+}
+
+/*
+ * Without backdrop-filter the panels would be flat, semi-transparent shapes
+ * over a star field: text sits directly on moving dots and becomes hard to
+ * read. Those browsers get an opaque surface instead — less pretty, still
+ * legible, which is the right way round.
+ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: --alpha(var(--color-orbit) / 94%);
+  }
+
+  .glass-raised {
+    background-color: --alpha(var(--color-deep) / 97%);
+  }
+}
+
+/*
  * Respect the operating system's motion preference. Animation is decoration
  * here; nothing in the interface depends on it to convey meaning.
  */
