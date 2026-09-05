@@ -5,15 +5,19 @@ import { useEffect, useState } from 'react';
 /**
  * Returns the id of the section currently closest to the top of the viewport.
  *
- * Used to mark the active navigation link. Sections are observed through a
- * narrow horizontal band near the top of the screen, which keeps the highlight
- * from flickering between two sections that are both partially visible.
+ * Generic over the id union, so a caller passing a literal tuple gets a
+ * narrowed result back and can hand it straight to a translation lookup
+ * without a cast.
+ *
+ * Sections are observed through a narrow horizontal band near the top of the
+ * screen, which stops the highlight flickering between two sections that are
+ * both partly visible.
  */
-export function useActiveSection(sectionIds: readonly string[]): string | undefined {
+export function useActiveSection<T extends string>(sectionIds: readonly T[]): T | undefined {
   // Undefined until a section actually enters the band: at the top of the page
   // the reader is in the hero, and highlighting the first link there would be a
   // lie about where they are.
-  const [activeId, setActiveId] = useState<string>();
+  const [activeId, setActiveId] = useState<T>();
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
@@ -44,8 +48,16 @@ export function useActiveSection(sectionIds: readonly string[]): string | undefi
           ([, aTop], [, bTop]) => Math.abs(aTop) - Math.abs(bTop),
         )[0];
 
-        if (closest) {
-          setActiveId(closest[0]);
+        if (!closest) {
+          return;
+        }
+
+        // Resolved back through the caller's list so the state stays typed as
+        // one of their ids rather than an arbitrary DOM id.
+        const matched = sectionIds.find((id) => id === closest[0]);
+
+        if (matched !== undefined) {
+          setActiveId(matched);
         }
       },
       // Only the band between 20% and 40% from the top counts as "active".

@@ -24,7 +24,12 @@
     "trajectory": "Trayectoria",
     "missions": "Misiones",
     "constellations": "Stack",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "systemMap": "Mapa del sistema",
+    "radar": "Radar de navegación"
+  },
+  "radar": {
+    "scanning": "Rastreando"
   },
   "hero": {
     "label": "Sistema Caimmi",

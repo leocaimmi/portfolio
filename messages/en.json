@@ -24,7 +24,12 @@
     "trajectory": "Trajectory",
     "missions": "Missions",
     "constellations": "Stack",
-    "contact": "Contact"
+    "contact": "Contact",
+    "systemMap": "System map",
+    "radar": "Navigation radar"
+  },
+  "radar": {
+    "scanning": "Scanning"
   },
   "hero": {
     "label": "Caimmi System",
