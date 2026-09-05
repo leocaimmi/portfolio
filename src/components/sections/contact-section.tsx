@@ -3,6 +3,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
+import { SocialIcon } from '@/components/ui/social-icon';
 import { profile } from '@/content';
 
 import { ContactForm } from './contact-form';
@@ -47,9 +48,10 @@ export function ContactSection({ isFormEnabled }: ContactSectionProps) {
                     {...(social.platform === 'email'
                       ? {}
                       : { target: '_blank', rel: 'noopener noreferrer' })}
-                    className="group flex items-baseline justify-between gap-4 border-b border-horizon/40 pb-3 transition-colors hover:border-star/50"
+                    className="group flex items-center justify-between gap-4 border-b border-horizon/40 pb-3 transition-colors hover:border-star/50"
                   >
-                    <span className="font-mono text-[0.6875rem] tracking-wide text-dust uppercase">
+                    <span className="flex items-center gap-2.5 font-mono text-[0.6875rem] tracking-wide text-dust uppercase transition-colors group-hover:text-moondust">
+                      <SocialIcon platform={social.platform} />
                       {PLATFORM_LABEL[social.platform]}
                     </span>
                     <span className="text-sm text-moondust transition-colors group-hover:text-star">
