@@ -5,6 +5,11 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
+import { NebulaBackdrop } from '@/components/cosmos/nebula-backdrop';
+import { Starfield } from '@/components/cosmos/starfield';
+import { SiteFooter } from '@/components/layout/site-footer';
+import { SiteHeader } from '@/components/layout/site-header';
+import { profile } from '@/content';
 import type { LocaleRouteParams } from '@/i18n/resolve-locale';
 import { resolveLocale } from '@/i18n/resolve-locale';
 import { routing } from '@/i18n/routing';
@@ -33,6 +38,11 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
+const initials = profile.name
+  .split(' ')
+  .map((part) => part.charAt(0))
+  .join('');
+
 export default async function LocaleLayout({
   children,
   params,
@@ -41,11 +51,29 @@ export default async function LocaleLayout({
   params: Promise<LocaleRouteParams>;
 }) {
   const locale = await resolveLocale(params);
+  const t = await getTranslations({ locale, namespace: 'common' });
 
   return (
     <html lang={locale} className={fontVariables}>
       <body className="bg-void text-starlight antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        {/* First focusable element on the page, revealed only on focus. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-full focus:bg-starlight focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-void"
+        >
+          {t('skipToContent')}
+        </a>
+
+        <NextIntlClientProvider>
+          <NebulaBackdrop />
+          <Starfield />
+
+          <SiteHeader initials={initials} />
+
+          <main id="main">{children}</main>
+
+          <SiteFooter />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

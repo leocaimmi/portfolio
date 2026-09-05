@@ -58,3 +58,6 @@ yarn-error.log*
 # Caches
 .eslintcache
 .turbo
+
+# Local agent tooling
+.claude/
