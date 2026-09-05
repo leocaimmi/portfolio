@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
 import { NebulaBackdrop } from '@/components/cosmos/nebula-backdrop';
+import { OrbitalNavigator } from '@/components/cosmos/orbital-navigator';
 import { Starfield } from '@/components/cosmos/starfield';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -73,6 +74,8 @@ export default async function LocaleLayout({
           <main id="main">{children}</main>
 
           <SiteFooter />
+
+          <OrbitalNavigator />
         </NextIntlClientProvider>
       </body>
     </html>

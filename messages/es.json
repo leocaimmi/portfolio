@@ -16,6 +16,8 @@
   },
   "nav": {
     "label": "Navegación principal",
+    "home": "Inicio",
+    "menu": "Menú",
     "open": "Abrir el menú",
     "close": "Cerrar el menú",
     "about": "Perfil",
@@ -25,7 +27,7 @@
     "contact": "Contacto"
   },
   "hero": {
-    "label": "Estación base",
+    "label": "Sistema Caimmi",
     "availability": {
       "open": "Disponible para nuevos proyectos",
       "selective": "Abierto a propuestas puntuales",
@@ -33,12 +35,12 @@
     },
     "primaryAction": "Ver misiones",
     "secondaryAction": "Abrir un canal",
-    "scrollHint": "Descender"
+    "scrollHint": "Descender por el sistema"
   },
   "about": {
     "label": "01 / Perfil",
     "title": "Quién está detrás del código",
-    "description": "Backend primero, producto siempre. Escribo software que otra gente usa todos los días.",
+    "description": "Backend primero, producto siempre.",
     "educationTitle": "Formación",
     "focusTitle": "Cómo trabajo",
     "focus": [
@@ -69,7 +71,7 @@
   "missions": {
     "label": "03 / Misiones",
     "title": "Sistemas en órbita",
-    "description": "Cuatro sistemas, tres de ellos en producción. Los repositorios de clientes son privados, así que acá está la historia completa sin el código.",
+    "description": "Tres sistemas, todos en producción. Los repositorios de clientes son privados, así que acá está la historia completa sin el código.",
     "status": {
       "production": "En producción",
       "development": "En desarrollo",
@@ -84,9 +86,7 @@
     "highlightsTitle": "Puntos clave",
     "stackTitle": "Stack",
     "viewSource": "Ver el código",
-    "viewLive": "Ver en vivo",
-    "orbitLabel": "Sistema solar de proyectos",
-    "selectHint": "Elegí un planeta para leer la misión"
+    "viewLive": "Ver en vivo"
   },
   "constellations": {
     "label": "04 / Constelaciones",
