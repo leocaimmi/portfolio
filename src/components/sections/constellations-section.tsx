@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { ConstellationFigure } from '@/components/cosmos/constellation-figure';
+import { TechnologyIcon } from '@/components/ui/brand-icon';
 import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
@@ -55,11 +56,12 @@ export function ConstellationsSection() {
                     title={t(`magnitude.${skill.magnitude}`)}
                     className="flex items-center gap-2 text-sm text-moondust"
                   >
+                    <TechnologyIcon id={skill.technology} />
+                    {technologyName(skill.technology)}
                     <span
                       aria-hidden="true"
                       className={`shrink-0 rounded-full ${MAGNITUDE_DOT[skill.magnitude]}`}
                     />
-                    {technologyName(skill.technology)}
                   </li>
                 ))}
               </ul>
