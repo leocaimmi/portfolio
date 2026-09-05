@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "title": "Leonardo Caimmi — Full Stack Developer",
+    "description": "Full Stack Developer specialised in backend engineering with Java and Spring Boot. REST APIs, PostgreSQL and applications built with React, Angular and Expo."
+  },
+  "locale": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  }
+}
