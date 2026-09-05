@@ -1,6 +1,5 @@
 import { useLocale, useTranslations } from 'next-intl';
 
-import { ProjectOrbit } from '@/components/cosmos/project-orbit';
 import { ActionLink } from '@/components/ui/action-link';
 import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
@@ -17,12 +16,11 @@ const STATUS_DOT = {
 } as const;
 
 /**
- * Projects section: a solar system as the visual index, and the full case
- * studies below it.
+ * Projects section: the case studies in full.
  *
- * The diagram never holds content of its own — every project is rendered in
- * full in the list, so the section is complete for a crawler, a screen reader
- * and anyone who simply scrolls past the illustration.
+ * The site's own solar system already indexes the sections, so this one stays
+ * a plain list — a second orbital diagram here would compete with the
+ * navigation rather than add to it.
  */
 export function MissionsSection() {
   const t = useTranslations('missions');
@@ -30,10 +28,6 @@ export function MissionsSection() {
 
   return (
     <Section id="missions" label={t('label')} title={t('title')} description={t('description')}>
-      <Reveal className="mb-16">
-        <ProjectOrbit projects={projects} label={t('orbitLabel')} hint={t('selectHint')} />
-      </Reveal>
-
       <ul className="space-y-6">
         {projects.map((project, index) => (
           <li key={project.id}>
