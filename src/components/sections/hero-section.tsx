@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 
-import { SolarSystem } from '@/components/cosmos/solar-system';
+import { CosmicScene } from '@/components/cosmos/cosmic-scene';
 import { ActionLink } from '@/components/ui/action-link';
 import { SECTION_IDS } from '@/config/navigation';
 import { profile } from '@/content';
@@ -15,12 +15,12 @@ const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
 };
 
 /**
- * Opening view: who this is, and the map of everything else.
+ * Opening view: the name over the system it navigates.
  *
- * The solar system is the site's navigation rather than an illustration, so
- * the first screen answers both "who is this" and "what else is here". It
- * tracks the active section for the moment the reader starts scrolling before
- * the hero has left the viewport.
+ * The scene runs full bleed behind the text, and the planets in it are the
+ * site's navigation. The copy sits in its own column on the left with pointer
+ * events switched off around it, so the planets stay clickable wherever they
+ * drift.
  */
 export function HeroSection() {
   const t = useTranslations('hero');
@@ -28,9 +28,11 @@ export function HeroSection() {
   const activeSection = useActiveSection(SECTION_IDS);
 
   return (
-    <section id="top" className="relative flex min-h-dvh items-center py-28">
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-10">
-        <div>
+    <section id="top" className="relative flex min-h-dvh items-center overflow-hidden">
+      <CosmicScene activeId={activeSection} />
+
+      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-[58vh] md:py-28">
+        <div className="pointer-events-auto max-w-xl">
           <p className="telemetry">{t('label')}</p>
 
           <p className="glass mt-6 inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[0.6875rem] tracking-wide text-moondust">
@@ -49,7 +51,7 @@ export function HeroSection() {
             {profile.role[locale]}
           </p>
 
-          <p className="mt-7 max-w-xl text-base leading-relaxed text-pretty text-moondust sm:text-lg">
+          <p className="mt-7 text-base leading-relaxed text-pretty text-moondust sm:text-lg">
             {profile.headline[locale]}
           </p>
 
@@ -60,15 +62,11 @@ export function HeroSection() {
             <ActionLink href="#contact">{t('secondaryAction')}</ActionLink>
           </div>
         </div>
-
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <SolarSystem variant="hero" activeId={activeSection} />
-        </div>
       </div>
 
       <p
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-7 text-center font-mono text-[0.625rem] tracking-[0.3em] text-dust uppercase"
+        className="absolute inset-x-0 bottom-7 z-10 text-center font-mono text-[0.625rem] tracking-[0.3em] text-dust uppercase"
       >
         {t('scrollHint')}
       </p>
