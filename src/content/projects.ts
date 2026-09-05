@@ -130,8 +130,8 @@ export const projects: Project[] = [
         en: 'Spanish and English on their own routes, with translation keys checked by the compiler.',
       },
       {
-        es: 'Content Security Policy estricta por nonce, cabeceras de seguridad y validación de variables de entorno.',
-        en: 'A strict nonce-based Content Security Policy, hardened headers and validated environment variables.',
+        es: 'Content Security Policy y cabeceras de seguridad en cada respuesta, con las variables de entorno validadas en tiempo de build.',
+        en: 'A Content Security Policy and hardened headers on every response, with environment variables validated at build time.',
       },
     ],
     links: {
