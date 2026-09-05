@@ -1,11 +1,145 @@
 {
   "metadata": {
     "title": "Leonardo Caimmi — Full Stack Developer",
-    "description": "Full Stack Developer specialised in backend engineering with Java and Spring Boot. REST APIs, PostgreSQL and applications built with React, Angular and Expo."
+    "description": "Full Stack Developer specialised in backend engineering with Java and Spring Boot. REST APIs, PostgreSQL data modelling and applications built with React, Angular and Expo."
+  },
+  "common": {
+    "present": "Present",
+    "opensInNewTab": "(opens in a new tab)",
+    "skipToContent": "Skip to main content"
   },
   "locale": {
     "label": "Language",
-    "es": "Español",
-    "en": "English"
+    "switchTo": "View this site in Spanish",
+    "es": "ES",
+    "en": "EN"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "open": "Open the menu",
+    "close": "Close the menu",
+    "about": "Profile",
+    "trajectory": "Trajectory",
+    "missions": "Missions",
+    "constellations": "Stack",
+    "contact": "Contact"
+  },
+  "hero": {
+    "label": "Base station",
+    "availability": {
+      "open": "Available for new projects",
+      "selective": "Open to selected opportunities",
+      "unavailable": "Not available right now"
+    },
+    "primaryAction": "View missions",
+    "secondaryAction": "Open a channel",
+    "scrollHint": "Descend"
+  },
+  "about": {
+    "label": "01 / Profile",
+    "title": "Who is behind the code",
+    "description": "Backend first, product always. I write software other people use every day.",
+    "educationTitle": "Education",
+    "focusTitle": "How I work",
+    "focus": [
+      {
+        "title": "Schema first",
+        "body": "I model the data before writing an endpoint. A good schema prevents half the bugs that would otherwise reach production."
+      },
+      {
+        "title": "Security in the engine",
+        "body": "Authorisation belongs in the database, not the client. Row Level Security, policies and triggers before trusting the frontend."
+      },
+      {
+        "title": "Explaining to understand",
+        "body": "Teaching forces me to justify every architectural decision. Anything I cannot explain, I do not yet understand."
+      }
+    ]
+  },
+  "trajectory": {
+    "label": "02 / Trajectory",
+    "title": "Mission log",
+    "description": "Where I have been, what I built, and what stayed running.",
+    "kind": {
+      "employment": "Employment",
+      "teaching": "Teaching",
+      "freelance": "Freelance"
+    }
+  },
+  "missions": {
+    "label": "03 / Missions",
+    "title": "Systems in orbit",
+    "description": "Four systems, three of them in production. Client repositories are private, so here is the full story without the source.",
+    "status": {
+      "production": "In production",
+      "development": "In development",
+      "archived": "Archived"
+    },
+    "visibility": {
+      "private": "Private repository",
+      "public": "Open source"
+    },
+    "privateNote": "Client work. The repository is not public.",
+    "contributionTitle": "My role",
+    "highlightsTitle": "Key points",
+    "stackTitle": "Stack",
+    "viewSource": "View the source",
+    "viewLive": "View live",
+    "orbitLabel": "Solar system of projects",
+    "selectHint": "Pick a planet to read the mission"
+  },
+  "constellations": {
+    "label": "04 / Constellations",
+    "title": "Technical stack",
+    "description": "Grouped by domain. How brightly a star burns reflects how much I use it, not how much I like it.",
+    "legendTitle": "Magnitude",
+    "magnitude": {
+      "1": "Daily production work",
+      "2": "Used regularly and comfortably",
+      "3": "Working familiarity"
+    }
+  },
+  "contact": {
+    "label": "05 / Transmission",
+    "title": "Open a channel",
+    "description": "If you have a project, a role, or simply a technical question, write to me.",
+    "directTitle": "Direct channels",
+    "form": {
+      "title": "Send a message",
+      "name": "Name",
+      "namePlaceholder": "What should I call you",
+      "email": "Email",
+      "emailPlaceholder": "where I should reply",
+      "message": "Message",
+      "messagePlaceholder": "Tell me what you have in mind",
+      "submit": "Transmit",
+      "sending": "Transmitting…",
+      "success": "Message received. I will get back to you shortly.",
+      "error": "The message could not be sent. Try again or email me directly.",
+      "rateLimited": "Too many attempts in a row. Wait a moment before retrying.",
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "tooShort": "This message is too short.",
+      "tooLong": "This message is too long.",
+      "disabled": "The form is not configured in this environment yet. Use the direct channels."
+    }
+  },
+  "footer": {
+    "builtWith": "Built with Next.js and TypeScript.",
+    "sourceCode": "Source code",
+    "backToTop": "Back to top"
+  },
+  "notFound": {
+    "label": "Signal lost",
+    "title": "This orbit does not exist",
+    "description": "The page you were looking for is not on any known star chart.",
+    "action": "Return to base station"
+  },
+  "error": {
+    "label": "System failure",
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. You can retry or head back home.",
+    "retry": "Retry",
+    "home": "Back home"
   }
 }
