@@ -10,9 +10,9 @@
  */
 @theme {
   /* Sky — from deepest background to raised surface. */
-  --color-void: #050510;
-  --color-abyss: #080818;
-  --color-deep: #0b1026;
+  --color-void: #02030a;
+  --color-abyss: #050612;
+  --color-deep: #080c1d;
   --color-orbit: #131a35;
   --color-horizon: #223059;
 
@@ -55,6 +55,39 @@
   --animate-float: float 8s var(--ease-orbital) infinite;
   --animate-scan: scan 3.5s var(--ease-orbital) infinite;
   --animate-reveal: reveal 0.7s var(--ease-orbital) both;
+
+  --animate-sonar-sweep: sonar-sweep 1.5s cubic-bezier(0.32, 0, 0.24, 1) 1 both;
+  --animate-sonar-pulse: sonar-pulse 1.5s ease-out 1 both;
+}
+
+/*
+ * Sonar. A single turn of the beam, fired when the reader crosses into a new
+ * section rather than looping forever: a scope that sweeps continuously is
+ * ambient noise, while one that sweeps on arrival is telling you something.
+ */
+@keyframes sonar-sweep {
+  from {
+    opacity: 0.85;
+    transform: rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sonar-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.2);
+  }
+  70% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
 }
 
 /*

@@ -6,8 +6,8 @@ import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
 import { NebulaBackdrop } from '@/components/cosmos/nebula-backdrop';
-import { OrbitalNavigator } from '@/components/cosmos/orbital-navigator';
 import { Starfield } from '@/components/cosmos/starfield';
+import { SystemNavigator } from '@/components/cosmos/system-navigator';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { profile } from '@/content';
@@ -35,14 +35,9 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: '#050510',
+  themeColor: '#02030a',
   colorScheme: 'dark',
 };
-
-const initials = profile.name
-  .split(' ')
-  .map((part) => part.charAt(0))
-  .join('');
 
 export default async function LocaleLayout({
   children,
@@ -69,13 +64,13 @@ export default async function LocaleLayout({
           <NebulaBackdrop />
           <Starfield />
 
-          <SiteHeader initials={initials} />
+          <SiteHeader name={profile.name} />
 
           <main id="main">{children}</main>
 
           <SiteFooter />
 
-          <OrbitalNavigator />
+          <SystemNavigator />
         </NextIntlClientProvider>
       </body>
     </html>

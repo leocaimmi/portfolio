@@ -46,8 +46,8 @@ const PLANETS = SECTION_IDS.map((id, index) => {
 interface SolarSystemProps {
   /** Section currently under the reader; lights up its planet. */
   activeId?: string;
-  /** `hero` shows labels and larger bodies; `compact` is the docked navigator. */
-  variant: 'hero' | 'compact';
+  /** Drops the labels and shrinks the bodies, for the docked navigator. */
+  compact?: boolean;
   className?: string;
 }
 
@@ -64,16 +64,15 @@ interface SolarSystemProps {
  * change, not a per-frame calculation — and each planet counter-rotates so its
  * label stays upright.
  */
-export function SolarSystem({ activeId, variant, className }: SolarSystemProps) {
+export function SolarSystem({ activeId, compact = false, className }: SolarSystemProps) {
   const t = useTranslations('nav');
-  const isHero = variant === 'hero';
 
   const activeIndex = PLANETS.findIndex((planet) => planet.id === activeId);
   const rotation = activeIndex >= 0 ? shortestRotation(-activeIndex * GOLDEN_ANGLE) : 0;
 
   return (
     <nav
-      aria-label={t('label')}
+      aria-label={t('systemMap')}
       className={cn('relative aspect-square w-full select-none', className)}
     >
       {ORBIT_RADII.map((radius) => (
@@ -89,7 +88,7 @@ export function SolarSystem({ activeId, variant, className }: SolarSystemProps) 
         href="#top"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
-          width: isHero ? '9%' : '16%',
+          width: compact ? '15%' : '9%',
           aspectRatio: '1',
           background:
             'radial-gradient(circle at 35% 30%, var(--color-starlight), var(--color-solar) 45%, var(--color-nebula) 100%)',
@@ -125,7 +124,7 @@ export function SolarSystem({ activeId, variant, className }: SolarSystemProps) 
                     aria-hidden="true"
                     className={cn(
                       'block rounded-full transition-all duration-500 ease-orbital',
-                      isHero ? 'size-3.5' : 'size-2',
+                      compact ? 'size-1.5' : 'size-3.5',
                       isActive
                         ? 'scale-150'
                         : 'opacity-70 group-hover:scale-125 group-hover:opacity-100',
@@ -141,7 +140,7 @@ export function SolarSystem({ activeId, variant, className }: SolarSystemProps) 
                   <span
                     className={cn(
                       'font-mono text-[0.625rem] tracking-[0.18em] whitespace-nowrap uppercase transition-colors duration-300',
-                      isHero ? 'block' : 'sr-only',
+                      compact && 'sr-only',
                       isActive ? 'text-starlight' : 'text-dust group-hover:text-starlight',
                     )}
                   >
