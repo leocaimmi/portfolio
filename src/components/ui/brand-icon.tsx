@@ -1,6 +1,6 @@
 import type { TechnologyId } from '@/content/technologies';
 import { technologyName } from '@/content/technologies';
-import { TECHNOLOGY_ICON_PATHS } from '@/content/technology-icons';
+import { TECHNOLOGY_ICONS } from '@/content/technology-icons';
 import { cn } from '@/lib/cn';
 
 /**
@@ -43,10 +43,10 @@ interface TechnologyIconProps {
  * row of thirty logos from turning into a colour chart.
  */
 export function TechnologyIcon({ id, className }: TechnologyIconProps) {
-  const path = TECHNOLOGY_ICON_PATHS[id];
+  const glyph = TECHNOLOGY_ICONS[id];
   const classes = cn('size-3.5 shrink-0', className);
 
-  if (path === undefined) {
+  if (glyph === undefined) {
     return (
       <span
         aria-hidden="true"
@@ -61,8 +61,13 @@ export function TechnologyIcon({ id, className }: TechnologyIconProps) {
   }
 
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className={classes}>
-      <path d={path} />
+    <svg
+      aria-hidden="true"
+      viewBox={glyph.viewBox ?? '0 0 24 24'}
+      fill="currentColor"
+      className={classes}
+    >
+      <path d={glyph.path} />
     </svg>
   );
 }
