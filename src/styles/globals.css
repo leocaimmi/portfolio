@@ -1,1 +1,175 @@
 @import 'tailwindcss';
+
+/*
+ * Design tokens for the "star chart" visual language: a near-black sky, a
+ * violet nebula wash, and instrument-panel surfaces lit by cyan hairlines.
+ *
+ * Everything the interface can paint is declared here. Components consume
+ * tokens (`bg-orbit`, `text-moondust`) and never hard-code a hex value, so the
+ * palette can be retuned in one place.
+ */
+@theme {
+  /* Sky — from deepest background to raised surface. */
+  --color-void: #050510;
+  --color-abyss: #080818;
+  --color-deep: #0b1026;
+  --color-orbit: #131a35;
+  --color-horizon: #223059;
+
+  /* Light sources — used for accents, never for large fills. */
+  --color-nebula: #7c3aed;
+  --color-nebula-glow: #a78bfa;
+  --color-star: #22d3ee;
+  --color-star-dim: #0e7490;
+  --color-solar: #fbbf24;
+  --color-comet: #f472b6;
+
+  /* Text — descending contrast against the void. */
+  --color-starlight: #e9edff;
+  --color-moondust: #a7b1d4;
+  --color-dust: #6c779c;
+
+  /* Typography. Faces are self-hosted through next/font to avoid a
+     third-party request on every page load. */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Telemetry labels: small, uppercase, widely tracked. */
+  --tracking-telemetry: 0.22em;
+
+  --radius-panel: 1rem;
+
+  /* Glows stand in for elevation: light travels, shadows do not. */
+  --shadow-glow-star:
+    0 0 0 1px --alpha(var(--color-star) / 25%), 0 0 32px -8px --alpha(var(--color-star) / 45%);
+  --shadow-glow-nebula:
+    0 0 0 1px --alpha(var(--color-nebula) / 30%), 0 0 48px -12px --alpha(var(--color-nebula) / 55%);
+  --shadow-panel:
+    0 1px 0 0 --alpha(var(--color-starlight) / 4%) inset, 0 24px 48px -24px var(--color-void);
+
+  --ease-orbital: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-twinkle: twinkle 4s var(--ease-orbital) infinite;
+  --animate-drift: drift 24s linear infinite;
+  --animate-float: float 8s var(--ease-orbital) infinite;
+  --animate-scan: scan 3.5s var(--ease-orbital) infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes scan {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  40%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchored sections clear of the fixed header. */
+    scroll-padding-top: 6rem;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: var(--color-starlight);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: --alpha(var(--color-nebula) / 45%);
+    color: var(--color-starlight);
+  }
+
+  /* A single visible focus treatment for every interactive element, so
+     keyboard navigation is never guesswork. */
+  :focus-visible {
+    outline: 2px solid var(--color-star);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-void);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-horizon);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-star-dim);
+  }
+}
+
+@utility telemetry {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-telemetry);
+  color: var(--color-star);
+}
+
+/*
+ * Respect the operating system's motion preference. Animation is decoration
+ * here; nothing in the interface depends on it to convey meaning.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
