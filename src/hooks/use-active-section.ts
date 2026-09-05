@@ -10,7 +10,10 @@ import { useEffect, useState } from 'react';
  * from flickering between two sections that are both partially visible.
  */
 export function useActiveSection(sectionIds: readonly string[]): string | undefined {
-  const [activeId, setActiveId] = useState<string | undefined>(sectionIds[0]);
+  // Undefined until a section actually enters the band: at the top of the page
+  // the reader is in the hero, and highlighting the first link there would be a
+  // lie about where they are.
+  const [activeId, setActiveId] = useState<string>();
 
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') {
