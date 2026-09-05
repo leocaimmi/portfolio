@@ -1,11 +1,145 @@
 {
   "metadata": {
     "title": "Leonardo Caimmi — Desarrollador Full Stack",
-    "description": "Desarrollador Full Stack especializado en backend con Java y Spring Boot. APIs REST, PostgreSQL y aplicaciones con React, Angular y Expo."
+    "description": "Desarrollador Full Stack especializado en backend con Java y Spring Boot. APIs REST, modelado de bases de datos PostgreSQL y aplicaciones con React, Angular y Expo."
+  },
+  "common": {
+    "present": "Presente",
+    "opensInNewTab": "(se abre en una pestaña nueva)",
+    "skipToContent": "Ir al contenido principal"
   },
   "locale": {
     "label": "Idioma",
-    "es": "Español",
-    "en": "English"
+    "switchTo": "Ver el sitio en inglés",
+    "es": "ES",
+    "en": "EN"
+  },
+  "nav": {
+    "label": "Navegación principal",
+    "open": "Abrir el menú",
+    "close": "Cerrar el menú",
+    "about": "Perfil",
+    "trajectory": "Trayectoria",
+    "missions": "Misiones",
+    "constellations": "Stack",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "label": "Estación base",
+    "availability": {
+      "open": "Disponible para nuevos proyectos",
+      "selective": "Abierto a propuestas puntuales",
+      "unavailable": "Sin disponibilidad por ahora"
+    },
+    "primaryAction": "Ver misiones",
+    "secondaryAction": "Abrir un canal",
+    "scrollHint": "Descender"
+  },
+  "about": {
+    "label": "01 / Perfil",
+    "title": "Quién está detrás del código",
+    "description": "Backend primero, producto siempre. Escribo software que otra gente usa todos los días.",
+    "educationTitle": "Formación",
+    "focusTitle": "Cómo trabajo",
+    "focus": [
+      {
+        "title": "El esquema primero",
+        "body": "Antes de escribir un endpoint modelo los datos. Un buen esquema evita la mitad de los bugs que llegan a producción."
+      },
+      {
+        "title": "Seguridad en el motor",
+        "body": "La autorización vive en la base de datos, no en el cliente. Row Level Security, policies y triggers antes que confiar en el frontend."
+      },
+      {
+        "title": "Explicar para entender",
+        "body": "Dar clases me obliga a justificar cada decisión de arquitectura. Lo que no puedo explicar, todavía no lo entiendo."
+      }
+    ]
+  },
+  "trajectory": {
+    "label": "02 / Trayectoria",
+    "title": "Bitácora de misión",
+    "description": "Dónde estuve, qué construí y qué quedó funcionando.",
+    "kind": {
+      "employment": "Relación de dependencia",
+      "teaching": "Docencia",
+      "freelance": "Freelance"
+    }
+  },
+  "missions": {
+    "label": "03 / Misiones",
+    "title": "Sistemas en órbita",
+    "description": "Cuatro sistemas, tres de ellos en producción. Los repositorios de clientes son privados, así que acá está la historia completa sin el código.",
+    "status": {
+      "production": "En producción",
+      "development": "En desarrollo",
+      "archived": "Archivado"
+    },
+    "visibility": {
+      "private": "Repositorio privado",
+      "public": "Código abierto"
+    },
+    "privateNote": "Trabajo para cliente. El repositorio no es público.",
+    "contributionTitle": "Mi rol",
+    "highlightsTitle": "Puntos clave",
+    "stackTitle": "Stack",
+    "viewSource": "Ver el código",
+    "viewLive": "Ver en vivo",
+    "orbitLabel": "Sistema solar de proyectos",
+    "selectHint": "Elegí un planeta para leer la misión"
+  },
+  "constellations": {
+    "label": "04 / Constelaciones",
+    "title": "Stack técnico",
+    "description": "Agrupado por dominio. El brillo de cada estrella indica cuánto la uso, no cuánto me gusta.",
+    "legendTitle": "Magnitud",
+    "magnitude": {
+      "1": "Uso diario en producción",
+      "2": "Uso frecuente y cómodo",
+      "3": "Familiaridad de trabajo"
+    }
+  },
+  "contact": {
+    "label": "05 / Transmisión",
+    "title": "Abrir un canal",
+    "description": "Si tenés un proyecto, una vacante o simplemente una duda técnica, escribime.",
+    "directTitle": "Canales directos",
+    "form": {
+      "title": "Enviar un mensaje",
+      "name": "Nombre",
+      "namePlaceholder": "Cómo te llamás",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "donde te respondo",
+      "message": "Mensaje",
+      "messagePlaceholder": "Contame en qué estás pensando",
+      "submit": "Transmitir",
+      "sending": "Transmitiendo…",
+      "success": "Mensaje recibido. Te respondo a la brevedad.",
+      "error": "No se pudo enviar el mensaje. Probá de nuevo o escribime directo por correo.",
+      "rateLimited": "Demasiados intentos seguidos. Esperá un momento antes de reintentar.",
+      "required": "Este campo es obligatorio.",
+      "invalidEmail": "Ingresá un correo electrónico válido.",
+      "tooShort": "El mensaje es demasiado corto.",
+      "tooLong": "El mensaje es demasiado largo.",
+      "disabled": "El formulario todavía no está configurado en este entorno. Usá los canales directos."
+    }
+  },
+  "footer": {
+    "builtWith": "Construido con Next.js y TypeScript.",
+    "sourceCode": "Código fuente",
+    "backToTop": "Volver arriba"
+  },
+  "notFound": {
+    "label": "Señal perdida",
+    "title": "Esta órbita no existe",
+    "description": "La página que buscabas no está en ninguna carta estelar conocida.",
+    "action": "Volver a la estación base"
+  },
+  "error": {
+    "label": "Falla de sistema",
+    "title": "Algo salió mal",
+    "description": "Se produjo un error inesperado. Podés reintentar o volver al inicio.",
+    "retry": "Reintentar",
+    "home": "Volver al inicio"
   }
 }
