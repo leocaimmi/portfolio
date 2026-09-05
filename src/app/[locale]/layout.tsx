@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 import type { LocaleRouteParams } from '@/i18n/resolve-locale';
 import { resolveLocale } from '@/i18n/resolve-locale';
 import { routing } from '@/i18n/routing';
+import { fontVariables } from '@/styles/fonts';
 
 export function generateStaticParams(): LocaleRouteParams[] {
   return routing.locales.map((locale) => ({ locale }));
@@ -29,6 +30,7 @@ export async function generateMetadata({
 
 export const viewport: Viewport = {
   themeColor: '#050510',
+  colorScheme: 'dark',
 };
 
 export default async function LocaleLayout({
@@ -41,8 +43,8 @@ export default async function LocaleLayout({
   const locale = await resolveLocale(params);
 
   return (
-    <html lang={locale}>
-      <body>
+    <html lang={locale} className={fontVariables}>
+      <body className="bg-void text-starlight antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
