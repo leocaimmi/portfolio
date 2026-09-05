@@ -66,30 +66,36 @@ function pick<T>(values: readonly T[], fallback: T): T {
   return values[Math.floor(Math.random() * values.length)] ?? fallback;
 }
 
-/**
- * Pre-renders a soft radial dot once, so each frame only blits an image
- * instead of building a gradient per star.
- */
-function createStarSprite(): HTMLCanvasElement {
-  const size = 32;
+const SPRITE_SIZE = 32;
+
+/** Pre-renders one soft radial dot per tint. */
+function createStarSprite(rgb: string): HTMLCanvasElement {
   const sprite = document.createElement('canvas');
-  sprite.width = size;
-  sprite.height = size;
+  sprite.width = SPRITE_SIZE;
+  sprite.height = SPRITE_SIZE;
 
   const context = sprite.getContext('2d');
 
   if (context) {
-    const center = size / 2;
+    const center = SPRITE_SIZE / 2;
     const gradient = context.createRadialGradient(center, center, 0, center, center, center);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.55)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    gradient.addColorStop(0, `rgba(${rgb}, 1)`);
+    gradient.addColorStop(0.4, `rgba(${rgb}, 0.5)`);
+    gradient.addColorStop(1, `rgba(${rgb}, 0)`);
 
     context.fillStyle = gradient;
-    context.fillRect(0, 0, size, size);
+    context.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
   }
 
   return sprite;
+}
+
+/**
+ * Builds the sprite atlas once per mount, so a frame only ever blits an image
+ * instead of rebuilding a gradient for every star.
+ */
+function createStarSprites(): Map<string, HTMLCanvasElement> {
+  return new Map(new Set(STAR_COLORS).values().map((rgb) => [rgb, createStarSprite(rgb)]));
 }
 
 function createStars(width: number, height: number): Star[] {
@@ -138,7 +144,8 @@ export function Starfield() {
       return;
     }
 
-    const sprite = createStarSprite();
+    const sprites = createStarSprites();
+    const fallbackSprite = createStarSprite(STAR_COLORS[0]);
 
     let width = 0;
     let height = 0;
@@ -173,6 +180,7 @@ export function Starfield() {
         // Wrap vertically so the field never runs out as the page scrolls.
         const y = (((star.y - offset) % height) + height) % height;
         const diameter = star.size * 4;
+        const sprite = sprites.get(star.color) ?? fallbackSprite;
 
         context.globalAlpha = star.baseAlpha * twinkle;
         context.drawImage(sprite, star.x - diameter / 2, y - diameter / 2, diameter, diameter);
