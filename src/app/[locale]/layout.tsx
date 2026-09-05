@@ -14,6 +14,7 @@ import { profile } from '@/content';
 import type { LocaleRouteParams } from '@/i18n/resolve-locale';
 import { resolveLocale } from '@/i18n/resolve-locale';
 import { routing } from '@/i18n/routing';
+import { buildPageMetadata, buildPersonJsonLd } from '@/lib/seo';
 import { fontVariables } from '@/styles/fonts';
 
 export function generateStaticParams(): LocaleRouteParams[] {
@@ -28,10 +29,11 @@ export async function generateMetadata({
   const locale = await resolveLocale(params);
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
-  return {
+  return buildPageMetadata({
+    locale,
     title: t('title'),
     description: t('description'),
-  };
+  });
 }
 
 export const viewport: Viewport = {
@@ -59,6 +61,18 @@ export default async function LocaleLayout({
         >
           {t('skipToContent')}
         </a>
+
+        {/*
+          Structured data describing the author, so a search engine reads one
+          entity rather than inferring it from prose. Built from the same
+          content the page renders, and inert: a JSON-LD script tag is never
+          executed.
+        */}
+        <script
+          type="application/ld+json"
+
+          dangerouslySetInnerHTML={{ __html: buildPersonJsonLd(locale) }}
+        />
 
         <NextIntlClientProvider>
           <NebulaBackdrop />
