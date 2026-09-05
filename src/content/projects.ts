@@ -3,47 +3,63 @@ import type { Project } from './schemas';
 /**
  * Project catalogue.
  *
- * Order here is authorial, not visual: the projects section derives orbital
- * placement from `featured` and from each entry's index, so reordering this
- * array is enough to restage the whole system.
- *
- * Client work lives in closed repositories. Those entries are marked
- * `visibility: 'private'`, which the UI surfaces explicitly instead of leaving
- * a missing source link to look like an oversight.
+ * Order here is authorial, not visual. Client work lives in closed
+ * repositories; those entries are marked `visibility: 'private'`, which the UI
+ * states outright instead of leaving a missing source link to look like an
+ * oversight.
  */
 export const projects: Project[] = [
   {
-    id: 'arca-invoicing',
-    name: 'ARCA Electronic Invoicing',
+    id: 'dessa-tech',
+    name: 'DESSA Tech',
     tagline: {
-      es: 'Emisión y validación de comprobantes fiscales contra los Web Services de ARCA.',
-      en: 'Issuing and validating fiscal receipts against the ARCA web services.',
+      es: 'Plataforma móvil con facturación electrónica fiscal integrada de punta a punta.',
+      en: 'Mobile platform with end-to-end fiscal electronic invoicing built in.',
     },
     description: {
-      es: 'Integración con los Web Services de Facturación Electrónica del organismo fiscal argentino. Resuelve la autenticación por ticket firmado (WSAA) y la emisión de comprobantes (WSFE), dos servicios SOAP con reglas estrictas donde un campo mal formado se traduce en un comprobante rechazado.',
-      en: 'Integration with the Argentine tax authority electronic invoicing web services. It handles signed-ticket authentication (WSAA) and receipt issuing (WSFE), two SOAP services with strict rules where a single malformed field means a rejected receipt.',
+      es: 'El producto en el que trabajo a diario: una aplicación móvil multiplataforma con Expo sobre APIs en FastAPI y una base PostgreSQL en Supabase. El desafío central fue la facturación electrónica contra ARCA (ex AFIP): dos servicios SOAP con reglas fiscales estrictas, donde un campo mal formado significa un comprobante rechazado y una venta que no se puede cerrar.',
+      en: 'The product I work on daily: a cross-platform mobile application built with Expo on top of FastAPI services and a PostgreSQL database on Supabase. The central challenge was electronic invoicing against ARCA, Argentina’s tax authority: two SOAP services with strict fiscal rules, where a single malformed field means a rejected receipt and a sale that cannot be closed.',
     },
     contribution: {
-      es: 'Diseñé e implementé la integración completa, desde la firma del ticket de acceso hasta la validación de los comprobantes emitidos.',
-      en: 'Designed and implemented the whole integration, from signing the access ticket through to validating issued receipts.',
+      es: 'Desarrollo de la aplicación móvil, diseño de las APIs, modelado de la base con sus políticas de seguridad, y la integración completa con los Web Services de facturación electrónica de ARCA.',
+      en: 'Built the mobile application, designed the APIs, modelled the database together with its security policies, and delivered the complete integration with the ARCA electronic invoicing web services.',
     },
     year: 2025,
     status: 'production',
     visibility: 'private',
     featured: true,
-    stack: ['python', 'fastapi', 'postgresql', 'arca', 'rest-api'],
+    stack: [
+      'python',
+      'fastapi',
+      'typescript',
+      'expo',
+      'react-native',
+      'postgresql',
+      'supabase',
+      'row-level-security',
+      'arca',
+      'openai-api',
+    ],
     highlights: [
       {
-        es: 'Autenticación WSAA con firma criptográfica del ticket de acceso y renovación automática antes del vencimiento.',
-        en: 'WSAA authentication with a cryptographically signed access ticket and automatic renewal before expiry.',
+        es: 'Facturación electrónica ARCA: autenticación WSAA con firma criptográfica del ticket de acceso y renovación automática antes del vencimiento.',
+        en: 'ARCA electronic invoicing: WSAA authentication with a cryptographically signed access ticket, renewed automatically before it expires.',
       },
       {
-        es: 'Emisión de comprobantes por WSFE con validación previa de los datos fiscales, para fallar antes de llegar al organismo.',
-        en: 'Receipt issuing through WSFE with fiscal data validated up front, so failures happen before reaching the tax authority.',
+        es: 'Emisión de comprobantes por WSFE con los datos fiscales validados antes de salir, para fallar en casa y no contra el organismo.',
+        en: 'Receipt issuing through WSFE with fiscal data validated before it leaves, so failures happen at home rather than against the tax authority.',
       },
       {
-        es: 'Trazabilidad de cada comprobante emitido, con el número de autorización almacenado junto a la operación que lo originó.',
-        en: 'Traceability for every issued receipt, storing the authorisation number alongside the operation that produced it.',
+        es: 'Trazabilidad de cada comprobante: el número de autorización queda guardado junto a la operación que lo originó.',
+        en: 'Traceability for every receipt: the authorisation number is stored alongside the operation that produced it.',
+      },
+      {
+        es: 'Row Level Security, policies y triggers en Supabase: la autorización se resuelve en el motor y no en el cliente.',
+        en: 'Row Level Security, policies and triggers in Supabase: authorisation is resolved in the engine, not in the client.',
+      },
+      {
+        es: 'Una sola base de código Expo para iOS y Android, con servicios de inteligencia artificial integrados en los flujos del producto.',
+        en: 'A single Expo codebase for iOS and Android, with AI services integrated into the product flows.',
       },
     ],
     links: {},
@@ -80,52 +96,6 @@ export const projects: Project[] = [
       {
         es: 'Control de stock acoplado a la venta, de modo que la caja y el inventario nunca divergen.',
         en: 'Stock control coupled to the sale, so checkout and inventory never drift apart.',
-      },
-    ],
-    links: {},
-  },
-  {
-    id: 'dessa-mobile-platform',
-    name: 'DESSA Mobile Platform',
-    tagline: {
-      es: 'Aplicación móvil multiplataforma sobre una API propia y una base gobernada por políticas.',
-      en: 'Cross-platform mobile application on an in-house API and a policy-governed database.',
-    },
-    description: {
-      es: 'Plataforma móvil construida con Expo sobre APIs en FastAPI y una base PostgreSQL en Supabase. Las reglas de acceso viven en el motor mediante Row Level Security, policies y triggers, de modo que ningún cliente puede leer datos que no le corresponden aunque intente hacerlo.',
-      en: 'A mobile platform built with Expo on top of FastAPI services and a PostgreSQL database on Supabase. Access rules live in the engine through Row Level Security, policies and triggers, so no client can read data it does not own, even if it tries.',
-    },
-    contribution: {
-      es: 'Desarrollo de la aplicación móvil, diseño de las APIs y modelado de la base de datos junto a sus políticas de seguridad.',
-      en: 'Built the mobile application, designed the APIs, and modelled the database together with its security policies.',
-    },
-    year: 2025,
-    status: 'production',
-    visibility: 'private',
-    featured: false,
-    stack: [
-      'typescript',
-      'expo',
-      'react-native',
-      'python',
-      'fastapi',
-      'postgresql',
-      'supabase',
-      'row-level-security',
-      'openai-api',
-    ],
-    highlights: [
-      {
-        es: 'Una sola base de código Expo para iOS y Android, con la lógica de dominio compartida entre ambas plataformas.',
-        en: 'A single Expo codebase for iOS and Android, with domain logic shared across both platforms.',
-      },
-      {
-        es: 'Row Level Security, policies y triggers en Supabase: la autorización se resuelve en la base y no en el cliente.',
-        en: 'Row Level Security, policies and triggers in Supabase: authorisation is resolved in the database, not in the client.',
-      },
-      {
-        es: 'Integración de servicios de inteligencia artificial dentro de los flujos del producto.',
-        en: 'AI services integrated into the product flows.',
       },
     ],
     links: {},
