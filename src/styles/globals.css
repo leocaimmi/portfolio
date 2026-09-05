@@ -54,6 +54,24 @@
   --animate-drift: drift 24s linear infinite;
   --animate-float: float 8s var(--ease-orbital) infinite;
   --animate-scan: scan 3.5s var(--ease-orbital) infinite;
+  --animate-reveal: reveal 0.7s var(--ease-orbital) both;
+}
+
+/*
+ * Entrance animation for scroll reveals.
+ *
+ * Elements render in their final state and this animation replays the entrance
+ * when they scroll into view, so content is never hidden behind JavaScript.
+ */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes twinkle {
