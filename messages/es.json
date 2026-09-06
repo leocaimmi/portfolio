@@ -91,14 +91,14 @@
   "constellations": {
     "label": "04 / Constelaciones",
     "title": "Stack técnico",
-    "description": "Agrupado por dominio, con el nivel real de cada herramienta. Avanzado significa uso diario en producción, no una tarde de tutoriales.",
+    "description": "Agrupado por área, con la frecuencia real con la que uso cada cosa. Diario es lo que toco en producción casi todos los días.",
     "filterLabel": "Filtrar por sector",
     "empty": "No hay ningún sector encendido.",
     "showAll": "Mostrar todo",
     "level": {
-      "1": "Avanzado",
-      "2": "Intermedio",
-      "3": "Básico"
+      "1": "Diario",
+      "2": "Frecuente",
+      "3": "Base"
     }
   },
   "contact": {
