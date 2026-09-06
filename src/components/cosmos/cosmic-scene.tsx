@@ -78,7 +78,7 @@ function computeLayout(width: number, height: number): Layout {
       x: width * (isNarrow ? 0.94 : 0.9),
       y: height * 0.45,
     },
-    starRadius: scale * (isNarrow ? 0.055 : 0.038),
+    starRadius: scale * (isNarrow ? 0.04 : 0.027),
     trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
   };
 }
@@ -270,7 +270,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         }
       });
 
-      drawStar(context, origin, layout.starRadius, palette);
+      drawStar(context, origin, layout.starRadius, palette, seconds);
 
       PLANETS.forEach((planet, index) => {
         const position = positions[index];
