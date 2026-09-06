@@ -48,7 +48,10 @@ export function AboutSection() {
               <div key={entry.id}>
                 <dt className="text-sm text-starlight">{entry.title[locale]}</dt>
                 <dd className="mt-0.5 font-mono text-[0.6875rem] tracking-wide text-dust">
-                  {entry.institution} · {formatPeriod(entry.period, locale, common('present'))}
+                  {entry.institution}
+                  {entry.period
+                    ? ` · ${formatPeriod(entry.period, locale, common('present'))}`
+                    : null}
                 </dd>
               </div>
             ))}

@@ -25,7 +25,8 @@ describe('content invariants', () => {
     const starts = experience.map((entry) => entry.period.start);
     expect([...starts].sort().reverse()).toEqual(starts);
 
-    const educationStarts = education.map((entry) => entry.period.start);
+    // An entry with no period sorts last, so an empty start belongs at the end.
+    const educationStarts = education.map((entry) => entry.period?.start ?? '');
     expect([...educationStarts].sort().reverse()).toEqual(educationStarts);
   });
 

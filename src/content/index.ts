@@ -59,11 +59,9 @@ export const experience = parseContent(
   'experience',
 ).toSorted((a, b) => b.period.start.localeCompare(a.period.start));
 
-export const education = parseContent(
-  uniqueById(educationSchema),
-  educationData,
-  'education',
-).toSorted((a, b) => b.period.start.localeCompare(a.period.start));
+export const education = parseContent(uniqueById(educationSchema), educationData, 'education')
+  // Undated entries sort last: an empty start compares below every real one.
+  .toSorted((a, b) => (b.period?.start ?? '').localeCompare(a.period?.start ?? ''));
 
 export const projects = parseContent(uniqueById(projectSchema), projectsData, 'projects');
 

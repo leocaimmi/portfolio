@@ -192,7 +192,12 @@ export const educationSchema = z.object({
   institution: z.string().min(1),
   title: localizedTextSchema,
   kind: z.enum(['degree', 'course', 'language']),
-  period: periodSchema,
+  /**
+   * Optional, because not every qualification has dates worth stating — an
+   * ongoing language level among them. An entry without one renders as the
+   * institution alone rather than as an empty range.
+   */
+  period: periodSchema.optional(),
 });
 
 export type Education = z.infer<typeof educationSchema>;
