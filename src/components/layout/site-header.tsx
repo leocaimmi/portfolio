@@ -25,7 +25,7 @@ import { Wordmark } from './wordmark';
  */
 export function SiteHeader({ name }: { name: string }) {
   const t = useTranslations('nav');
-  const activeSection = useActiveSection(SECTION_IDS);
+  const activeSection = useActiveSection();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {

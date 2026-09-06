@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { CosmicScene } from '@/components/cosmos/cosmic-scene';
 import { ActionLink } from '@/components/ui/action-link';
-import { SECTION_IDS } from '@/config/navigation';
 import { profile } from '@/content';
 import { useActiveSection } from '@/hooks/use-active-section';
 
@@ -25,7 +24,7 @@ const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
 export function HeroSection() {
   const t = useTranslations('hero');
   const locale = useLocale();
-  const activeSection = useActiveSection(SECTION_IDS);
+  const activeSection = useActiveSection();
 
   return (
     <section id="top" className="relative flex min-h-dvh items-center overflow-hidden">

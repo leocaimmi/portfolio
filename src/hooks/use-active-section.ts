@@ -1,77 +1,114 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
+
+import type { SectionId } from '@/config/navigation';
+import { SECTION_IDS } from '@/config/navigation';
 
 /**
- * Returns the id of the section currently closest to the top of the viewport.
+ * Which section the reader is in.
  *
- * Generic over the id union, so a caller passing a literal tuple gets a
- * narrowed result back and can hand it straight to a translation lookup
- * without a cast.
+ * One store for the whole page rather than a hook that sets up its own
+ * observer per caller. Three components ask this question — the header, the
+ * docked navigator and the hero scene — and three copies meant three sets of
+ * listeners measuring the same thing on every scroll.
  *
- * Sections are observed through a narrow horizontal band near the top of the
- * screen, which stops the highlight flickering between two sections that are
- * both partly visible.
+ * The answer is measured from live geometry each time rather than accumulated
+ * from `IntersectionObserver` entries. The previous version cached each
+ * section's offset at the moment it crossed into an observed band and compared
+ * those cached numbers afterwards, so a jump straight to a section left the one
+ * above it holding the older, closer-looking value and winning the comparison:
+ * clicking a link highlighted the section before it.
  */
-export function useActiveSection<T extends string>(sectionIds: readonly T[]): T | undefined {
-  // Undefined until a section actually enters the band: at the top of the page
-  // the reader is in the hero, and highlighting the first link there would be a
-  // lie about where they are.
-  const [activeId, setActiveId] = useState<T>();
 
-  useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') {
+/**
+ * Distance below the top of the viewport at which a section counts as reached.
+ * Just under the header, and matched to the scroll offset in `globals.css` so
+ * that jumping to a section immediately marks that section.
+ */
+const ANCHOR_LINE = 96;
+
+let activeId: SectionId | undefined;
+let frame = 0;
+
+const listeners = new Set<() => void>();
+
+/** The last section whose top has passed the line; none while in the hero. */
+function measure(): SectionId | undefined {
+  let reached: SectionId | undefined;
+
+  for (const id of SECTION_IDS) {
+    const top = document.getElementById(id)?.getBoundingClientRect().top;
+
+    if (top !== undefined && top <= ANCHOR_LINE) {
+      reached = id;
+    }
+  }
+
+  return reached;
+}
+
+function publish(): void {
+  const next = measure();
+
+  if (next === activeId) {
+    return;
+  }
+
+  activeId = next;
+
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+/** Coalesces a burst of scroll events into one measurement per frame. */
+function schedule(): void {
+  if (frame !== 0) {
+    return;
+  }
+
+  frame = window.requestAnimationFrame(() => {
+    frame = 0;
+    publish();
+  });
+}
+
+function subscribe(onStoreChange: () => void): () => void {
+  if (listeners.size === 0) {
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    publish();
+  }
+
+  listeners.add(onStoreChange);
+
+  return () => {
+    listeners.delete(onStoreChange);
+
+    if (listeners.size > 0) {
       return;
     }
 
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((element): element is HTMLElement => element !== null);
+    window.removeEventListener('scroll', schedule);
+    window.removeEventListener('resize', schedule);
+    window.cancelAnimationFrame(frame);
+    frame = 0;
+  };
+}
 
-    if (elements.length === 0) {
-      return;
-    }
-
-    const visible = new Map<string, number>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            visible.set(entry.target.id, entry.boundingClientRect.top);
-          } else {
-            visible.delete(entry.target.id);
-          }
-        }
-
-        const closest = [...visible.entries()].sort(
-          ([, aTop], [, bTop]) => Math.abs(aTop) - Math.abs(bTop),
-        )[0];
-
-        if (!closest) {
-          return;
-        }
-
-        // Resolved back through the caller's list so the state stays typed as
-        // one of their ids rather than an arbitrary DOM id.
-        const matched = sectionIds.find((id) => id === closest[0]);
-
-        if (matched !== undefined) {
-          setActiveId(matched);
-        }
-      },
-      // Only the band between 20% and 40% from the top counts as "active".
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
-    );
-
-    for (const element of elements) {
-      observer.observe(element);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [sectionIds]);
-
+function getSnapshot(): SectionId | undefined {
   return activeId;
+}
+
+/*
+ * Nothing is active on the server: at the top of the page the reader is in the
+ * hero, and marking the first link there would be a lie about where they are.
+ */
+function getServerSnapshot(): SectionId | undefined {
+  return undefined;
+}
+
+export function useActiveSection(): SectionId | undefined {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
