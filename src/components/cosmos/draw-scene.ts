@@ -73,39 +73,101 @@ export function drawSceneStars(
   context.restore();
 }
 
+/**
+ * The star at the centre of the system.
+ *
+ * A star is not a disc of flat colour, and the first version looked like one:
+ * too large, and perfectly still. Three things fix that without a texture or a
+ * shader — a corona that breathes on two out-of-phase cycles so the rhythm
+ * never repeats visibly, a pair of slowly counter-rotating flare arcs, and a
+ * limb that darkens towards its edge the way a real photosphere does.
+ */
 export function drawStar(
   context: CanvasRenderingContext2D,
   origin: ScenePoint,
   radius: number,
   palette: Palette,
+  seconds: number,
 ): void {
-  const halo = context.createRadialGradient(origin.x, origin.y, 0, origin.x, origin.y, radius * 8);
-  halo.addColorStop(0, rgba(palette.solar, 0.4));
-  halo.addColorStop(0.35, rgba(palette.nebula, 0.16));
+  // Two incommensurable periods, so the pulse never settles into a loop the
+  // eye can predict.
+  const pulse = 1 + 0.07 * Math.sin(seconds * 0.83) + 0.035 * Math.sin(seconds * 2.17 + 1.1);
+  const coronaRadius = radius * 8.5 * pulse;
+
+  const halo = context.createRadialGradient(
+    origin.x,
+    origin.y,
+    radius * 0.5,
+    origin.x,
+    origin.y,
+    coronaRadius,
+  );
+  halo.addColorStop(0, rgba(palette.solar, 0.34));
+  halo.addColorStop(0.28, rgba(palette.solar, 0.13));
+  halo.addColorStop(0.6, rgba(palette.nebula, 0.08));
   halo.addColorStop(1, rgba(palette.nebula, 0));
 
   context.fillStyle = halo;
   context.beginPath();
-  context.arc(origin.x, origin.y, radius * 8, 0, TAU);
+  context.arc(origin.x, origin.y, coronaRadius, 0, TAU);
   context.fill();
 
+  drawCorona(context, origin, radius, palette, seconds);
+
+  // Limb darkening: brightest just off centre, cooling towards the edge.
   const core = context.createRadialGradient(
-    origin.x - radius * 0.3,
-    origin.y - radius * 0.35,
+    origin.x - radius * 0.28,
+    origin.y - radius * 0.32,
     0,
     origin.x,
     origin.y,
     radius,
   );
   core.addColorStop(0, rgba(palette.starlight, 1));
-  core.addColorStop(0.45, rgba(palette.solar, 1));
-  core.addColorStop(1, rgba(palette.solar, 0.5));
+  core.addColorStop(0.35, rgba(palette.solar, 1));
+  core.addColorStop(0.86, rgba(palette.solar, 0.95));
+  core.addColorStop(1, rgba(palette.comet, 0.7));
 
   context.fillStyle = core;
   context.beginPath();
   context.arc(origin.x, origin.y, radius, 0, TAU);
   context.fill();
 }
+
+/** Faint arcs turning around the star, at odds with each other so it churns. */
+function drawCorona(
+  context: CanvasRenderingContext2D,
+  origin: ScenePoint,
+  radius: number,
+  palette: Palette,
+  seconds: number,
+): void {
+  const arcs: readonly (readonly [number, number, number, number])[] = [
+    // [radius multiple, angular speed, sweep in radians, alpha]
+    [1.5, 0.22, 2.1, 0.3],
+    [1.9, -0.14, 1.4, 0.2],
+    [2.4, 0.09, 2.6, 0.12],
+  ];
+
+  context.save();
+  context.globalCompositeOperation = 'lighter';
+  context.lineCap = 'round';
+
+  for (const [scale, speed, sweep, alpha] of arcs) {
+    const from = seconds * speed;
+
+    context.strokeStyle = rgba(palette.solar, alpha);
+    context.lineWidth = Math.max(0.6, radius * 0.16);
+    context.beginPath();
+    context.arc(origin.x, origin.y, radius * scale, from, from + sweep);
+    context.stroke();
+  }
+
+  context.restore();
+}
+
+/** Number of pieces a trail is stroked in. Higher is smoother and costs more. */
+const TRAIL_SEGMENTS = 18;
 
 /**
  * A planet's recent path.
@@ -114,11 +176,17 @@ export function drawStar(
  * be dropped the moment the scene stops being visible, and the lines stay crisp
  * at any resolution.
  *
- * The tail is one path stroked twice — a wide, faint pass for the glow and a
- * narrow bright one for the core — rather than a segment per sample with its
- * own alpha. Because the drift is horizontal, a gradient running from the
- * oldest point to the newest reproduces the fade almost exactly, at two draw
- * calls a planet instead of several hundred.
+ * The fade runs along the *path*, not along a straight axis. The earlier
+ * version stroked the whole tail once with a gradient from the oldest point to
+ * the newest, which is correct only while the trail is monotonic in x. It is
+ * not: orbit plus drift makes a helix, and where the curve doubles back a
+ * segment sits at the same horizontal position as a much older one and is given
+ * its opacity — which reads as the trail snapping rather than curling round.
+ *
+ * Stroking in a fixed number of overlapping chunks instead makes opacity a
+ * function of age, which is what it always meant. Fourteen chunks is smooth
+ * enough to look continuous and still an order of magnitude cheaper than a
+ * segment per sample.
  */
 export function drawTrail(
   context: CanvasRenderingContext2D,
@@ -126,27 +194,34 @@ export function drawTrail(
   color: Rgb,
   width: number,
 ): void {
-  const tail = points[0];
-  const head = points[points.length - 1];
-
-  if (points.length < 2 || !tail || !head) {
+  if (points.length < 3) {
     return;
   }
 
-  // A zero-length gradient axis paints nothing at all, so skip the frames
-  // before the tail has pulled away from the head.
-  if (Math.abs(head.x - tail.x) < 1 && Math.abs(head.y - tail.y) < 1) {
-    return;
-  }
-
+  context.save();
   context.lineCap = 'round';
   context.lineJoin = 'round';
 
-  const trace = () => {
-    context.beginPath();
-    context.moveTo(tail.x, tail.y);
+  const perChunk = Math.max(1, Math.ceil((points.length - 1) / TRAIL_SEGMENTS));
 
-    for (let index = 1; index < points.length; index += 1) {
+  for (let start = 0; start < points.length - 1; start += perChunk) {
+    // One point of overlap, so consecutive chunks meet instead of leaving gaps.
+    const end = Math.min(start + perChunk, points.length - 1);
+    const age = (start + perChunk / 2) / points.length;
+    // Gentler than a square, which dimmed everything but the last third and
+    // left the tail looking clipped rather than faded.
+    const strength = age ** 1.5;
+
+    context.beginPath();
+    const first = points[start];
+
+    if (!first) {
+      continue;
+    }
+
+    context.moveTo(first.x, first.y);
+
+    for (let index = start + 1; index <= end; index += 1) {
       const point = points[index];
 
       if (point) {
@@ -154,26 +229,17 @@ export function drawTrail(
       }
     }
 
+    // A wide faint pass for the glow, then a narrow bright one for the core.
+    context.strokeStyle = rgba(color, strength * 0.3);
+    context.lineWidth = width * 3.2;
     context.stroke();
-  };
 
-  const ramp = (peak: number): CanvasGradient => {
-    const gradient = context.createLinearGradient(tail.x, tail.y, head.x, head.y);
-    gradient.addColorStop(0, rgba(color, 0));
-    gradient.addColorStop(0.45, rgba(color, peak * 0.28));
-    gradient.addColorStop(0.85, rgba(color, peak * 0.75));
-    gradient.addColorStop(1, rgba(color, peak));
+    context.strokeStyle = rgba(color, strength);
+    context.lineWidth = width;
+    context.stroke();
+  }
 
-    return gradient;
-  };
-
-  context.strokeStyle = ramp(0.3);
-  context.lineWidth = width * 3.4;
-  trace();
-
-  context.strokeStyle = ramp(0.95);
-  context.lineWidth = width;
-  trace();
+  context.restore();
 }
 
 export function drawPlanet(
