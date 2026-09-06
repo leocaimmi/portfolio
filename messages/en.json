@@ -45,22 +45,7 @@
   "about": {
     "label": "01 / Profile",
     "title": "Who is behind the code",
-    "educationTitle": "Education",
-    "focusTitle": "How I work",
-    "focus": [
-      {
-        "title": "Schema first",
-        "body": "I model the data before writing an endpoint. A good schema prevents half the bugs that would otherwise reach production."
-      },
-      {
-        "title": "Security in the engine",
-        "body": "Authorisation belongs in the database, not the client. Row Level Security, policies and triggers before trusting the frontend."
-      },
-      {
-        "title": "Explaining to understand",
-        "body": "Fielding questions forces me to justify every architectural decision. What I cannot explain another way, I do not understand yet."
-      }
-    ]
+    "educationTitle": "Education"
   },
   "trajectory": {
     "label": "02 / Trajectory",

@@ -45,22 +45,7 @@
   "about": {
     "label": "01 / Perfil",
     "title": "Quién está detrás del código",
-    "educationTitle": "Formación",
-    "focusTitle": "Cómo trabajo",
-    "focus": [
-      {
-        "title": "El esquema primero",
-        "body": "Antes de escribir un endpoint modelo los datos. Un buen esquema evita la mitad de los bugs que llegan a producción."
-      },
-      {
-        "title": "Seguridad en el motor",
-        "body": "La autorización vive en la base de datos, no en el cliente. Row Level Security, policies y triggers antes que confiar en el frontend."
-      },
-      {
-        "title": "Explicar para entender",
-        "body": "Atender consultas me obliga a justificar cada decisión de arquitectura. Lo que no puedo explicar de otra manera, todavía no lo entiendo."
-      }
-    ]
+    "educationTitle": "Formación"
   },
   "trajectory": {
     "label": "02 / Trayectoria",
