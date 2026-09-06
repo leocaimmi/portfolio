@@ -57,6 +57,7 @@ export const technologies = {
   vercel: { name: 'Vercel', category: 'platform' },
   railway: { name: 'Railway', category: 'platform' },
   'mercado-pago': { name: 'Mercado Pago Checkout Pro', category: 'platform' },
+  'whatsapp-api': { name: 'WhatsApp Business API', category: 'platform' },
   arca: { name: 'ARCA (AFIP)', category: 'platform' },
   'openai-api': { name: 'OpenAI API', category: 'platform' },
 
