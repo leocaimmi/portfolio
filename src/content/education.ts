@@ -1,10 +1,7 @@
 import type { Education } from './schemas';
 
 /**
- * Formal education, newest first.
- *
- * Language study is deliberately absent: the site ships in Spanish and
- * English, which demonstrates the point better than a certificate would.
+ * Formal education, newest first. Entries without a period sort last.
  */
 export const education: Education[] = [
   {
@@ -16,6 +13,15 @@ export const education: Education[] = [
     },
     kind: 'course',
     period: { start: '2024-09', end: '2024-12' },
+  },
+  {
+    id: 'cem-english',
+    institution: 'CEM',
+    title: {
+      es: 'Inglés · Nivel 3',
+      en: 'English · Level 3',
+    },
+    kind: 'language',
   },
   {
     id: 'programming-degree',
