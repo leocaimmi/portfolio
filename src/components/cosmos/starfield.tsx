@@ -36,6 +36,21 @@ const STAR_COLORS = [
 const METEOR_MIN_DELAY_MS = 7_000;
 const METEOR_MAX_DELAY_MS = 18_000;
 
+/**
+ * How often the field is actually repainted, at rest and while the page moves.
+ *
+ * It does not need a frame of its own sixty times a second. A twinkle takes
+ * seconds to cross its cycle, and this canvas sits behind every pane of glass
+ * on the site — each of which has to blur its backdrop again whenever the
+ * canvas repaints. At sixty frames a second an idle star field was the most
+ * expensive thing on a page that was only being read.
+ *
+ * A meteor is the exception: it crosses in about a second and stutters at
+ * anything less than the full rate, so it gets it, for the second it lasts.
+ */
+const IDLE_FRAME_MS = 66;
+const MOVING_FRAME_MS = 32;
+
 interface Star {
   x: number;
   y: number;
@@ -155,6 +170,7 @@ export function Starfield() {
     let scrollY = window.scrollY;
     let frameId = 0;
     let lastTime = performance.now();
+    let hasMoved = false;
 
     const resize = () => {
       const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
@@ -226,8 +242,17 @@ export function Starfield() {
     };
 
     const render = (time: number) => {
+      frameId = window.requestAnimationFrame(render);
+
+      const interval = meteor ? 0 : hasMoved ? MOVING_FRAME_MS : IDLE_FRAME_MS;
       const delta = time - lastTime;
+
+      if (delta < interval) {
+        return;
+      }
+
       lastTime = time;
+      hasMoved = false;
 
       context.clearRect(0, 0, width, height);
       drawStars(time);
@@ -239,8 +264,6 @@ export function Starfield() {
 
         drawMeteor(delta);
       }
-
-      frameId = window.requestAnimationFrame(render);
     };
 
     const start = () => {
@@ -261,6 +284,7 @@ export function Starfield() {
 
     const handleScroll = () => {
       scrollY = window.scrollY;
+      hasMoved = true;
 
       // With motion disabled there is no loop running, so repaint on demand.
       if (prefersReducedMotion) {
