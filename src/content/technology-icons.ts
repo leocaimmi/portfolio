@@ -24,6 +24,7 @@ import {
   siSwagger,
   siTailwindcss,
   siTypescript,
+  siUml,
   siVercel,
 } from 'simple-icons';
 
@@ -97,4 +98,5 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   jira: { path: siJira.path },
   miro: { path: siMiro.path },
   'claude-code': { path: siClaude.path },
+  uml: { path: siUml.path },
 };

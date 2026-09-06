@@ -52,7 +52,7 @@ export const technologies = {
   firebase: { name: 'Firebase', category: 'platform' },
   vercel: { name: 'Vercel', category: 'platform' },
   railway: { name: 'Railway', category: 'platform' },
-  'mercado-pago': { name: 'Mercado Pago', category: 'platform' },
+  'mercado-pago': { name: 'Mercado Pago Checkout Pro', category: 'platform' },
   arca: { name: 'ARCA (AFIP)', category: 'platform' },
   'openai-api': { name: 'OpenAI API', category: 'platform' },
 
@@ -69,6 +69,7 @@ export const technologies = {
   'rest-api': { name: 'REST APIs', category: 'practice' },
   'row-level-security': { name: 'Row Level Security', category: 'practice' },
   'design-patterns': { name: 'Design Patterns', category: 'practice' },
+  uml: { name: 'UML', category: 'practice' },
   'data-modeling': { name: 'Data Modeling', category: 'practice' },
   scrum: { name: 'Scrum', category: 'practice' },
   kanban: { name: 'Kanban', category: 'practice' },
