@@ -186,7 +186,7 @@ export function CosmicScene() {
       const emerged = PLANETS.map((_planet, index) => planetEmergence(index, system.emergence));
 
       const positions = PLANETS.map((planet, index) => {
-        const position = planetPosition(planet, seconds, origin, orbitScale);
+        const position = planetPosition(planet, seconds, origin, orbitScale, system.plane);
         const history = trails[index];
 
         if (history && shouldSample) {
@@ -227,7 +227,7 @@ export function CosmicScene() {
           drawPlanet(
             context,
             position,
-            planet.size * orbitScale,
+            planet.size * orbitScale * position.depth,
             palette[planet.color],
             planet.id === activeSection,
           );
@@ -235,7 +235,14 @@ export function CosmicScene() {
       });
 
       context.globalAlpha = system.opacity;
-      drawStar(context, origin, layout.starRadius * system.scale, palette, seconds);
+      drawStar(
+        context,
+        origin,
+        layout.starRadius * system.scale,
+        palette,
+        seconds,
+        system.plane.stretch,
+      );
 
       PLANETS.forEach((planet, index) => {
         const position = positions[index];
@@ -251,7 +258,7 @@ export function CosmicScene() {
           drawPlanet(
             context,
             position,
-            planet.size * orbitScale,
+            planet.size * orbitScale * position.depth,
             palette[planet.color],
             planet.id === activeSection,
           );

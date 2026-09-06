@@ -22,6 +22,37 @@ export const ORBIT_FLATTEN = 0.42;
 /** Tilt of the orbital plane, in radians. */
 export const ORBIT_TILT = -0.3;
 
+/**
+ * How much the near half of an orbit is magnified over the far half.
+ *
+ * A squashed circle is still a circle: every point on it is the same size and
+ * the same distance apart, which is why the system read as a flat badge rather
+ * than as something with a far side. Dividing by the depth turns the ellipse
+ * into the egg shape a tilted ring actually projects to, and the same factor
+ * sizes the bodies, so a planet swinging towards the viewer grows.
+ */
+export const ORBIT_PERSPECTIVE = 0.2;
+
+/** The largest the perspective divisor gets, at the nearest point of an orbit. */
+export const MAX_DEPTH = 1 / (1 - ORBIT_PERSPECTIVE);
+
+/** The orientation and condition of the orbital plane. */
+export interface OrbitPlane {
+  flatten: number;
+  tilt: number;
+  /** Elongation along the plane's own axis. 1 is an undisturbed system. */
+  stretch: number;
+  perspective: number;
+}
+
+/** The plane as it sits when nothing is pulling on it. */
+export const RESTING_PLANE: OrbitPlane = {
+  flatten: ORBIT_FLATTEN,
+  tilt: ORBIT_TILT,
+  stretch: 1,
+  perspective: ORBIT_PERSPECTIVE,
+};
+
 export interface PlanetDefinition {
   id: SectionId;
   /** Orbit radius as a fraction of the scene's reference size. */
@@ -87,30 +118,42 @@ export interface ScenePoint {
   y: number;
 }
 
+export interface PlanetPlacement extends ScenePoint {
+  /** Above 1 on the near side of the orbit, below it on the far side. */
+  depth: number;
+}
+
 /**
  * Position of a planet at a given moment, in scene coordinates.
  *
  * `scale` is the scene's reference size in pixels, so the same definition
- * renders correctly in the full-width hero and in the docked navigator.
+ * renders correctly in the full-width hero and in the docked navigator. The
+ * plane defaults to its resting state; the hero passes a disturbed one as the
+ * system falls, which is what makes the approach look like a fall.
  */
 export function planetPosition(
   planet: PlanetDefinition,
   seconds: number,
   origin: ScenePoint,
   scale: number,
-): ScenePoint {
+  plane: OrbitPlane = RESTING_PLANE,
+): PlanetPlacement {
   const angle = planet.phase + (seconds / planet.period) * TAU;
   const radius = planet.orbit * scale;
 
-  const offsetX = radius * Math.cos(angle);
-  const offsetY = radius * Math.sin(angle) * ORBIT_FLATTEN;
+  const near = Math.sin(angle);
+  const depth = 1 / (1 - plane.perspective * near);
 
-  const cos = Math.cos(ORBIT_TILT);
-  const sin = Math.sin(ORBIT_TILT);
+  const offsetX = radius * Math.cos(angle) * plane.stretch * depth;
+  const offsetY = radius * near * plane.flatten * depth;
+
+  const cos = Math.cos(plane.tilt);
+  const sin = Math.sin(plane.tilt);
 
   return {
     x: origin.x + offsetX * cos - offsetY * sin,
     y: origin.y + offsetX * sin + offsetY * cos,
+    depth,
   };
 }
 
