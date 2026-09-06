@@ -50,12 +50,7 @@
   "trajectory": {
     "label": "02 / Trayectoria",
     "title": "Bitácora de misión",
-    "description": "Dónde estuve, qué construí y qué quedó funcionando.",
-    "kind": {
-      "employment": "Relación de dependencia",
-      "teaching": "Docencia",
-      "freelance": "Freelance"
-    }
+    "description": "Dónde estuve, qué construí y qué quedó funcionando."
   },
   "missions": {
     "label": "03 / Misiones",
