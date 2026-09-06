@@ -1,10 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { useActiveSection } from '@/hooks/use-active-section';
 import { cn } from '@/lib/cn';
+import { subscribeToFrames } from '@/lib/reading-position';
 
 import { SolarSystem } from './solar-system';
 
@@ -36,8 +37,6 @@ export function SystemNavigator() {
   const activeSection = useActiveSection();
 
   const [isDocked, setIsDocked] = useState(false);
-  const [depth, setDepth] = useState(0);
-  const [progress, setProgress] = useState(0);
 
   // Incremented on every arrival, and used as the sweep's key so the animation
   // restarts from the beginning instead of being ignored as already-running.
@@ -53,34 +52,16 @@ export function SystemNavigator() {
     setSweepId((id) => id + 1);
   }, [activeSection]);
 
-  useEffect(() => {
-    let frame = 0;
-
-    const handleScroll = () => {
-      if (frame !== 0) {
-        return;
-      }
-
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-
-        const scrolled = window.scrollY;
-        const travel = document.documentElement.scrollHeight - window.innerHeight;
-
-        setIsDocked(scrolled > window.innerHeight * DOCK_THRESHOLD);
-        setDepth(Math.round(scrolled / DEPTH_STEP) * DEPTH_STEP);
-        setProgress(travel > 0 ? Math.min(100, Math.round((scrolled / travel) * 100)) : 0);
-      });
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  // Setting the same boolean again is a no-op in React, so this costs a render
+  // on the two frames the navigator actually docks or undocks, not on every
+  // frame of the scroll that carries it there.
+  useEffect(
+    () =>
+      subscribeToFrames(({ scrollY, viewportHeight }) => {
+        setIsDocked(scrollY > viewportHeight * DOCK_THRESHOLD);
+      }),
+    [],
+  );
 
   return (
     <div
@@ -114,9 +95,41 @@ export function SystemNavigator() {
         {activeSection ? t(activeSection) : readout('scanning')}
       </p>
 
-      <p className="mt-1 font-mono text-[0.5625rem] tracking-[0.1em] text-dust uppercase">
-        Y {String(depth).padStart(5, '0')} · {String(progress).padStart(2, '0')}%
-      </p>
+      <DepthReadout />
     </div>
   );
 }
+
+/**
+ * The depth and progress gauge, written straight to the DOM.
+ *
+ * These two numbers change on almost every frame of a scroll, and rendering
+ * them through React meant re-rendering the whole navigator — schematic
+ * included — a few hundred times to move a counter. Memoised with no props, so
+ * React mounts it once and never touches its text again; the subscription owns
+ * the content from then on.
+ */
+const DepthReadout = memo(function DepthReadout() {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  useEffect(
+    () =>
+      subscribeToFrames(({ scrollY, progress }) => {
+        const node = ref.current;
+
+        if (!node) {
+          return;
+        }
+
+        const depth = Math.round(scrollY / DEPTH_STEP) * DEPTH_STEP;
+        const percent = Math.round(progress * 100);
+
+        node.textContent = `Y ${String(depth).padStart(5, '0')} · ${String(percent).padStart(2, '0')}%`;
+      }),
+    [],
+  );
+
+  return (
+    <p ref={ref} className="mt-1 font-mono text-[0.5625rem] tracking-[0.1em] text-dust uppercase" />
+  );
+});
