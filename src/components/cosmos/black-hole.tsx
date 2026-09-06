@@ -18,6 +18,12 @@
  * against, so the asset carries a black ground; blending the whole image in
  * screen makes that ground contribute nothing and lets only the light through.
  *
+ * Pushed most of the way off the right edge on purpose: only the near half of
+ * the disk is on screen, which is what makes it look like something the rest of
+ * the scene is falling into rather than an object sitting beside it. The
+ * brightness lift restores the punch the upstream still gets from rendering on
+ * its own deep-blue ground, which this does not have.
+ *
  * Purely decorative. Its internal animation is CSS rather than SMIL precisely
  * so that a media query inside the file can stop it for a visitor who asked for
  * less motion — SMIL could not have been.
@@ -35,7 +41,7 @@ export function BlackHole() {
       // Above the fold and the focal point of the hero, so never deferred.
       loading="eager"
       decoding="async"
-      className="pointer-events-none absolute top-[44%] left-[80%] w-[78vw] max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen select-none md:top-[46%] md:left-[88%] md:w-[62vmin]"
+      className="pointer-events-none absolute top-[46%] left-[92%] w-[98vw] max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen brightness-[1.45] saturate-[1.08] select-none md:top-[48%] md:left-[97%] md:w-[78vmin]"
     />
   );
 }
