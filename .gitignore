@@ -61,3 +61,6 @@ yarn-error.log*
 
 # Local agent tooling
 .claude/
+
+# Upstream notebook, downloaded on demand by scripts/build-gargantua.py
+scripts/svg-gargantua.ipynb

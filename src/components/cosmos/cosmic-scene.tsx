@@ -6,7 +6,9 @@ import { useEffect, useRef } from 'react';
 import type { SectionId } from '@/config/navigation';
 import { usePrefersReducedMotion } from '@/hooks/use-prefers-reduced-motion';
 
-import { drawBlackHole, drawPlanet, drawStar, drawTrail } from './draw-scene';
+import { BlackHole } from './black-hole';
+import type { SceneStar } from './draw-scene';
+import { drawPlanet, drawSceneStars, drawStar, drawTrail } from './draw-scene';
 import type { Palette } from './palette';
 import { readPalette } from './palette';
 import type { ScenePoint } from './scene-geometry';
@@ -30,6 +32,21 @@ const DRIFT_RATE = 0.055;
 const MAX_PIXEL_RATIO = 2;
 const NARROW_BREAKPOINT = 768;
 
+/** One star per this many square pixels, capped so a wide screen stays cheap. */
+const STAR_AREA_PER_STAR = 5_600;
+const MAX_SCENE_STARS = 110;
+
+/**
+ * How far the star wanders across its slow cycle, as a fraction of the scene.
+ *
+ * The system is meant to be travelling, not sitting still, so the whole thing
+ * drifts on a long sine. It is small and slow enough to read as motion rather
+ * than as wobble, and because every planet is positioned relative to the star,
+ * the wave carries through to all of their trails.
+ */
+const STAR_WANDER = 0.018;
+const STAR_WANDER_RATE = 0.075;
+
 interface TrailPoint extends ScenePoint {
   /** Seconds since the scene started, used to age the point as it drifts. */
   bornAt: number;
@@ -41,7 +58,6 @@ interface Layout {
   scale: number;
   origin: ScenePoint;
   blackHole: ScenePoint;
-  blackHoleRadius: number;
   starRadius: number;
   trailSeconds: number;
 }
@@ -59,10 +75,9 @@ function computeLayout(width: number, height: number): Layout {
       y: height * 0.5,
     },
     blackHole: {
-      x: width * (isNarrow ? 1.02 : 0.93),
-      y: height * (isNarrow ? 0.42 : 0.38),
+      x: width * (isNarrow ? 0.94 : 0.9),
+      y: height * 0.45,
     },
-    blackHoleRadius: scale * (isNarrow ? 0.09 : 0.062),
     starRadius: scale * (isNarrow ? 0.055 : 0.038),
     trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
   };
@@ -115,6 +130,8 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
     let layout = computeLayout(container.clientWidth, container.clientHeight);
     let palette: Palette = readPalette(document.documentElement);
     let trails: TrailPoint[][] = PLANETS.map(() => []);
+    let starTrail: TrailPoint[] = [];
+    let sceneStars: SceneStar[] = [];
     let lastSampleAt = -Infinity;
 
     let frameId = 0;
@@ -125,7 +142,33 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
 
     const resetTrails = () => {
       trails = PLANETS.map(() => []);
+      starTrail = [];
       lastSampleAt = -Infinity;
+    };
+
+    /** Where the star sits at a given moment, including its slow wander. */
+    const starPosition = (seconds: number): ScenePoint => ({
+      x: layout.origin.x,
+      y: layout.origin.y + Math.sin(seconds * STAR_WANDER_RATE) * layout.scale * STAR_WANDER,
+    });
+
+    const createSceneStars = (): SceneStar[] => {
+      const count = Math.min(
+        Math.round((layout.width * layout.height) / STAR_AREA_PER_STAR),
+        MAX_SCENE_STARS,
+      );
+
+      return Array.from({ length: count }, () => {
+        const depth = Math.random() ** 2.6;
+
+        return {
+          x: Math.random() * layout.width,
+          y: Math.random() * layout.height,
+          depth,
+          size: 0.7 + depth * 1.5,
+          alpha: 0.16 + depth * 0.5,
+        };
+      });
     };
 
     const resize = () => {
@@ -139,23 +182,44 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
 
       // Trail geometry is stored in pixels, so a resize invalidates all of it.
       resetTrails();
+      sceneStars = createSceneStars();
     };
 
     const drawFrame = () => {
       const seconds = prefersReducedMotion ? 0 : (performance.now() - startedAt) / 1000;
       const activeSection = activeIdRef.current;
 
+      const drift = DRIFT_RATE * layout.scale;
+      const origin = starPosition(seconds);
+      const trailWidth = Math.max(1.3, layout.scale * 0.0042);
+
       context.clearRect(0, 0, layout.width, layout.height);
-      drawBlackHole(context, layout.blackHole, layout.blackHoleRadius, palette, seconds);
+
+      if (!prefersReducedMotion) {
+        drawSceneStars(
+          context,
+          sceneStars,
+          layout.width,
+          seconds,
+          drift,
+          layout.blackHole.y,
+          palette,
+        );
+      }
 
       const shouldSample = !prefersReducedMotion && seconds - lastSampleAt >= SAMPLE_INTERVAL;
 
       if (shouldSample) {
         lastSampleAt = seconds;
+        starTrail.push({ ...origin, bornAt: seconds });
+
+        while (seconds - (starTrail[0]?.bornAt ?? seconds) > layout.trailSeconds) {
+          starTrail.shift();
+        }
       }
 
       const positions = PLANETS.map((planet, index) => {
-        const position = planetPosition(planet, seconds, layout.origin, layout.scale);
+        const position = planetPosition(planet, seconds, origin, layout.scale);
         const history = trails[index];
 
         if (history && shouldSample) {
@@ -169,23 +233,24 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         return position;
       });
 
+      /** Ages a stored path into the past by sliding it away from the star. */
+      const asWake = (history: readonly TrailPoint[]) =>
+        history.map((point) => ({
+          x: point.x - drift * (seconds - point.bornAt),
+          y: point.y,
+        }));
+
       if (!prefersReducedMotion) {
-        const drift = DRIFT_RATE * layout.scale;
+        // The star's own wake, wider and warmer: it is the thing towing the
+        // rest of the system, so its path should be the most legible one.
+        drawTrail(context, asWake(starTrail), palette.solar, trailWidth * 2.4);
 
         PLANETS.forEach((planet, index) => {
           const history = trails[index];
 
-          if (!history) {
-            return;
+          if (history) {
+            drawTrail(context, asWake(history), palette[planet.color], trailWidth);
           }
-
-          // Slide each point away from the star in proportion to its age.
-          const drifted = history.map((point) => ({
-            x: point.x - drift * (seconds - point.bornAt),
-            y: point.y,
-          }));
-
-          drawTrail(context, drifted, palette[planet.color], Math.max(1.3, layout.scale * 0.0042));
         });
       }
 
@@ -205,7 +270,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         }
       });
 
-      drawStar(context, layout.origin, layout.starRadius, palette);
+      drawStar(context, origin, layout.starRadius, palette);
 
       PLANETS.forEach((planet, index) => {
         const position = positions[index];
@@ -303,6 +368,8 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
       className="absolute inset-x-0 top-[54%] bottom-0 overflow-hidden md:inset-0"
     >
       <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
+
+      <BlackHole />
 
       <nav aria-label={t('systemMap')} className="absolute inset-0">
         <ul>
