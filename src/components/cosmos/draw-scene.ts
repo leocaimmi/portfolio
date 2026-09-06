@@ -21,17 +21,25 @@ export interface SceneStar {
   alpha: number;
 }
 
+/** Where along the width a star is close enough to start being torn apart. */
+const ABSORPTION_START = 0.72;
+
 /**
  * The star field being drawn into the black hole.
  *
  * Distinct from the page-wide backdrop: these stars stream towards the hole at
- * a rate set by their depth, and bend towards its plane as they get closer.
- * That is what makes the hole read as the thing pulling everything in, rather
- * than a bright shape that happens to be on the right.
+ * a rate set by their depth and bend towards its plane as they close, which is
+ * what makes the hole read as the thing pulling everything in rather than a
+ * bright shape that happens to be on the right.
  *
- * The bend is a function of horizontal position rather than of elapsed time, so
- * it stays continuous across the wrap: a star that reappears on the left starts
- * again from its own latitude instead of jumping.
+ * Past `ABSORPTION_START` a star stretches and fades to nothing, and only then
+ * does it wrap round to the left. Letting it cross the hole and reappear on the
+ * far side would have shown matter leaving a black hole, which is the one thing
+ * a black hole is for.
+ *
+ * The bend and the fade are both functions of horizontal position rather than
+ * of elapsed time, so they stay continuous across the wrap: a star reappearing
+ * on the left starts again from its own latitude at full brightness.
  */
 export function drawSceneStars(
   context: CanvasRenderingContext2D,
@@ -47,14 +55,32 @@ export function drawSceneStars(
 
   for (const star of stars) {
     const travelled = drift * star.depth * seconds;
-    const x = (((star.x + travelled) % width) + width) % width;
+    const cycle = ((((star.x + travelled) / width) % 1) + 1) % 1;
 
-    const approach = x / width;
-    const y = star.y + (blackHoleY - star.y) * approach * approach * 0.4;
-    const streak = star.depth * star.depth * 15;
+    // Gravitational time dilation, near enough: from out here, infalling matter
+    // appears to slow as it nears the horizon rather than speed up. A linear
+    // sweep looked like a conveyor belt; this crawls at the end.
+    const approach = 1 - (1 - cycle) ** 2.1;
+    const x = approach * width;
 
-    context.strokeStyle = rgba(palette.starlight, star.alpha);
-    context.fillStyle = rgba(palette.starlight, star.alpha);
+    // 0 until the star nears the hole, then 1 at the point of no return.
+    const capture = Math.max(0, (approach - ABSORPTION_START) / (1 - ABSORPTION_START));
+
+    // Fading in over the first sliver of the journey hides the wrap: a star
+    // reappears at the left edge rather than popping into existence there.
+    const arrival = Math.min(1, cycle / 0.06);
+    const fade = arrival * (1 - capture) ** 2;
+
+    if (fade <= 0.01) {
+      continue;
+    }
+
+    const y = star.y + (blackHoleY - star.y) * approach * approach * 0.55;
+    // Spaghettification: the closer it gets, the more it is drawn out.
+    const streak = star.depth * star.depth * 15 + capture * capture * 40;
+
+    context.strokeStyle = rgba(palette.starlight, star.alpha * fade);
+    context.fillStyle = rgba(palette.starlight, star.alpha * fade);
 
     // Only the nearest few stretch. If most of the field streaks it stops
     // reading as stars and starts reading as a screen full of dashes.
@@ -199,7 +225,10 @@ export function drawTrail(
   }
 
   context.save();
-  context.lineCap = 'round';
+  // Butt caps, deliberately. A round cap at every chunk boundary left a bead of
+  // colour at each joint, which read as a string of dots rather than a trail.
+  // The chunks overlap by a point, so they still meet cleanly without them.
+  context.lineCap = 'butt';
   context.lineJoin = 'round';
 
   const perChunk = Math.max(1, Math.ceil((points.length - 1) / TRAIL_SEGMENTS));
@@ -230,11 +259,11 @@ export function drawTrail(
     }
 
     // A wide faint pass for the glow, then a narrow bright one for the core.
-    context.strokeStyle = rgba(color, strength * 0.3);
-    context.lineWidth = width * 3.2;
+    context.strokeStyle = rgba(color, strength * 0.16);
+    context.lineWidth = width * 2.6;
     context.stroke();
 
-    context.strokeStyle = rgba(color, strength);
+    context.strokeStyle = rgba(color, strength * 0.72);
     context.lineWidth = width;
     context.stroke();
   }
