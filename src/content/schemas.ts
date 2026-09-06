@@ -160,31 +160,20 @@ export type ProjectLinks = z.infer<typeof projectLinksSchema>;
 /* -------------------------------------------------------------------------- */
 
 /**
- * Borrowed from stellar magnitude, where a lower number is a brighter star:
- * 1 is daily, production-grade work and 3 is working familiarity. The scale is
- * inverted on purpose so the metaphor holds visually, and the interface states
- * each step in words, so nobody has to know that.
+ * A group of technologies, and nothing about how well they are held.
  *
- * It measures how often something is used, not how well it is known. A claim
- * about frequency is one the work either supports or does not; a claim about
- * mastery is a claim about the person making it.
+ * Each entry used to carry a level. Every wording of that scale ends up being a
+ * claim about the person making it, and nobody grades their own — so the list
+ * says what is used and leaves the judgement to whoever is reading. Order
+ * inside a group is the only signal left, and it is deliberate.
  */
-export const skillMagnitudeSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
-
-export const skillSchema = z.object({
-  technology: technologyIdSchema,
-  magnitude: skillMagnitudeSchema,
-});
-
 export const constellationSchema = z.object({
   id: slugSchema,
   name: localizedTextSchema,
   description: localizedTextSchema,
-  skills: z.array(skillSchema).min(1),
+  skills: z.array(technologyIdSchema).min(1),
 });
 
-export type Skill = z.infer<typeof skillSchema>;
-export type SkillMagnitude = z.infer<typeof skillMagnitudeSchema>;
 export type Constellation = z.infer<typeof constellationSchema>;
 
 /* -------------------------------------------------------------------------- */

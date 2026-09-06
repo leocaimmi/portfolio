@@ -58,8 +58,8 @@ describe('content invariants', () => {
     }
 
     for (const constellation of constellations) {
-      for (const skill of constellation.skills) {
-        expect(known.has(skill.technology)).toBe(true);
+      for (const id of constellation.skills) {
+        expect(known.has(id)).toBe(true);
       }
     }
   });
