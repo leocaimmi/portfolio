@@ -76,6 +76,8 @@ export const profileSchema = z.object({
   name: z.string().min(1),
   /** Short job title, rendered next to the name. */
   role: localizedTextSchema,
+  /** The qualification held, as it is stated under the name. */
+  credential: localizedTextSchema,
   /** One-sentence hook for the hero section. */
   headline: localizedTextSchema,
   /** Longer narrative, one entry per paragraph. */
