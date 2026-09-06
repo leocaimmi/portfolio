@@ -50,12 +50,7 @@
   "trajectory": {
     "label": "02 / Trajectory",
     "title": "Mission log",
-    "description": "Where I have been, what I built, and what stayed running.",
-    "kind": {
-      "employment": "Employment",
-      "teaching": "Teaching",
-      "freelance": "Freelance"
-    }
+    "description": "Where I have been, what I built, and what stayed running."
   },
   "missions": {
     "label": "03 / Missions",
