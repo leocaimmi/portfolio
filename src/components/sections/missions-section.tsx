@@ -50,7 +50,7 @@ function ProjectCard({ project, locale }: { project: Project; locale: Locale }) 
       as="article"
       id={`project-${project.id}`}
       aria-labelledby={`project-${project.id}-title`}
-      className="scroll-mt-24 p-6 sm:p-8"
+      className="p-6 sm:p-8"
     >
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
         <div>
