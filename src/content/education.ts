@@ -16,7 +16,7 @@ export const education: Education[] = [
   },
   {
     id: 'cem-english',
-    institution: 'CEM',
+    institution: 'CEM English',
     title: {
       es: 'Inglés · Nivel 3',
       en: 'English · Level 3',

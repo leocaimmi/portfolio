@@ -1,5 +1,6 @@
 import {
   siAngular,
+  siAstro,
   siC,
   siClaude,
   siCss,
@@ -8,6 +9,7 @@ import {
   siFastapi,
   siFirebase,
   siGit,
+  siGithub,
   siHtml5,
   siJavascript,
   siJira,
@@ -25,6 +27,7 @@ import {
   siSupabase,
   siSwagger,
   siTailwindcss,
+  siTauri,
   siTypescript,
   siUml,
   siVercel,
@@ -82,6 +85,8 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   'react-native': { path: siReact.path },
   angular: { path: siAngular.path },
   nextjs: { path: siNextdotjs.path },
+  astro: { path: siAstro.path },
+  tauri: { path: siTauri.path },
   expo: { path: siExpo.path },
   tailwindcss: { path: siTailwindcss.path },
 
@@ -96,6 +101,7 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   'mercado-pago': { path: siMercadopago.path },
 
   git: { path: siGit.path },
+  github: { path: siGithub.path },
   docker: { path: siDocker.path },
   postman: { path: siPostman.path },
   swagger: { path: siSwagger.path },
