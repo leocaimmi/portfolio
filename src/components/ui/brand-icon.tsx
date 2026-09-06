@@ -47,15 +47,20 @@ export function TechnologyIcon({ id, className }: TechnologyIconProps) {
   const classes = cn('size-3.5 shrink-0', className);
 
   if (glyph === undefined) {
+    const letters = monogram(technologyName(id));
+
     return (
       <span
         aria-hidden="true"
         className={cn(
           classes,
-          'grid place-items-center rounded-[3px] border border-current/45 font-mono text-[0.5rem] leading-none',
+          'grid place-items-center rounded-[3px] border border-current/45 font-mono leading-none',
+          // Three letters do not fit a square at the size two do, and the ones
+          // that overflowed sat off their own badge.
+          letters.length > 2 ? 'text-[0.4375rem] tracking-[-0.06em]' : 'text-[0.5rem]',
         )}
       >
-        {monogram(technologyName(id))}
+        {letters}
       </span>
     );
   }

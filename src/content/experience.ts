@@ -98,7 +98,7 @@ export const experience: Experience[] = [
         en: 'Computer Architecture and Operating Systems: systems fundamentals and concurrency.',
       },
     ],
-    stack: ['java', 'spring-boot', 'c', 'mysql', 'sql', 'design-patterns', 'data-modeling'],
+    stack: ['java', 'spring-boot', 'c', 'mysql', 'sql', 'design-patterns', 'data-modeling', 'uml'],
   },
   {
     id: 'freelance',
@@ -131,6 +131,16 @@ export const experience: Experience[] = [
         en: 'Gathered requirements directly with the client and shipped releases without interrupting day-to-day trading.',
       },
     ],
-    stack: ['typescript', 'react', 'postgresql', 'supabase', 'mercado-pago', 'rest-api'],
+    stack: [
+      'typescript',
+      'react',
+      'angular',
+      'java',
+      'spring-boot',
+      'postgresql',
+      'supabase',
+      'mercado-pago',
+      'rest-api',
+    ],
   },
 ];
