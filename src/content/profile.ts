@@ -14,9 +14,14 @@ export const profile: Profile = {
     en: 'Full Stack Developer',
   },
 
+  credential: {
+    es: 'Técnico Universitario en Programación',
+    en: 'University Technician in Programming',
+  },
+
   headline: {
-    es: 'Construyo el backend que sostiene productos en producción: APIs REST, modelos de datos y las integraciones que nadie ve pero de las que todo depende.',
-    en: 'I build the backend that keeps products running: REST APIs, data models, and the integrations nobody sees but everything depends on.',
+    es: 'Construyo producto de punta a punta: la interfaz que la gente toca, las APIs que la sostienen y el modelo de datos sobre el que todo se apoya.',
+    en: 'I build products end to end: the interface people touch, the APIs that hold it up, and the data model everything else rests on.',
   },
 
   biography: [
