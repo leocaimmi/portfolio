@@ -73,9 +73,6 @@ export const constellations = parseContent(
   'skills',
 );
 
-/** Projects promoted to the inner orbit and a larger card. */
-export const featuredProjects = projects.filter((project) => project.featured);
-
 export * from './schemas';
 export type { TechnologyCategory, TechnologyId } from './technologies';
 export { technologies, technologyName } from './technologies';

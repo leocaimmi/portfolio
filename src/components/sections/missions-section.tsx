@@ -16,11 +16,17 @@ const STATUS_DOT = {
 } as const;
 
 /**
- * Projects section: the case studies in full.
+ * Projects section: the catalogue.
  *
- * The site's own solar system already indexes the sections, so this one stays
- * a plain list — a second orbital diagram here would compete with the
- * navigation rather than add to it.
+ * Three cards abreast, each one scannable in a glance — what the system is,
+ * what it is built from, and whether its source can be read. The account of
+ * what the work involved lives in the timeline, told once as a role with its
+ * outcomes; when it was repeated here as well, every project had two versions
+ * of itself and a card too tall to compare with its neighbours.
+ *
+ * The site's own solar system already indexes the sections, so this one stays a
+ * plain grid — a second orbital diagram here would compete with the navigation
+ * rather than add to it.
  */
 export function MissionsSection() {
   const t = useTranslations('missions');
@@ -28,10 +34,10 @@ export function MissionsSection() {
 
   return (
     <Section id="missions" label={t('label')} title={t('title')} description={t('description')}>
-      <ul className="space-y-6">
+      <ul className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
-          <li key={project.id}>
-            <Reveal delay={index * 60}>
+          <li key={project.id} className="h-full">
+            <Reveal delay={index * 60} className="h-full">
               <ProjectCard project={project} locale={locale} />
             </Reveal>
           </li>
@@ -50,91 +56,63 @@ function ProjectCard({ project, locale }: { project: Project; locale: Locale }) 
       as="article"
       id={`project-${project.id}`}
       aria-labelledby={`project-${project.id}-title`}
-      className="p-6 sm:p-8"
+      className="flex h-full flex-col p-6"
     >
-      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-        <div>
-          <h3
-            id={`project-${project.id}-title`}
-            className="font-display text-xl font-semibold text-starlight"
-          >
-            {project.name}
-          </h3>
-          <p className="mt-1.5 text-sm text-pretty text-nebula-glow">{project.tagline[locale]}</p>
-        </div>
-
-        <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[0.6875rem] tracking-wide text-dust">
-          <li className="flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className={`size-1.5 rounded-full ${STATUS_DOT[project.status]}`}
-            />
-            {t(`status.${project.status}`)}
-          </li>
-          <li>{t(`visibility.${project.visibility}`)}</li>
-          <li>{project.year}</li>
-        </ul>
+      <div className="flex items-baseline justify-between gap-4">
+        <h3
+          id={`project-${project.id}-title`}
+          className="font-display text-lg font-semibold text-starlight"
+        >
+          {project.name}
+        </h3>
+        <span className="font-mono text-[0.6875rem] tracking-wide text-dust">{project.year}</span>
       </div>
 
-      <p className="mt-5 text-sm leading-relaxed text-pretty text-moondust">
+      <ul className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[0.6875rem] tracking-wide text-dust">
+        <li className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className={`size-1.5 rounded-full ${STATUS_DOT[project.status]}`}
+          />
+          {t(`status.${project.status}`)}
+        </li>
+        <li>{t(`visibility.${project.visibility}`)}</li>
+      </ul>
+
+      <p className="mt-4 text-sm leading-relaxed text-pretty text-moondust">
         {project.description[locale]}
       </p>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-        <div>
-          <h4 className="telemetry">{t('contributionTitle')}</h4>
-          <p className="mt-3 text-sm leading-relaxed text-pretty text-moondust">
-            {project.contribution[locale]}
-          </p>
-        </div>
-
-        <div>
-          <h4 className="telemetry">{t('highlightsTitle')}</h4>
-          <ul className="mt-3 space-y-2">
-            {project.highlights.map((highlight) => (
-              <li
-                key={highlight.en}
-                className="flex gap-3 text-sm leading-relaxed text-pretty text-moondust"
-              >
-                <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-star" />
-                {highlight[locale]}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="mt-7 border-t border-horizon/50 pt-5">
+      {/* Pushed to the bottom, so the stacks line up across the row. */}
+      <div className="mt-auto pt-6">
         <h4 className="sr-only">{t('stackTitle')}</h4>
         <TechTagList items={project.stack} />
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        {project.links.repository ? (
-          <ActionLink
-            href={project.links.repository}
-            external
-            newTabLabel={common('opensInNewTab')}
-          >
-            {t('viewSource')}
-          </ActionLink>
-        ) : null}
+      {(project.links.repository ?? project.links.live) ? (
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          {project.links.repository ? (
+            <ActionLink
+              href={project.links.repository}
+              external
+              newTabLabel={common('opensInNewTab')}
+            >
+              {t('viewSource')}
+            </ActionLink>
+          ) : null}
 
-        {project.links.live ? (
-          <ActionLink
-            href={project.links.live}
-            variant="primary"
-            external
-            newTabLabel={common('opensInNewTab')}
-          >
-            {t('viewLive')}
-          </ActionLink>
-        ) : null}
-
-        {project.visibility === 'private' ? (
-          <p className="font-mono text-[0.6875rem] tracking-wide text-dust">{t('privateNote')}</p>
-        ) : null}
-      </div>
+          {project.links.live ? (
+            <ActionLink
+              href={project.links.live}
+              variant="primary"
+              external
+              newTabLabel={common('opensInNewTab')}
+            >
+              {t('viewLive')}
+            </ActionLink>
+          ) : null}
+        </div>
+      ) : null}
     </Panel>
   );
 }

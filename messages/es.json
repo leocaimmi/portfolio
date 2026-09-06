@@ -76,7 +76,7 @@
   "missions": {
     "label": "03 / Misiones",
     "title": "Sistemas en órbita",
-    "description": "Tres sistemas, todos en producción. Los repositorios de clientes son privados, así que acá está la historia completa sin el código.",
+    "description": "Tres sistemas, todos en producción. Los repositorios de clientes son privados; el detalle del trabajo está en la trayectoria.",
     "status": {
       "production": "En producción",
       "development": "En desarrollo",
@@ -86,9 +86,6 @@
       "private": "Repositorio privado",
       "public": "Código abierto"
     },
-    "privateNote": "Trabajo para cliente. El repositorio no es público.",
-    "contributionTitle": "Mi rol",
-    "highlightsTitle": "Puntos clave",
     "stackTitle": "Stack",
     "viewSource": "Ver el código",
     "viewLive": "Ver en vivo"

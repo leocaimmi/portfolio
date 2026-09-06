@@ -76,7 +76,7 @@
   "missions": {
     "label": "03 / Missions",
     "title": "Systems in orbit",
-    "description": "Three systems, all in production. Client repositories are private, so here is the full story without the source.",
+    "description": "Three systems, all in production. Client repositories are private; the detail of the work is in the timeline.",
     "status": {
       "production": "In production",
       "development": "In development",
@@ -86,9 +86,6 @@
       "private": "Private repository",
       "public": "Open source"
     },
-    "privateNote": "Client work. The repository is not public.",
-    "contributionTitle": "My role",
-    "highlightsTitle": "Key points",
     "stackTitle": "Stack",
     "viewSource": "View the source",
     "viewLive": "View live"

@@ -43,7 +43,7 @@ describe('content invariants', () => {
     }
 
     for (const project of projects) {
-      expect(project.tagline.es).not.toBe(project.tagline.en);
+      expect(project.description.es).not.toBe(project.description.en);
     }
   });
 
@@ -88,14 +88,10 @@ describe('schema guards', () => {
     const base = {
       id: 'example',
       name: 'Example',
-      tagline: { es: 'a', en: 'a' },
       description: { es: 'a', en: 'a' },
-      contribution: { es: 'a', en: 'a' },
       year: 2025,
       status: 'production' as const,
-      featured: false,
       stack: ['typescript' as const],
-      highlights: [{ es: 'a', en: 'a' }],
     };
 
     expect(

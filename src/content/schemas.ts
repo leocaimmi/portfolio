@@ -125,21 +125,24 @@ export const projectLinksSchema = z.object({
  */
 export const projectVisibility = ['public', 'private'] as const;
 
+/**
+ * A catalogue entry, not a case study.
+ *
+ * The narrative lives in the timeline, where the same work is told as a role
+ * with its outcomes; repeating it here gave every project two accounts of
+ * itself and a card too tall to scan. What is left is what a catalogue is for:
+ * what it is, what it is built from, and whether the source can be read.
+ */
 export const projectSchema = z
   .object({
     id: slugSchema,
     name: z.string().min(1),
-    tagline: localizedTextSchema,
+    /** One or two sentences. This is a card, not a page. */
     description: localizedTextSchema,
-    /** What the author personally owned on the project. */
-    contribution: localizedTextSchema,
     year: z.number().int().gte(2020).lte(2100),
     status: z.enum(['production', 'development', 'archived']),
     visibility: z.enum(projectVisibility),
-    /** Raises the project to the inner orbit and a larger card. */
-    featured: z.boolean(),
     stack: z.array(technologyIdSchema).min(1),
-    highlights: z.array(localizedTextSchema).min(1),
     links: projectLinksSchema,
   })
   .refine((project) => project.visibility === 'public' || project.links.repository === undefined, {
