@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
-import { SECTION_IDS } from '@/config/navigation';
 import { useActiveSection } from '@/hooks/use-active-section';
 import { cn } from '@/lib/cn';
 
@@ -34,7 +33,7 @@ const DEPTH_STEP = 10;
 export function SystemNavigator() {
   const t = useTranslations('nav');
   const readout = useTranslations('radar');
-  const activeSection = useActiveSection(SECTION_IDS);
+  const activeSection = useActiveSection();
 
   const [isDocked, setIsDocked] = useState(false);
   const [depth, setDepth] = useState(0);
