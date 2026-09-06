@@ -10,8 +10,14 @@ import { cn } from '@/lib/cn';
  * than being clipped to SQ. Longer multi-word names give their initials, and
  * anything else gives its first two letters. The row then stays visually even
  * instead of showing holes where a logo was never available.
+ *
+ * A parenthetical is a gloss on the name rather than part of it, so it is
+ * dropped first: "ARCA (AFIP)" was giving its initials as A and an open
+ * bracket.
  */
-function monogram(name: string): string {
+function monogram(fullName: string): string {
+  const name = fullName.replace(/\([^)]*\)/g, ' ').trim();
+
   if (name.length <= 3) {
     return name.toUpperCase();
   }
