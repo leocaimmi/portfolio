@@ -1,11 +1,8 @@
-'use client';
-
 import { useLocale, useTranslations } from 'next-intl';
 
 import { CosmicScene } from '@/components/cosmos/cosmic-scene';
 import { ActionLink } from '@/components/ui/action-link';
 import { profile } from '@/content';
-import { useActiveSection } from '@/hooks/use-active-section';
 
 const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
   open: 'bg-star',
@@ -20,15 +17,19 @@ const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
  * site's navigation. The copy sits in its own column on the left with pointer
  * events switched off around it, so the planets stay clickable wherever they
  * drift.
+ *
+ * Rendered on the server. Only the scene tracks which section the reader is
+ * in, and it tracks that for itself: when the hero held the subscription, every
+ * section boundary crossed on the way down re-rendered the name, the role, the
+ * headline and both buttons to change one planet's colour.
  */
 export function HeroSection() {
   const t = useTranslations('hero');
   const locale = useLocale();
-  const activeSection = useActiveSection();
 
   return (
     <section id="top" className="relative flex min-h-dvh items-center overflow-hidden">
-      <CosmicScene activeId={activeSection} />
+      <CosmicScene />
 
       <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 pb-[52vh] md:py-28">
         <div className="pointer-events-auto max-w-2xl">

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 
 import type { SectionId } from '@/config/navigation';
+import { useActiveSection } from '@/hooks/use-active-section';
 import { usePrefersReducedMotion } from '@/hooks/use-prefers-reduced-motion';
 
 import { BlackHole } from './black-hole';
@@ -38,11 +39,6 @@ interface TrailPoint extends ScenePoint {
   bornAt: number;
 }
 
-interface CosmicSceneProps {
-  /** Section under the reader; its planet is lit and its label emphasised. */
-  activeId?: SectionId;
-}
-
 /**
  * The hero: a star with planets in orbit, trailing behind them as the whole
  * system falls towards a black hole at the right-hand edge.
@@ -58,8 +54,9 @@ interface CosmicSceneProps {
  * three separate callbacks. Splitting that decision is how a canvas ends up
  * either frozen or quietly running two loops at once.
  */
-export function CosmicScene({ activeId }: CosmicSceneProps) {
+export function CosmicScene() {
   const t = useTranslations('nav');
+  const activeId = useActiveSection();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const markersRef = useRef(new Map<SectionId, HTMLElement | null>());
