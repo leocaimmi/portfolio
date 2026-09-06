@@ -93,6 +93,9 @@
     "label": "04 / Constelaciones",
     "title": "Stack técnico",
     "description": "Agrupado por dominio, con el nivel real de cada herramienta. Avanzado significa uso diario en producción, no una tarde de tutoriales.",
+    "filterLabel": "Filtrar por sector",
+    "empty": "No hay ningún sector encendido.",
+    "showAll": "Mostrar todo",
     "level": {
       "1": "Avanzado",
       "2": "Intermedio",

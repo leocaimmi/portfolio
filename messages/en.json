@@ -93,6 +93,9 @@
     "label": "04 / Constellations",
     "title": "Technical stack",
     "description": "Grouped by domain, with each tool's real level. Advanced means daily production use, not an afternoon of tutorials.",
+    "filterLabel": "Filter by domain",
+    "empty": "No domain is switched on.",
+    "showAll": "Show all",
     "level": {
       "1": "Advanced",
       "2": "Intermediate",
