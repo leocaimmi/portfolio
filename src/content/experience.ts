@@ -46,6 +46,10 @@ export const experience: Experience[] = [
         en: 'Integrated payments through the Mercado Pago Checkout Pro API inside the sales flow.',
       },
       {
+        es: 'Bot de WhatsApp construido sobre la API de Meta, como canal del producto.',
+        en: 'Built a WhatsApp bot on Meta’s API, as a channel of the product.',
+      },
+      {
         es: 'Landing institucional del producto construida con Astro.',
         en: 'Built the product’s marketing site with Astro.',
       },
@@ -65,6 +69,7 @@ export const experience: Experience[] = [
       'supabase',
       'row-level-security',
       'mercado-pago',
+      'whatsapp-api',
       'arca',
       'openai-api',
     ],

@@ -31,6 +31,7 @@ import {
   siTypescript,
   siUml,
   siVercel,
+  siWhatsapp,
 } from 'simple-icons';
 
 import type { TechnologyId } from './technologies';
@@ -99,6 +100,7 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   vercel: { path: siVercel.path },
   railway: { path: siRailway.path },
   'mercado-pago': { path: siMercadopago.path },
+  'whatsapp-api': { path: siWhatsapp.path },
 
   git: { path: siGit.path },
   github: { path: siGithub.path },

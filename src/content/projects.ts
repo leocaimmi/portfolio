@@ -34,6 +34,7 @@ export const projects: Project[] = [
       'supabase',
       'row-level-security',
       'mercado-pago',
+      'whatsapp-api',
       'arca',
       'openai-api',
     ],
