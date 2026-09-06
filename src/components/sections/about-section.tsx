@@ -30,7 +30,7 @@ export function AboutSection() {
   const focus = t.raw('focus') as FocusItem[];
 
   return (
-    <Section id="about" label={t('label')} title={t('title')} description={t('description')}>
+    <Section id="about" label={t('label')} title={t('title')}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
         <Reveal className="space-y-4">
           {profile.biography.map((paragraph) => (

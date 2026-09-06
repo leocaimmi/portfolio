@@ -8,7 +8,7 @@
     "opensInNewTab": "(se abre en una pestaña nueva)",
     "skipToContent": "Ir al contenido principal",
     "availability": {
-      "open": "Disponible para nuevos proyectos",
+      "open": "Disponible para nuevas misiones",
       "selective": "Abierto a propuestas puntuales",
       "unavailable": "Sin disponibilidad por ahora"
     }
@@ -44,7 +44,6 @@
   "about": {
     "label": "01 / Perfil",
     "title": "Quién está detrás del código",
-    "description": "Backend primero, producto siempre.",
     "educationTitle": "Formación",
     "focusTitle": "Cómo trabajo",
     "focus": [
@@ -58,7 +57,7 @@
       },
       {
         "title": "Explicar para entender",
-        "body": "Dar clases me obliga a justificar cada decisión de arquitectura. Lo que no puedo explicar, todavía no lo entiendo."
+        "body": "Atender consultas me obliga a justificar cada decisión de arquitectura. Lo que no puedo explicar de otra manera, todavía no lo entiendo."
       }
     ]
   },
