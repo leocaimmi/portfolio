@@ -36,14 +36,43 @@ export interface PlanetDefinition {
   color: PaletteToken;
 }
 
-export const PLANETS: PlanetDefinition[] = SECTION_IDS.map((id, index) => ({
-  id,
-  orbit: 0.13 + index * 0.072,
-  period: 30 + index * 13,
-  phase: index * GOLDEN_ANGLE,
-  size: index === 2 ? 0.017 : 0.013,
-  color: (['star', 'solar', 'nebula-glow', 'comet', 'starlight'] as const)[index % 5] ?? 'star',
-}));
+/** Orbit radius of the innermost planet, as a fraction of the scene size. */
+const INNER_ORBIT = 0.13;
+const ORBIT_SPACING = 0.072;
+
+/** Seconds for the innermost planet to complete one revolution. */
+const INNER_PERIOD = 18;
+
+/**
+ * Kepler's third law: the square of the orbital period is proportional to the
+ * cube of the semi-major axis, so `T = T₀ · (a / a₀)^1.5`.
+ *
+ * A linear ramp was the obvious shortcut and it looked wrong for a reason —
+ * every planet appeared to be keeping pace with its neighbours. Under the real
+ * law the inner bodies race and the outer ones barely move, which is what
+ * makes a solar system read as a system rather than as a set of rotating
+ * rings.
+ *
+ * It also happens to be good interaction design: the planets furthest out are
+ * the largest click targets and the slowest, and the innermost is the one a
+ * reader is least likely to be aiming at.
+ */
+function orbitalPeriod(radius: number): number {
+  return INNER_PERIOD * (radius / INNER_ORBIT) ** 1.5;
+}
+
+export const PLANETS: PlanetDefinition[] = SECTION_IDS.map((id, index) => {
+  const orbit = INNER_ORBIT + index * ORBIT_SPACING;
+
+  return {
+    id,
+    orbit,
+    period: orbitalPeriod(orbit),
+    phase: index * GOLDEN_ANGLE,
+    size: index === 2 ? 0.017 : 0.013,
+    color: (['star', 'solar', 'nebula-glow', 'comet', 'starlight'] as const)[index % 5] ?? 'star',
+  };
+});
 
 export interface ScenePoint {
   x: number;
