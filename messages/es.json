@@ -37,9 +37,8 @@
     "scanning": "Rastreando"
   },
   "hero": {
-    "label": "Sistema Caimmi",
     "primaryAction": "Ver misiones",
-    "secondaryAction": "Abrir un canal",
+    "secondaryAction": "Contactame",
     "scrollHint": "Descender por el sistema"
   },
   "about": {

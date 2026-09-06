@@ -37,9 +37,8 @@
     "scanning": "Scanning"
   },
   "hero": {
-    "label": "Caimmi System",
     "primaryAction": "View missions",
-    "secondaryAction": "Open a channel",
+    "secondaryAction": "Get in touch",
     "scrollHint": "Descend through the system"
   },
   "about": {
