@@ -31,6 +31,8 @@ export const technologies = {
   python: { name: 'Python', category: 'language' },
   c: { name: 'C', category: 'language' },
   sql: { name: 'SQL', category: 'language' },
+  html: { name: 'HTML', category: 'language' },
+  css: { name: 'CSS', category: 'language' },
 
   // Frameworks and runtimes
   'spring-boot': { name: 'Spring Boot', category: 'framework' },

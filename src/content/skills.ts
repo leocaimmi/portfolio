@@ -1,92 +1,111 @@
 import type { Constellation } from './schemas';
 
 /**
- * Technical skills, grouped into constellations.
+ * Technical skills, grouped by what they are.
  *
  * `magnitude` follows the astronomical convention where a lower number is a
  * brighter star, and the interface reads it out in plain words:
  *
- *   1 — advanced: daily, production-grade work
- *   2 — intermediate: used regularly and comfortably
+ *   1 — daily: in production, most days
+ *   2 — regular: reached for often and comfortably
  *   3 — basic: working familiarity
  *
- * The scale is intentionally coarse. Finer gradations would suggest a
- * precision that no self-assessment actually has.
+ * It is a measure of use rather than of mastery. How often something is picked
+ * up is a claim the work either supports or does not; how well it is known is a
+ * claim about the person making it, and nobody grades their own.
+ *
+ * Order within a group is deliberate, not alphabetical: it runs from what the
+ * group is really built on down to what is merely known.
  */
 export const constellations: Constellation[] = [
   {
-    id: 'backend',
+    id: 'languages',
     name: {
-      es: 'Núcleo',
-      en: 'Core',
+      es: 'Lenguajes',
+      en: 'Languages',
     },
     description: {
-      es: 'Donde vive la lógica del negocio. APIs REST, servicios y las reglas que sostienen el producto.',
-      en: 'Where the business logic lives. REST APIs, services, and the rules that hold the product together.',
+      es: 'Lo que efectivamente se escribe. Todo lo demás son herramientas alrededor de estos.',
+      en: 'What the code is actually written in. Everything else is tooling around these.',
     },
     skills: [
       { technology: 'java', magnitude: 1 },
-      { technology: 'spring-boot', magnitude: 1 },
+      { technology: 'typescript', magnitude: 1 },
       { technology: 'python', magnitude: 1 },
-      { technology: 'fastapi', magnitude: 1 },
-      { technology: 'rest-api', magnitude: 1 },
-      { technology: 'design-patterns', magnitude: 2 },
+      { technology: 'javascript', magnitude: 2 },
       { technology: 'c', magnitude: 2 },
     ],
   },
   {
-    id: 'data',
+    id: 'backend',
     name: {
-      es: 'Datos',
-      en: 'Data',
+      es: 'Backend',
+      en: 'Backend',
+    },
+    description: {
+      es: 'Donde vive la lógica del negocio: servicios, contratos y las reglas que sostienen el producto.',
+      en: 'Where the business logic lives: services, contracts and the rules that hold the product together.',
+    },
+    skills: [
+      { technology: 'fastapi', magnitude: 1 },
+      { technology: 'rest-api', magnitude: 1 },
+      { technology: 'spring-boot', magnitude: 2 },
+      { technology: 'design-patterns', magnitude: 2 },
+      { technology: 'uml', magnitude: 2 },
+    ],
+  },
+  {
+    id: 'frontend',
+    name: {
+      es: 'Frontend',
+      en: 'Frontend',
+    },
+    description: {
+      es: 'La superficie que la gente toca, en web y en móvil, desde una única base de código cuando se puede.',
+      en: 'The surface people touch, on web and mobile, from a single codebase wherever possible.',
+    },
+    skills: [
+      { technology: 'react', magnitude: 1 },
+      { technology: 'expo', magnitude: 1 },
+      { technology: 'html', magnitude: 1 },
+      { technology: 'css', magnitude: 2 },
+      { technology: 'react-native', magnitude: 2 },
+      { technology: 'nextjs', magnitude: 2 },
+      { technology: 'angular', magnitude: 2 },
+    ],
+  },
+  {
+    id: 'databases',
+    name: {
+      es: 'Bases de datos',
+      en: 'Databases',
     },
     description: {
       es: 'El esquema es la primera decisión de arquitectura. Modelado relacional y autorización resuelta en el motor.',
       en: 'The schema is the first architectural decision. Relational modelling with authorisation resolved in the engine.',
     },
     skills: [
-      { technology: 'postgresql', magnitude: 1 },
       { technology: 'sql', magnitude: 1 },
-      { technology: 'data-modeling', magnitude: 1 },
-      { technology: 'supabase', magnitude: 1 },
-      { technology: 'row-level-security', magnitude: 1 },
+      { technology: 'postgresql', magnitude: 1 },
       { technology: 'mysql', magnitude: 2 },
       { technology: 'sqlite', magnitude: 3 },
+      { technology: 'data-modeling', magnitude: 1 },
+      { technology: 'row-level-security', magnitude: 1 },
     ],
   },
   {
-    id: 'interface',
+    id: 'tools',
     name: {
-      es: 'Interfaz',
-      en: 'Interface',
+      es: 'Herramientas',
+      en: 'Tooling',
     },
     description: {
-      es: 'La superficie que la gente realmente toca, en web y en móvil, desde una única base de código cuando se puede.',
-      en: 'The surface people actually touch, on web and mobile, from a single codebase wherever possible.',
-    },
-    skills: [
-      { technology: 'typescript', magnitude: 1 },
-      { technology: 'javascript', magnitude: 1 },
-      { technology: 'react', magnitude: 1 },
-      { technology: 'expo', magnitude: 1 },
-      { technology: 'react-native', magnitude: 2 },
-      { technology: 'nextjs', magnitude: 2 },
-      { technology: 'angular', magnitude: 2 },
-      { technology: 'tailwindcss', magnitude: 2 },
-    ],
-  },
-  {
-    id: 'operations',
-    name: {
-      es: 'Órbita',
-      en: 'Orbit',
-    },
-    description: {
-      es: 'Todo lo que rodea al código: control de versiones, despliegue, documentación de contratos y forma de trabajo.',
-      en: 'Everything orbiting the code: version control, deployment, contract documentation and ways of working.',
+      es: 'Todo lo que rodea al código: plataformas, despliegue, documentación de contratos y forma de trabajo.',
+      en: 'Everything around the code: platforms, deployment, contract documentation and ways of working.',
     },
     skills: [
       { technology: 'git', magnitude: 1 },
+      { technology: 'supabase', magnitude: 1 },
       { technology: 'postman', magnitude: 1 },
       { technology: 'claude-code', magnitude: 1 },
       { technology: 'docker', magnitude: 2 },

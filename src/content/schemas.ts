@@ -162,8 +162,12 @@ export type ProjectLinks = z.infer<typeof projectLinksSchema>;
 /**
  * Borrowed from stellar magnitude, where a lower number is a brighter star:
  * 1 is daily, production-grade work and 3 is working familiarity. The scale is
- * inverted on purpose so the metaphor holds visually; the interface states each
- * level in words — advanced, intermediate, basic — so nobody has to know that.
+ * inverted on purpose so the metaphor holds visually, and the interface states
+ * each step in words, so nobody has to know that.
+ *
+ * It measures how often something is used, not how well it is known. A claim
+ * about frequency is one the work either supports or does not; a claim about
+ * mastery is a claim about the person making it.
  */
 export const skillMagnitudeSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 

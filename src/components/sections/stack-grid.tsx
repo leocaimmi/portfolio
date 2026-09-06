@@ -21,8 +21,8 @@ const LEVEL_TONE: Record<SkillMagnitude, string> = {
 /**
  * The stack, sector by sector, laid out side by side.
  *
- * Four columns rather than four bands stacked down the page: the same
- * information in a quarter of the scroll, and the sectors can be compared
+ * A column per group rather than bands stacked down the page: the same
+ * information in a fraction of the scroll, and the groups can be compared
  * against each other instead of remembered one after another.
  *
  * What is held is the set of sectors switched *off*, so the initial state is an
@@ -72,7 +72,7 @@ export function StackGrid() {
           </button>
         </p>
       ) : (
-        <div className="mt-10 grid items-start gap-x-6 gap-y-9 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-10 grid items-start gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {visible.map((sector) => (
             <section key={sector.id} aria-labelledby={`sector-${sector.id}`}>
               <h3
