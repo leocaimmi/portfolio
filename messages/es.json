@@ -93,12 +93,11 @@
   "constellations": {
     "label": "04 / Constelaciones",
     "title": "Stack técnico",
-    "description": "Agrupado por dominio. El brillo de cada estrella indica cuánto la uso, no cuánto me gusta.",
-    "legendTitle": "Magnitud",
-    "magnitude": {
-      "1": "Uso diario en producción",
-      "2": "Uso frecuente y cómodo",
-      "3": "Familiaridad de trabajo"
+    "description": "Agrupado por dominio, con el nivel real de cada herramienta. Avanzado significa uso diario en producción, no una tarde de tutoriales.",
+    "level": {
+      "1": "Avanzado",
+      "2": "Intermedio",
+      "3": "Básico"
     }
   },
   "contact": {

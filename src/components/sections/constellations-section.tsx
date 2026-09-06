@@ -1,27 +1,32 @@
 import { useLocale, useTranslations } from 'next-intl';
 
-import { ConstellationFigure } from '@/components/cosmos/constellation-figure';
 import { TechnologyIcon } from '@/components/ui/brand-icon';
-import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
-import type { SkillMagnitude } from '@/content';
+import type { Skill, SkillMagnitude } from '@/content';
 import { constellations, technologyName } from '@/content';
 
-const MAGNITUDES: readonly SkillMagnitude[] = [1, 2, 3];
-
-const MAGNITUDE_DOT: Record<SkillMagnitude, string> = {
-  1: 'size-2 bg-starlight',
-  2: 'size-1.5 bg-moondust',
-  3: 'size-1 bg-dust',
+/**
+ * Level is stated in words on every card, so colour is reinforcement rather
+ * than the only carrier of the meaning.
+ */
+const LEVEL_TONE: Record<SkillMagnitude, string> = {
+  1: 'text-star',
+  2: 'text-nebula-glow',
+  3: 'text-dust',
 };
 
 /**
- * Technical stack, grouped into constellations.
+ * Technical stack, grouped by domain.
  *
- * Each group pairs a decorative star pattern with the same information in
- * plain text. Magnitude is never conveyed by size alone: every entry carries
- * its meaning as a `title`, and the legend states the scale outright.
+ * A card per technology: its mark, its name and the level it is actually held
+ * at. The previous arrangement gave each group a panel and a decorative star
+ * figure, which took a screen and a half to convey a list of names — a lot of
+ * room for what a reader is here to check quickly.
+ *
+ * The level is written out on every card rather than encoded in the size of a
+ * dot with a legend somewhere else. A scale nobody has to look up is worth more
+ * than a prettier one that they do.
  */
 export function ConstellationsSection() {
   const t = useTranslations('constellations');
@@ -34,62 +39,51 @@ export function ConstellationsSection() {
       title={t('title')}
       description={t('description')}
     >
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="space-y-10">
         {constellations.map((constellation, index) => (
-          <Reveal key={constellation.id} delay={index * 80}>
-            <Panel className="flex h-full flex-col p-6">
-              <h3 className="font-display text-lg font-semibold text-starlight">
-                {constellation.name[locale]}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-pretty text-moondust">
-                {constellation.description[locale]}
-              </p>
-
-              <div className="my-5">
-                <ConstellationFigure id={constellation.id} skills={constellation.skills} />
+          <Reveal key={constellation.id} delay={index * 60}>
+            <div>
+              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-horizon/50 pb-3">
+                <h3 className="font-display text-lg font-semibold text-starlight">
+                  {constellation.name[locale]}
+                </h3>
+                <p className="text-sm text-pretty text-moondust">
+                  {constellation.description[locale]}
+                </p>
               </div>
 
-              <ul className="mt-auto flex flex-wrap gap-x-4 gap-y-2">
+              <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {constellation.skills.map((skill) => (
-                  <li
+                  <SkillCard
                     key={skill.technology}
-                    title={t(`magnitude.${skill.magnitude}`)}
-                    className="flex items-center gap-2 text-sm text-moondust"
-                  >
-                    <TechnologyIcon id={skill.technology} />
-                    {technologyName(skill.technology)}
-                    <span
-                      aria-hidden="true"
-                      className={`shrink-0 rounded-full ${MAGNITUDE_DOT[skill.magnitude]}`}
-                    />
-                  </li>
+                    skill={skill}
+                    level={t(`level.${skill.magnitude}`)}
+                  />
                 ))}
               </ul>
-            </Panel>
+            </div>
           </Reveal>
         ))}
       </div>
-
-      <Reveal delay={200}>
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <h3 className="telemetry">{t('legendTitle')}</h3>
-
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
-            {MAGNITUDES.map((magnitude) => (
-              <li
-                key={magnitude}
-                className="flex items-center gap-2 font-mono text-[0.6875rem] tracking-wide text-dust"
-              >
-                <span
-                  aria-hidden="true"
-                  className={`shrink-0 rounded-full ${MAGNITUDE_DOT[magnitude]}`}
-                />
-                {t(`magnitude.${magnitude}`)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Reveal>
     </Section>
+  );
+}
+
+function SkillCard({ skill, level }: { skill: Skill; level: string }) {
+  return (
+    <li className="flex items-center gap-3 rounded-2xl border border-horizon/70 bg-deep/40 px-3.5 py-3 transition-colors duration-300 ease-orbital hover:border-star/40">
+      <TechnologyIcon id={skill.technology} className="size-5 text-moondust" />
+
+      <span className="min-w-0">
+        <span className="block truncate text-sm text-starlight">
+          {technologyName(skill.technology)}
+        </span>
+        <span
+          className={`block font-mono text-[0.5625rem] tracking-[0.14em] uppercase ${LEVEL_TONE[skill.magnitude]}`}
+        >
+          {level}
+        </span>
+      </span>
+    </li>
   );
 }

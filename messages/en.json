@@ -93,12 +93,11 @@
   "constellations": {
     "label": "04 / Constellations",
     "title": "Technical stack",
-    "description": "Grouped by domain. How brightly a star burns reflects how much I use it, not how much I like it.",
-    "legendTitle": "Magnitude",
-    "magnitude": {
-      "1": "Daily production work",
-      "2": "Used regularly and comfortably",
-      "3": "Working familiarity"
+    "description": "Grouped by domain, with each tool's real level. Advanced means daily production use, not an afternoon of tutorials.",
+    "level": {
+      "1": "Advanced",
+      "2": "Intermediate",
+      "3": "Basic"
     }
   },
   "contact": {
