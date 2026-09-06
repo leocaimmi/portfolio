@@ -48,7 +48,7 @@ export function SiteHeader({ name }: { name: string }) {
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 px-4 sm:px-6">
-      <div className="relative mx-auto w-full max-w-6xl">
+      <div className="relative mx-auto w-full max-w-7xl">
         <div className="glass flex h-14 items-center gap-4 rounded-full glass-raised px-4 sm:px-5">
           <Wordmark name={name} />
 
