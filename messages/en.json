@@ -8,7 +8,7 @@
     "opensInNewTab": "(opens in a new tab)",
     "skipToContent": "Skip to main content",
     "availability": {
-      "open": "Available for new projects",
+      "open": "Available for new missions",
       "selective": "Open to selected opportunities",
       "unavailable": "Not available right now"
     }
@@ -44,7 +44,6 @@
   "about": {
     "label": "01 / Profile",
     "title": "Who is behind the code",
-    "description": "Backend first, product always.",
     "educationTitle": "Education",
     "focusTitle": "How I work",
     "focus": [
@@ -58,7 +57,7 @@
       },
       {
         "title": "Explaining to understand",
-        "body": "Teaching forces me to justify every architectural decision. Anything I cannot explain, I do not yet understand."
+        "body": "Fielding questions forces me to justify every architectural decision. What I cannot explain another way, I do not understand yet."
       }
     ]
   },

@@ -20,22 +20,26 @@ export const profile: Profile = {
   },
 
   headline: {
-    es: 'Construyo producto de punta a punta: la interfaz que la gente toca, las APIs que la sostienen y el modelo de datos sobre el que todo se apoya.',
-    en: 'I build products end to end: the interface people touch, the APIs that hold it up, and the data model everything else rests on.',
+    es: 'Construyo productos de punta a punta, pensados para escalar: la interfaz que la gente toca, las APIs que la sostienen y el modelo de datos sobre el que todo se apoya.',
+    en: 'I build products end to end, built to scale: the interface people touch, the APIs that hold it up, and the data model everything else rests on.',
   },
 
   biography: [
     {
-      es: 'Técnico Universitario en Programación por la UTN FRMDP y desarrollador Full Stack con foco en backend. Diseño APIs REST, modelo bases de datos PostgreSQL y acompaño los productos desde el esquema hasta producción.',
-      en: 'University Technician in Programming from UTN FRMDP and a Full Stack developer focused on the backend. I design REST APIs, model PostgreSQL databases, and take products from schema to production.',
+      es: 'Técnico Universitario en Programación por la UTN FRMDP. Actualmente trabajo como Full Stack Developer: diseño APIs REST, modelo bases de datos PostgreSQL y acompaño los productos de punta a punta, del esquema a producción.',
+      en: 'University Technician in Programming from UTN FRMDP. I currently work as a Full Stack Developer: I design REST APIs, model PostgreSQL databases and take products end to end, from the schema through to production.',
     },
     {
       es: 'En DESSA Tech desarrollo aplicaciones multiplataforma web y móviles con Expo sobre APIs en FastAPI y Supabase, donde implementé Row Level Security, policies y triggers, integré servicios de inteligencia artificial y construí la integración con los Web Services de facturación electrónica de ARCA.',
       en: 'At DESSA Tech I build cross-platform web and mobile apps with Expo on top of FastAPI and Supabase, where I implemented Row Level Security, policies and triggers, integrated AI services, and built the integration with ARCA electronic invoicing web services.',
     },
     {
-      es: 'En paralelo soy Ayudante de Cátedra en la UTN, donde acompaño Programación III con Spring Boot, Programación I en C, Bases de Datos y Patrones de Diseño. Explicar arquitectura todas las semanas es lo que más me hizo crecer como desarrollador.',
-      en: 'Alongside that I am a Teaching Assistant at UTN, covering Programming III with Spring Boot, Programming I in C, Databases and Design Patterns. Explaining architecture every week is what pushed my own engineering the furthest.',
+      es: 'Por fuera trabajo freelance para comercios. El sistema de punto de venta que opera todos los días la cafetería de la UTN FRMDP es mío, con los cobros integrados por Mercado Pago Checkout Pro.',
+      en: 'Outside that I work freelance for local businesses. The point-of-sale system the UTN FRMDP coffee shop runs every day is mine, with payments integrated through Mercado Pago Checkout Pro.',
+    },
+    {
+      es: 'En paralelo soy Ayudante de Cátedra en la UTN: atiendo consultas, explico el punto que trabó a alguien y llevo el registro de asistencia y notas en Programación III con Spring Boot, Programación I en C, Bases de Datos y Patrones de Diseño. Responder la misma duda de tres maneras distintas es lo que más me hizo crecer como desarrollador.',
+      en: 'Alongside that I am a Teaching Assistant at UTN: I take questions, explain whatever has someone stuck, and keep the attendance and marks for Programming III with Spring Boot, Programming I in C, Databases and Design Patterns. Answering the same question three different ways is what pushed my own engineering the furthest.',
     },
   ],
 
