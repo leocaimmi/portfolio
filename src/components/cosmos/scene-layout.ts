@@ -211,7 +211,7 @@ export function computeLayout(width: number, height: number): Layout {
   // A phone has neither the width for the system to cross nor the room for its
   // labels, so it gets a smaller system in a shorter run rather than the same
   // one spilling off both edges.
-  const entryScale = isNarrow ? 0.7 : 1.1;
+  const entryScale = isNarrow ? 0.8 : 1.28;
   const arrivalScale = isNarrow ? 0.34 : 0.5;
 
   // Mirrors the element's own placement and size, since the scene has to know
@@ -229,9 +229,11 @@ export function computeLayout(width: number, height: number): Layout {
   const clearance =
     horizonRadius * 2.1 + OUTERMOST_ORBIT * scale * arrivalScale * MAX_REACH + scale * 0.03;
 
-  // As far from the hole as the width allows. The system has to look like it is
-  // coming from somewhere, and the only somewhere on offer is the far edge.
-  const entryX = width * (isNarrow ? 0.24 : 0.12);
+  // On the edge itself, so the system rises out of it rather than fading into
+  // existence in clear sky a little way in. Its outer orbits are wider than the
+  // margin, which is the point: they arrive from beyond the frame. A phone
+  // starts further in, where there is no room to spare for that.
+  const entryX = width * (isNarrow ? 0.14 : 0.03);
 
   return {
     width,
