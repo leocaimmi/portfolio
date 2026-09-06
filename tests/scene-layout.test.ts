@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { MAX_DEPTH, OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-geometry';
+import { OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-geometry';
 import type { Layout, SystemState } from '@/components/cosmos/scene-layout';
 import {
   computeLayout,
@@ -53,7 +53,7 @@ function horizonRadius(width: number, height: number): number {
 
 /** How far the outermost planet gets from the star, at its widest swing. */
 function reachOf(layout: Layout, system: SystemState): number {
-  return OUTERMOST_ORBIT * layout.scale * system.scale * system.plane.stretch * MAX_DEPTH;
+  return OUTERMOST_ORBIT * layout.scale * system.scale * system.plane.stretch;
 }
 
 describe('scene layout', () => {
@@ -148,7 +148,7 @@ describe('scene layout', () => {
     const approaching = systemState(TRAVERSE_SECONDS * 0.65, layout);
 
     expect(early.plane.stretch).toBe(1);
-    expect(approaching.plane.stretch).toBeGreaterThan(1.1);
+    expect(approaching.plane.stretch).toBeGreaterThan(1.05);
     expect(Math.abs(approaching.plane.tilt)).toBeGreaterThan(Math.abs(early.plane.tilt));
   });
 

@@ -23,18 +23,16 @@ export const ORBIT_FLATTEN = 0.42;
 export const ORBIT_TILT = -0.3;
 
 /**
- * How much the near half of an orbit is magnified over the far half.
+ * How much a planet on the near half of its orbit is magnified over one on the
+ * far half. It sizes the bodies and nothing else.
  *
- * A squashed circle is still a circle: every point on it is the same size and
- * the same distance apart, which is why the system read as a flat badge rather
- * than as something with a far side. Dividing by the depth turns the ellipse
- * into the egg shape a tilted ring actually projects to, and the same factor
- * sizes the bodies, so a planet swinging towards the viewer grows.
+ * It used to displace them as well, which is what a real projection does — and
+ * it is also what pulled the star off the middle of its own system: magnifying
+ * the near half of a ring about its centre moves the apparent centre of the
+ * drawn ellipse away from the thing the ring goes around. Depth belongs in how
+ * large a planet looks, not in where it is.
  */
 export const ORBIT_PERSPECTIVE = 0.2;
-
-/** The largest the perspective divisor gets, at the nearest point of an orbit. */
-export const MAX_DEPTH = 1 / (1 - ORBIT_PERSPECTIVE);
 
 /** The orientation and condition of the orbital plane. */
 export interface OrbitPlane {
@@ -144,14 +142,18 @@ export function planetPosition(
   const near = Math.sin(angle);
   const depth = 1 / (1 - plane.perspective * near);
 
-  const offsetX = radius * Math.cos(angle) * plane.stretch * depth;
-  const offsetY = radius * near * plane.flatten * depth;
+  const offsetX = radius * Math.cos(angle);
+  const offsetY = radius * near * plane.flatten;
 
   const cos = Math.cos(plane.tilt);
   const sin = Math.sin(plane.tilt);
 
   return {
-    x: origin.x + offsetX * cos - offsetY * sin,
+    // The tidal stretch pulls towards the hole, which is a direction in the
+    // sky and not one in the orbital plane, so it is applied after the plane's
+    // own rotation. Applied before it, the elongation turned with the plane and
+    // ended up pointing somewhere the hole is not.
+    x: origin.x + (offsetX * cos - offsetY * sin) * plane.stretch,
     y: origin.y + offsetX * sin + offsetY * cos,
     depth,
   };

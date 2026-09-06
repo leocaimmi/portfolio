@@ -1,5 +1,5 @@
 import type { OrbitPlane, ScenePoint } from './scene-geometry';
-import { MAX_DEPTH, OUTERMOST_ORBIT, PLANETS, RESTING_PLANE } from './scene-geometry';
+import { OUTERMOST_ORBIT, PLANETS, RESTING_PLANE } from './scene-geometry';
 
 /**
  * Where everything in the hero scene sits, and where it is going.
@@ -55,11 +55,11 @@ const TILT_ROLL = -0.34;
 const STRETCH_GAIN = 0.34;
 
 /**
- * The most the outermost orbit can extend beyond its nominal radius: the near
- * side of the ellipse under perspective, drawn out by the tidal stretch. The
- * clearance in front of the hole is derived from it, so the two cannot drift.
+ * The most the outermost orbit can extend beyond its nominal radius, which is
+ * the tidal stretch and nothing else. The clearance in front of the hole is
+ * derived from it, so the two cannot drift.
  */
-const MAX_REACH = MAX_DEPTH * (1 + STRETCH_GAIN);
+const MAX_REACH = 1 + STRETCH_GAIN;
 
 /** Fraction of the journey spent surfacing at the left edge. */
 const EMERGE_SPAN = 0.11;
