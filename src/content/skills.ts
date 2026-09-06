@@ -4,11 +4,11 @@ import type { Constellation } from './schemas';
  * Technical skills, grouped into constellations.
  *
  * `magnitude` follows the astronomical convention where a lower number is a
- * brighter star:
+ * brighter star, and the interface reads it out in plain words:
  *
- *   1 — daily, production-grade work
- *   2 — used regularly and comfortably
- *   3 — working familiarity
+ *   1 — advanced: daily, production-grade work
+ *   2 — intermediate: used regularly and comfortably
+ *   3 — basic: working familiarity
  *
  * The scale is intentionally coarse. Finer gradations would suggest a
  * precision that no self-assessment actually has.

@@ -159,8 +159,9 @@ export type ProjectLinks = z.infer<typeof projectLinksSchema>;
 
 /**
  * Borrowed from stellar magnitude, where a lower number is a brighter star:
- * 1 is daily, production-grade work, 3 is working familiarity. The scale is
- * inverted on purpose so the metaphor holds visually.
+ * 1 is daily, production-grade work and 3 is working familiarity. The scale is
+ * inverted on purpose so the metaphor holds visually; the interface states each
+ * level in words — advanced, intermediate, basic — so nobody has to know that.
  */
 export const skillMagnitudeSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
