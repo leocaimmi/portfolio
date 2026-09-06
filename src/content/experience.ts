@@ -21,13 +21,13 @@ export const experience: Experience[] = [
       en: 'Argentina · Remote',
     },
     summary: {
-      es: 'Desarrollo de producto de punta a punta: aplicaciones móviles multiplataforma sobre APIs propias y una base de datos gobernada por políticas de seguridad a nivel de fila.',
-      en: 'End-to-end product work: cross-platform mobile applications on top of in-house APIs and a database governed by row-level security policies.',
+      es: 'Desarrollo de producto de punta a punta: aplicaciones multiplataforma web y móviles sobre APIs propias y una base de datos gobernada por políticas de seguridad a nivel de fila.',
+      en: 'End-to-end product work: cross-platform web and mobile applications on top of in-house APIs and a database governed by row-level security policies.',
     },
     achievements: [
       {
-        es: 'Desarrollo de aplicaciones móviles multiplataforma con Expo, compartiendo una única base de código entre iOS y Android.',
-        en: 'Built cross-platform mobile applications with Expo, sharing a single codebase across iOS and Android.',
+        es: 'Desarrollo multiplataforma con Expo, compartiendo una única base de código entre web, iOS y Android.',
+        en: 'Cross-platform development with Expo, sharing a single codebase across web, iOS and Android.',
       },
       {
         es: 'Diseño e implementación de APIs REST con FastAPI, con contratos documentados y validación de entrada en el borde.',

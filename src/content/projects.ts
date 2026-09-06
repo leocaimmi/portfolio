@@ -13,16 +13,16 @@ export const projects: Project[] = [
     id: 'dessa-tech',
     name: 'DESSA Tech',
     tagline: {
-      es: 'Plataforma móvil con facturación electrónica fiscal integrada de punta a punta.',
-      en: 'Mobile platform with end-to-end fiscal electronic invoicing built in.',
+      es: 'Plataforma multiplataforma web y móvil con facturación electrónica fiscal integrada de punta a punta.',
+      en: 'Cross-platform web and mobile platform with end-to-end fiscal electronic invoicing built in.',
     },
     description: {
-      es: 'El producto en el que trabajo a diario: una aplicación móvil multiplataforma con Expo sobre APIs en FastAPI y una base PostgreSQL en Supabase. El desafío central fue la facturación electrónica contra ARCA (ex AFIP): dos servicios SOAP con reglas fiscales estrictas, donde un campo mal formado significa un comprobante rechazado y una venta que no se puede cerrar.',
-      en: 'The product I work on daily: a cross-platform mobile application built with Expo on top of FastAPI services and a PostgreSQL database on Supabase. The central challenge was electronic invoicing against ARCA, Argentina’s tax authority: two SOAP services with strict fiscal rules, where a single malformed field means a rejected receipt and a sale that cannot be closed.',
+      es: 'El producto en el que trabajo a diario: una aplicación multiplataforma web y móvil con Expo sobre APIs en FastAPI y una base PostgreSQL en Supabase. El desafío central fue la facturación electrónica contra ARCA (ex AFIP): dos servicios SOAP con reglas fiscales estrictas, donde un campo mal formado significa un comprobante rechazado y una venta que no se puede cerrar.',
+      en: 'The product I work on daily: a cross-platform web and mobile application built with Expo on top of FastAPI services and a PostgreSQL database on Supabase. The central challenge was electronic invoicing against ARCA, Argentina’s tax authority: two SOAP services with strict fiscal rules, where a single malformed field means a rejected receipt and a sale that cannot be closed.',
     },
     contribution: {
-      es: 'Desarrollo de la aplicación móvil, diseño de las APIs, modelado de la base con sus políticas de seguridad, y la integración completa con los Web Services de facturación electrónica de ARCA.',
-      en: 'Built the mobile application, designed the APIs, modelled the database together with its security policies, and delivered the complete integration with the ARCA electronic invoicing web services.',
+      es: 'Desarrollo de la aplicación en web y móvil, diseño de las APIs, modelado de la base con sus políticas de seguridad, y la integración completa con los Web Services de facturación electrónica de ARCA.',
+      en: 'Built the application for web and mobile, designed the APIs, modelled the database together with its security policies, and delivered the complete integration with the ARCA electronic invoicing web services.',
     },
     year: 2025,
     status: 'production',
@@ -58,8 +58,8 @@ export const projects: Project[] = [
         en: 'Row Level Security, policies and triggers in Supabase: authorisation is resolved in the engine, not in the client.',
       },
       {
-        es: 'Una sola base de código Expo para iOS y Android, con servicios de inteligencia artificial integrados en los flujos del producto.',
-        en: 'A single Expo codebase for iOS and Android, with AI services integrated into the product flows.',
+        es: 'Una sola base de código Expo para web, iOS y Android, con servicios de inteligencia artificial integrados en los flujos del producto.',
+        en: 'A single Expo codebase for web, iOS and Android, with AI services integrated into the product flows.',
       },
     ],
     links: {},
