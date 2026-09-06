@@ -13,74 +13,23 @@ import type { Palette } from './palette';
 import { readPalette } from './palette';
 import type { ScenePoint } from './scene-geometry';
 import { isInFront, planetPosition, PLANETS } from './scene-geometry';
-
-/** Seconds of history kept behind each planet. */
-const TRAIL_SECONDS = 11;
-const TRAIL_SECONDS_COMPACT = 6;
+import { computeLayout, systemState, VISIBILITY_THRESHOLD } from './scene-layout';
 
 /** How often a trail point is recorded. Below the frame rate, and plenty smooth. */
 const SAMPLE_INTERVAL = 1 / 24;
 
-/**
- * Leftward drift applied to trail history, as a fraction of the scene size per
- * second. The star is painted at a fixed point and its past slides away behind
- * it, which is what opens closed orbits into helices: circular motion plus
- * steady translation.
- */
+/** Star field speed, as a fraction of the scene size per second. */
 const DRIFT_RATE = 0.055;
 
 const MAX_PIXEL_RATIO = 2;
-const NARROW_BREAKPOINT = 768;
 
 /** One star per this many square pixels, capped so a wide screen stays cheap. */
 const STAR_AREA_PER_STAR = 5_600;
 const MAX_SCENE_STARS = 110;
 
-/**
- * How far the star wanders across its slow cycle, as a fraction of the scene.
- *
- * The system is meant to be travelling, not sitting still, so the whole thing
- * drifts on a long sine. It is small and slow enough to read as motion rather
- * than as wobble, and because every planet is positioned relative to the star,
- * the wave carries through to all of their trails.
- */
-const STAR_WANDER = 0.018;
-const STAR_WANDER_RATE = 0.075;
-
 interface TrailPoint extends ScenePoint {
-  /** Seconds since the scene started, used to age the point as it drifts. */
+  /** Seconds since the scene started, kept so old points can be aged out. */
   bornAt: number;
-}
-
-interface Layout {
-  width: number;
-  height: number;
-  scale: number;
-  origin: ScenePoint;
-  blackHole: ScenePoint;
-  starRadius: number;
-  trailSeconds: number;
-}
-
-function computeLayout(width: number, height: number): Layout {
-  const isNarrow = width < NARROW_BREAKPOINT;
-  const scale = Math.min(width, height);
-
-  return {
-    width,
-    height,
-    scale,
-    origin: {
-      x: width * (isNarrow ? 0.44 : 0.66),
-      y: height * 0.5,
-    },
-    blackHole: {
-      x: width * (isNarrow ? 0.94 : 0.9),
-      y: height * 0.45,
-    },
-    starRadius: scale * (isNarrow ? 0.04 : 0.027),
-    trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
-  };
 }
 
 interface CosmicSceneProps {
@@ -108,6 +57,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const markersRef = useRef(new Map<SectionId, HTMLElement | null>());
+  const navRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   // Mirrored into a ref so the loop can read it without listing it as a
@@ -137,6 +87,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
     let frameId = 0;
     let isRunning = false;
     let isInViewport = true;
+    let lastCycle = 0;
 
     const startedAt = performance.now();
 
@@ -145,12 +96,6 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
       starTrail = [];
       lastSampleAt = -Infinity;
     };
-
-    /** Where the star sits at a given moment, including its slow wander. */
-    const starPosition = (seconds: number): ScenePoint => ({
-      x: layout.origin.x,
-      y: layout.origin.y + Math.sin(seconds * STAR_WANDER_RATE) * layout.scale * STAR_WANDER,
-    });
 
     const createSceneStars = (): SceneStar[] => {
       const count = Math.min(
@@ -190,8 +135,17 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
       const activeSection = activeIdRef.current;
 
       const drift = DRIFT_RATE * layout.scale;
-      const origin = starPosition(seconds);
-      const trailWidth = Math.max(1.3, layout.scale * 0.0042);
+      const system = systemState(seconds, layout);
+      const origin = system.origin;
+      const orbitScale = layout.scale * system.scale;
+      const trailWidth = Math.max(1, layout.scale * 0.003);
+
+      // The journey has restarted on the far left. Without dropping the history
+      // the next trail would be a straight line drawn back across the whole sky.
+      if (system.cycle !== lastCycle) {
+        lastCycle = system.cycle;
+        resetTrails();
+      }
 
       context.clearRect(0, 0, layout.width, layout.height);
 
@@ -218,8 +172,11 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         }
       }
 
+      // Everything the system is made of dims together as it is swallowed.
+      context.globalAlpha = system.opacity;
+
       const positions = PLANETS.map((planet, index) => {
-        const position = planetPosition(planet, seconds, origin, layout.scale);
+        const position = planetPosition(planet, seconds, origin, orbitScale);
         const history = trails[index];
 
         if (history && shouldSample) {
@@ -233,23 +190,16 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         return position;
       });
 
-      /** Ages a stored path into the past by sliding it away from the star. */
-      const asWake = (history: readonly TrailPoint[]) =>
-        history.map((point) => ({
-          x: point.x - drift * (seconds - point.bornAt),
-          y: point.y,
-        }));
-
       if (!prefersReducedMotion) {
-        // The star's own wake, wider and warmer: it is the thing towing the
-        // rest of the system, so its path should be the most legible one.
-        drawTrail(context, asWake(starTrail), palette.solar, trailWidth * 2.4);
+        // No artificial drift any more: the system genuinely travels, so the
+        // stored history is the path it actually took.
+        drawTrail(context, starTrail, palette.solar, trailWidth * 2);
 
         PLANETS.forEach((planet, index) => {
           const history = trails[index];
 
           if (history) {
-            drawTrail(context, asWake(history), palette[planet.color], trailWidth);
+            drawTrail(context, history, palette[planet.color], trailWidth);
           }
         });
       }
@@ -263,14 +213,14 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
           drawPlanet(
             context,
             position,
-            planet.size * layout.scale,
+            planet.size * orbitScale,
             palette[planet.color],
             planet.id === activeSection,
           );
         }
       });
 
-      drawStar(context, origin, layout.starRadius, palette, seconds);
+      drawStar(context, origin, layout.starRadius * system.scale, palette, seconds);
 
       PLANETS.forEach((planet, index) => {
         const position = positions[index];
@@ -283,7 +233,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
           drawPlanet(
             context,
             position,
-            planet.size * layout.scale,
+            planet.size * orbitScale,
             palette[planet.color],
             planet.id === activeSection,
           );
@@ -293,8 +243,20 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
 
         if (marker) {
           marker.style.transform = `translate3d(${String(Math.round(position.x))}px, ${String(Math.round(position.y))}px, 0)`;
+          marker.style.opacity = String(system.opacity);
         }
       });
+
+      // While the system is being swallowed its links are neither visible nor
+      // reachable. A focus ring landing on something nobody can see is worse
+      // than a navigation that pauses.
+      const nav = navRef.current;
+
+      if (nav) {
+        nav.inert = system.opacity < VISIBILITY_THRESHOLD;
+      }
+
+      context.globalAlpha = 1;
     };
 
     const loop = () => {
@@ -365,13 +327,18 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-x-0 top-[54%] bottom-0 overflow-hidden md:inset-0"
+      className="absolute inset-x-0 top-[46%] bottom-0 overflow-hidden md:inset-0"
     >
       <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
 
       <BlackHole />
 
-      <nav aria-label={t('systemMap')} className="absolute inset-0">
+      {/*
+        Above the copy in the stack, so a planet passing behind the text is
+        still clickable. The markers are small; the little text they cover is
+        not interactive anyway.
+      */}
+      <nav ref={navRef} aria-label={t('systemMap')} className="absolute inset-0 z-20">
         <ul>
           {PLANETS.map((planet) => (
             <li key={planet.id}>

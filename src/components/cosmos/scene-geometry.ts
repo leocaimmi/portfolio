@@ -38,7 +38,15 @@ export interface PlanetDefinition {
 
 /** Orbit radius of the innermost planet, as a fraction of the scene size. */
 const INNER_ORBIT = 0.13;
-const ORBIT_SPACING = 0.072;
+const ORBIT_SPACING = 0.061;
+
+/**
+ * Radius of the outermost orbit, as a fraction of the scene size.
+ *
+ * Exported because the layout has to keep the system clear of the black hole,
+ * and this is the number that decides how much room it needs.
+ */
+export const OUTERMOST_ORBIT = INNER_ORBIT + (SECTION_IDS.length - 1) * ORBIT_SPACING;
 
 /** Seconds for the innermost planet to complete one revolution. */
 const INNER_PERIOD = 18;
