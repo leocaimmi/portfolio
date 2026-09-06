@@ -44,13 +44,13 @@ export const projects: Project[] = [
     id: 'utn-point-of-sale',
     name: 'POS',
     description: {
-      es: 'Punto de venta en uso diario en la cafetería de la UTN FRMDP: aplicación de escritorio con Tauri y React sobre el mostrador, y un tablero web para seguir la operación en tiempo real.',
-      en: 'A point of sale in daily use at the UTN FRMDP coffee shop: a Tauri and React desktop application at the counter, and a web dashboard that follows the day in real time.',
+      es: 'Punto de venta en uso diario en el buffet de la UTN FRMDP: aplicación de escritorio con Tauri y React sobre el mostrador, y un tablero web para seguir la operación en tiempo real.',
+      en: 'A point of sale in daily use at the UTN FRMDP buffet: a Tauri and React desktop application at the counter, and a web dashboard that follows the day in real time.',
     },
     year: 2026,
     status: 'production',
     visibility: 'private',
-    stack: ['typescript', 'react', 'tauri', 'postgresql', 'supabase', 'mercado-pago', 'rest-api'],
+    stack: ['typescript', 'react', 'tauri', 'postgresql', 'supabase', 'rest-api'],
     links: {},
   },
   {

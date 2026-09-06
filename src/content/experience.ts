@@ -21,7 +21,7 @@ export const experience: Experience[] = [
       en: 'Argentina · Remote',
     },
     summary: {
-      es: 'Desarrollo de producto de punta a punta: aplicaciones multiplataforma web y móviles sobre APIs propias y una base de datos gobernada por políticas de seguridad a nivel de fila.',
+      es: 'Desarrollo de producto end to end: aplicaciones multiplataforma web y móviles sobre APIs propias y una base de datos gobernada por políticas de seguridad a nivel de fila.',
       en: 'End-to-end product work: cross-platform web and mobile applications on top of in-house APIs and a database governed by row-level security policies.',
     },
     achievements: [
@@ -129,13 +129,13 @@ export const experience: Experience[] = [
       en: 'Mar del Plata, Argentina',
     },
     summary: {
-      es: 'Desarrollo de software a medida para comercios locales, con foco en sistemas que se usan todos los días y no pueden fallar en el mostrador.',
-      en: 'Custom software for local businesses, focused on systems used every single day that cannot fail at the counter.',
+      es: 'Sistemas a medida que resuelven un problema concreto: puntos de venta como el POS, automatizaciones y gestores contables. Software que se usa todos los días y no puede fallar en el mostrador.',
+      en: 'Custom systems built to solve a concrete problem: points of sale such as the POS, automations and accounting tools. Software used every single day that cannot fail at the counter.',
     },
     achievements: [
       {
-        es: 'Sistema de punto de venta en producción en la cafetería de la UTN FRMDP, operando a diario sobre caja, stock y comprobantes.',
-        en: 'Point-of-sale system running in production at the UTN FRMDP coffee shop, handling checkout, stock and receipts every day.',
+        es: 'Sistema de punto de venta en producción en el buffet de la UTN FRMDP, operando a diario sobre caja, stock y comprobantes.',
+        en: 'Point-of-sale system running in production at the UTN FRMDP buffet, handling checkout, stock and receipts every day.',
       },
       {
         es: 'Integración de pagos con Mercado Pago Checkout Pro, incluyendo el manejo de webhooks y la conciliación de estados de pago.',
