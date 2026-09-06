@@ -30,7 +30,9 @@ export function Section({ id, label, title, description, children, className }: 
     <section
       id={id}
       aria-labelledby={headingId}
-      className={cn('scroll-mt-24 py-20 sm:py-28', className)}
+      // The negative scroll margin cancels this section's own top padding, so
+      // an anchored jump lands on the heading rather than well above it.
+      className={cn('-scroll-mt-16 py-20 sm:-scroll-mt-24 sm:py-28', className)}
     >
       <div className="mx-auto w-full max-w-7xl px-6">
         <Reveal>

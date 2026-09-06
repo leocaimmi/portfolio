@@ -154,8 +154,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Keeps anchored sections clear of the fixed header. */
-    scroll-padding-top: 6rem;
+    /*
+     * Clears the fixed header, which ends 4.5rem down. Sections pull most of
+     * this back with a negative scroll margin, because they carry their own top
+     * padding and would otherwise land with the heading a third of the way down
+     * an empty screen.
+     */
+    scroll-padding-top: 5.5rem;
     color-scheme: dark;
   }
 
