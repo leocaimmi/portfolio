@@ -25,6 +25,7 @@ const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
  */
 export function HeroSection() {
   const t = useTranslations('hero');
+  const common = useTranslations('common');
   const locale = useLocale();
 
   return (
@@ -47,7 +48,7 @@ export function HeroSection() {
               aria-hidden="true"
               className={`size-1.5 rounded-full ${AVAILABILITY_DOT[profile.availability]}`}
             />
-            {t(`availability.${profile.availability}`)}
+            {common(`availability.${profile.availability}`)}
           </p>
 
           <h1 className="font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl md:mt-6 xl:text-7xl">
