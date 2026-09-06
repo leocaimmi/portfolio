@@ -6,7 +6,12 @@
   "common": {
     "present": "Present",
     "opensInNewTab": "(opens in a new tab)",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "availability": {
+      "open": "Available for new projects",
+      "selective": "Open to selected opportunities",
+      "unavailable": "Not available right now"
+    }
   },
   "locale": {
     "label": "Language",
@@ -33,11 +38,6 @@
   },
   "hero": {
     "label": "Caimmi System",
-    "availability": {
-      "open": "Available for new projects",
-      "selective": "Open to selected opportunities",
-      "unavailable": "Not available right now"
-    },
     "primaryAction": "View missions",
     "secondaryAction": "Open a channel",
     "scrollHint": "Descend through the system"
@@ -126,7 +126,8 @@
     }
   },
   "footer": {
-    "builtWith": "Built with Next.js and TypeScript.",
+    "navTitle": "Navigation",
+    "contactTitle": "Contact",
     "sourceCode": "Source code",
     "backToTop": "Back to top"
   },
