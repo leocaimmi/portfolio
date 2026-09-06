@@ -13,7 +13,13 @@ import type { Palette } from './palette';
 import { readPalette } from './palette';
 import type { ScenePoint } from './scene-geometry';
 import { isInFront, planetPosition, PLANETS } from './scene-geometry';
-import { computeLayout, STILL_SECONDS, systemState, VISIBILITY_THRESHOLD } from './scene-layout';
+import {
+  computeLayout,
+  planetEmergence,
+  STILL_SECONDS,
+  systemState,
+  VISIBILITY_THRESHOLD,
+} from './scene-layout';
 
 /** How often a trail point is recorded. Below the frame rate, and plenty smooth. */
 const SAMPLE_INTERVAL = 1 / 24;
@@ -177,6 +183,11 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
       // Everything the system is made of dims together as it is swallowed.
       context.globalAlpha = system.opacity;
 
+      // The star surfaces alone and the planets follow it out, innermost first.
+      // Only their visibility is staggered: every one of them travels its own
+      // ellipse from the first frame, so nothing spirals out of the star.
+      const emerged = PLANETS.map((_planet, index) => planetEmergence(index, system.emergence));
+
       const positions = PLANETS.map((planet, index) => {
         const position = planetPosition(planet, seconds, origin, orbitScale);
         const history = trails[index];
@@ -201,9 +212,12 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
           const history = trails[index];
 
           if (history) {
+            context.globalAlpha = system.opacity * (emerged[index] ?? 1);
             drawTrail(context, history, palette[planet.color], trailWidth);
           }
         });
+
+        context.globalAlpha = system.opacity;
       }
 
       // Far side, then the star, then the near side, so the system reads as a
@@ -212,6 +226,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         const position = positions[index];
 
         if (position && !isInFront(planet, seconds)) {
+          context.globalAlpha = system.opacity * (emerged[index] ?? 1);
           drawPlanet(
             context,
             position,
@@ -222,6 +237,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
         }
       });
 
+      context.globalAlpha = system.opacity;
       drawStar(context, origin, layout.starRadius * system.scale, palette, seconds);
 
       PLANETS.forEach((planet, index) => {
@@ -231,7 +247,10 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
           return;
         }
 
+        const visibility = system.opacity * (emerged[index] ?? 1);
+
         if (isInFront(planet, seconds)) {
+          context.globalAlpha = visibility;
           drawPlanet(
             context,
             position,
@@ -245,7 +264,7 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
 
         if (marker) {
           marker.style.transform = `translate3d(${String(Math.round(position.x))}px, ${String(Math.round(position.y))}px, 0)`;
-          marker.style.opacity = String(system.opacity);
+          marker.style.opacity = String(visibility);
         }
       });
 
