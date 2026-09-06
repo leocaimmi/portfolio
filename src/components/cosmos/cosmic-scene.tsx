@@ -267,8 +267,20 @@ export function CosmicScene() {
         const marker = markersRef.current.get(planet.id);
 
         if (marker) {
+          // Faded out as it nears an edge. The system is wider than the sky it
+          // crosses, so an outer planet does leave the frame - and a label cut
+          // in half by the edge of the screen looks like a mistake.
+          const inset = Math.min(
+            position.x,
+            layout.width - position.x,
+            position.y,
+            layout.height - position.y,
+          );
+          const edge = Math.min(1, Math.max(0, inset / layout.markerMargin));
+
           marker.style.transform = `translate3d(${String(Math.round(position.x))}px, ${String(Math.round(position.y))}px, 0)`;
-          marker.style.opacity = String(visibility);
+          marker.style.opacity = String(visibility * edge);
+          marker.inert = edge < 0.5;
         }
       });
 
@@ -375,8 +387,15 @@ export function CosmicScene() {
                 aria-current={planet.id === activeId ? 'true' : undefined}
                 className="group absolute top-0 left-0 -m-7 flex size-14 flex-col items-center justify-end p-1"
               >
+                {/*
+                  Read out rather than drawn below the breakpoint. Five labels
+                  this length will not fit across a phone without overlapping
+                  each other and running off the edge, and on that screen the
+                  same sections are one tap away in the menu. The name stays in
+                  the accessibility tree either way.
+                */}
                 <span
-                  className={`translate-y-6 font-mono text-[0.625rem] tracking-[0.18em] whitespace-nowrap uppercase transition-colors duration-300 ${
+                  className={`sr-only md:not-sr-only md:translate-y-6 md:font-mono md:text-[0.625rem] md:tracking-[0.18em] md:whitespace-nowrap md:uppercase md:transition-colors md:duration-300 ${
                     planet.id === activeId
                       ? 'text-starlight'
                       : 'text-dust group-hover:text-starlight group-focus-visible:text-starlight'

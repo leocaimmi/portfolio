@@ -20,14 +20,6 @@ export const TRAIL_SECONDS_COMPACT = 6;
 /** Seconds for the system to cross the sky and be taken by the hole. */
 export const TRAVERSE_SECONDS = 140;
 
-/**
- * Size of the system as it surfaces, and again as the crossing ends. Above 1 at
- * the near edge and half that at the far one, so the journey reads as distance
- * rather than as a shape sliding across a flat backdrop.
- */
-const ENTRY_SCALE = 1.1;
-const ARRIVAL_SCALE = 0.5;
-
 /** Where the crossing ends and the fall begins, as a fraction of the journey. */
 const CAPTURE_PHASE = 0.75;
 
@@ -108,9 +100,14 @@ export interface Layout {
   /** Where the crossing ends and the hole takes over. */
   approachX: number;
   originY: number;
+  /** Size of the system as it surfaces, and as the crossing ends. */
+  entryScale: number;
+  arrivalScale: number;
   blackHole: ScenePoint;
   starRadius: number;
   trailSeconds: number;
+  /** How close to an edge a marker may sit before it is faded out. */
+  markerMargin: number;
 }
 
 /** Where the system is, and in what state, at a given moment. */
@@ -180,7 +177,7 @@ export function systemState(seconds: number, layout: Layout): SystemState {
 
   const fall = smoothstep(clamp01((phase - TIP_PHASE) / (1 - TIP_PHASE)));
   const arrival = clamp01(phase / FADE_IN_PHASE);
-  const distance = ENTRY_SCALE + (ARRIVAL_SCALE - ENTRY_SCALE) * travel;
+  const distance = layout.entryScale + (layout.arrivalScale - layout.entryScale) * travel;
 
   return {
     origin: {
@@ -211,6 +208,12 @@ export function computeLayout(width: number, height: number): Layout {
   const isNarrow = width < NARROW_BREAKPOINT;
   const scale = Math.min(width, height);
 
+  // A phone has neither the width for the system to cross nor the room for its
+  // labels, so it gets a smaller system in a shorter run rather than the same
+  // one spilling off both edges.
+  const entryScale = isNarrow ? 0.7 : 1.1;
+  const arrivalScale = isNarrow ? 0.34 : 0.5;
+
   // Mirrors the element's own placement and size, since the scene has to know
   // both where it is falling towards and how much room that leaves.
   const blackHole = {
@@ -224,11 +227,11 @@ export function computeLayout(width: number, height: number): Layout {
   // it crosses in, and a margin. Derived rather than tuned, so the fall always
   // begins with the whole system still in clear sky whatever the viewport.
   const clearance =
-    horizonRadius * 2.1 + OUTERMOST_ORBIT * scale * ARRIVAL_SCALE * MAX_REACH + scale * 0.03;
+    horizonRadius * 2.1 + OUTERMOST_ORBIT * scale * arrivalScale * MAX_REACH + scale * 0.03;
 
   // As far from the hole as the width allows. The system has to look like it is
   // coming from somewhere, and the only somewhere on offer is the far edge.
-  const entryX = width * 0.12;
+  const entryX = width * (isNarrow ? 0.24 : 0.12);
 
   return {
     width,
@@ -237,8 +240,13 @@ export function computeLayout(width: number, height: number): Layout {
     entryX,
     approachX: Math.max(entryX + scale * 0.05, blackHole.x - clearance),
     originY: height * 0.5,
+    entryScale,
+    arrivalScale,
     blackHole,
     starRadius: scale * (isNarrow ? 0.04 : 0.027),
     trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
+    // Half a section label on a screen wide enough to show them; barely more
+    // than a planet on one where they are read out of the menu instead.
+    markerMargin: isNarrow ? 14 : 60,
   };
 }

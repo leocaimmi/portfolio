@@ -4,6 +4,7 @@ import { MAX_DEPTH, OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-g
 import type { Layout, SystemState } from '@/components/cosmos/scene-layout';
 import {
   computeLayout,
+  NARROW_BREAKPOINT,
   planetEmergence,
   STILL_SECONDS,
   systemState,
@@ -121,6 +122,20 @@ describe('scene layout', () => {
     expect(end.opacity).toBeLessThan(0.01);
     expect(end.scale).toBeLessThan(0.01);
   });
+
+  /*
+   * A phone is not a small desktop here: the same system would spill off both
+   * edges at once, and its labels would sit on top of one another.
+   */
+  it.each(VIEWPORTS.filter(([width]) => width < NARROW_BREAKPOINT))(
+    'fits a system across the width of a phone at %ix%i',
+    (width, height) => {
+      const layout = computeLayout(width, height);
+      const surfaced = systemState(0, layout);
+
+      expect(reachOf(layout, surfaced) * 2).toBeLessThanOrEqual(width);
+    },
+  );
 
   /*
    * Shrinking alone read as a badge sliding into the distance. The plane has to
