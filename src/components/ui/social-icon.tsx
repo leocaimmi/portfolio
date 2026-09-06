@@ -14,6 +14,13 @@ const LINKEDIN_PATH =
 const EMAIL_PATH =
   'M1.5 4.5h21a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 0 18V6a1.5 1.5 0 0 1 1.5-1.5Zm.9 2.4v.36l9.6 6.24 9.6-6.24V6.9H2.4Zm19.2 3.24-8.79 5.71a1.5 1.5 0 0 1-1.62 0L2.4 10.14v6.96h19.2v-6.96Z';
 
+/** How each channel is named in the interface. Brands, so never translated. */
+export const PLATFORM_LABEL: Record<SocialLink['platform'], string> = {
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
+  email: 'Email',
+};
+
 const SOCIAL_PATHS: Record<SocialLink['platform'], string> = {
   github: siGithub.path,
   linkedin: LINKEDIN_PATH,

@@ -3,7 +3,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
-import { SocialIcon } from '@/components/ui/social-icon';
+import { PLATFORM_LABEL, SocialIcon } from '@/components/ui/social-icon';
 import { profile } from '@/content';
 
 import { ContactForm } from './contact-form';
@@ -15,12 +15,6 @@ interface ContactSectionProps {
    */
   isFormEnabled: boolean;
 }
-
-const PLATFORM_LABEL = {
-  github: 'GitHub',
-  linkedin: 'LinkedIn',
-  email: 'Email',
-} as const;
 
 /**
  * Closing section: the direct channels first, the form second.
