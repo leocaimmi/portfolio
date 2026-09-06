@@ -155,7 +155,10 @@ prerendered at build time; only the contact endpoint is dynamic.
 
 ## Credits
 
-- The black hole adapts [Diego Inácio's SVG Gargantua study](https://diegoinacio.github.io/creative-coding-notebooks-page/pages/svg-gargantua.html) (MIT).
+- The black hole **is** [Diego Inácio's SVG Gargantua](https://github.com/diegoinacio/creative-coding-notebooks)
+  (MIT), not a lookalike. `scripts/build-gargantua.py` generates `public/gargantua.svg`
+  from his notebook, trimmed for the wire and with its animations converted from SMIL to
+  CSS so a media query can stop them.
 - The Java mark is vendored from [skill-icons](https://github.com/tandpfun/skill-icons) (MIT);
   the rest come from [Simple Icons](https://simpleicons.org) (CC0).
 - Brand marks belong to their respective owners and are used only to identify the

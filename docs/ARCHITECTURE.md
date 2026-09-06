@@ -94,6 +94,20 @@ observe each input is how the first version ended up frozen after a single frame
 initial render ran while the reduced-motion store still held its server snapshot, and
 nothing owned the job of starting the loop afterwards.
 
+### The black hole is generated, not written
+
+`public/gargantua.svg` comes from Diego Inácio's notebook by way of
+`scripts/build-gargantua.py`. Two attempts to reproduce it on canvas got closer each time
+and were never going to arrive: the effect is `feTurbulence` and per-channel colour
+matrices composited in `screen`, and canvas has no answer to either.
+
+The generator is committed so the asset stays reproducible rather than a blob to be taken
+on trust. It downloads the upstream notebook on demand and is never called by
+`npm run build`, so a network failure cannot break a deploy. It cuts revolutions per
+strand to 35% — the path data is almost all of the weight — and rewrites the SMIL
+animations as CSS, because no media query can stop SMIL and the file has to hold still
+under reduced motion.
+
 ### Reveals animate from the visible state
 
 Content renders in its final state and the reveal only replays an entrance when the
