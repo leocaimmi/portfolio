@@ -372,10 +372,15 @@ export function CosmicScene() {
 
       {/*
         Above the copy in the stack, so a planet passing behind the text is
-        still clickable. The markers are small; the little text they cover is
-        not interactive anyway.
+        still clickable — but transparent to the pointer everywhere except on
+        the markers themselves. Covering the hero with a live layer swallowed
+        every click meant for the buttons underneath it.
       */}
-      <nav ref={navRef} aria-label={t('systemMap')} className="absolute inset-0 z-20">
+      <nav
+        ref={navRef}
+        aria-label={t('systemMap')}
+        className="pointer-events-none absolute inset-0 z-20"
+      >
         <ul>
           {PLANETS.map((planet) => (
             <li key={planet.id}>
@@ -385,7 +390,7 @@ export function CosmicScene() {
                 }}
                 href={`#${planet.id}`}
                 aria-current={planet.id === activeId ? 'true' : undefined}
-                className="group absolute top-0 left-0 -m-7 flex size-14 flex-col items-center justify-end p-1"
+                className="group pointer-events-auto absolute top-0 left-0 -m-7 flex size-14 flex-col items-center justify-end p-1"
               >
                 {/*
                   Read out rather than drawn below the breakpoint. Five labels
