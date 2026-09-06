@@ -67,14 +67,14 @@ export function SystemNavigator() {
     <div
       inert={!isDocked}
       className={cn(
-        'glass fixed bottom-6 left-6 z-40 hidden w-36 rounded-3xl glass-raised p-3 transition-all duration-700 ease-orbital xl:block',
+        'glass fixed bottom-6 left-6 z-40 hidden w-40 rounded-3xl glass-raised p-3 transition-all duration-700 ease-orbital xl:block',
         isDocked
           ? 'translate-y-0 scale-100 opacity-100'
           : 'pointer-events-none translate-y-6 scale-90 opacity-0',
       )}
     >
       <div className="relative overflow-hidden rounded-full border border-star/20 bg-void/50">
-        <SolarSystem compact activeId={activeSection} />
+        <SolarSystem activeId={activeSection} />
 
         {sweepId > 0 ? (
           <div key={sweepId} aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -95,41 +95,117 @@ export function SystemNavigator() {
         {activeSection ? t(activeSection) : readout('scanning')}
       </p>
 
-      <DepthReadout />
+      <DescentGauge label={readout('horizon')} />
     </div>
   );
 }
 
+/** Base classes for the two parts the gauge recolours as the hole closes. */
+const READING =
+  'font-mono text-[0.625rem] tabular-nums transition-colors duration-700 ease-orbital';
+const BAR = 'block h-full origin-left transition-colors duration-700 ease-orbital';
+
 /**
- * The depth and progress gauge, written straight to the DOM.
+ * Nominal, caution, critical: the three states an instrument has.
  *
- * These two numbers change on almost every frame of a scroll, and rendering
- * them through React meant re-rendering the whole navigator — schematic
- * included — a few hundred times to move a counter. Memoised with no props, so
- * React mounts it once and never touches its text again; the subscription owns
- * the content from then on.
+ * Bands rather than a continuous ramp, because the palette has three tones that
+ * mean those three things and a gradient between them passes through colours
+ * that mean nothing. Crossing a band is also the only moment anything has to be
+ * written to the DOM.
  */
-const DepthReadout = memo(function DepthReadout() {
-  const ref = useRef<HTMLParagraphElement>(null);
+const BANDS = [
+  { until: 0.55, reading: 'text-star', bar: 'bg-star' },
+  { until: 0.85, reading: 'text-solar', bar: 'bg-solar' },
+  { until: Infinity, reading: 'text-comet', bar: 'bg-comet' },
+] as const;
 
-  useEffect(
-    () =>
-      subscribeToFrames(({ scrollY, progress }) => {
-        const node = ref.current;
+function bandAt(progress: number): number {
+  return BANDS.findIndex((band) => progress < band.until);
+}
 
-        if (!node) {
-          return;
-        }
+/**
+ * How far the reader has left before the hole has them, written straight to the
+ * DOM.
+ *
+ * Distance and depth change on almost every frame of a scroll, and rendering
+ * them through React meant re-rendering the whole navigator — chart included —
+ * a few hundred times to move a counter. Memoised with no props but the label,
+ * so React mounts it once and never touches its numbers again; the subscription
+ * owns them from then on, and each of the three writes is guarded by the value
+ * that would change it.
+ *
+ * Hidden from assistive technology on purpose. It is an instrument reading of
+ * the scroll position, which a screen reader already knows better than this
+ * does, and announcing it on every step would be noise over the navigation it
+ * sits inside.
+ */
+const DescentGauge = memo(function DescentGauge({ label }: { label: string }) {
+  const readingRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
+  const depthRef = useRef<HTMLParagraphElement>(null);
 
-        const depth = Math.round(scrollY / DEPTH_STEP) * DEPTH_STEP;
-        const percent = Math.round(progress * 100);
+  useEffect(() => {
+    let lastBand = -1;
+    let lastRemaining = -1;
+    let lastDepth = -1;
 
-        node.textContent = `Y ${String(depth).padStart(5, '0')} · ${String(percent).padStart(2, '0')}%`;
-      }),
-    [],
-  );
+    return subscribeToFrames(({ scrollY, progress }) => {
+      const bar = barRef.current;
+      const reading = readingRef.current;
+      const depthNode = depthRef.current;
+
+      if (!bar || !reading || !depthNode) {
+        return;
+      }
+
+      // A transform, so the bar is the compositor's problem and not layout's.
+      bar.style.transform = `scaleX(${String(1 - progress)})`;
+
+      const band = bandAt(progress);
+
+      if (band !== lastBand) {
+        lastBand = band;
+        reading.className = `${READING} ${BANDS[band]?.reading ?? ''}`;
+        bar.className = `${BAR} ${BANDS[band]?.bar ?? ''}`;
+      }
+
+      const remaining = Math.round((1 - progress) * 100);
+
+      if (remaining !== lastRemaining) {
+        lastRemaining = remaining;
+        reading.textContent = `${String(remaining).padStart(2, '0')}%`;
+      }
+
+      const depth = Math.round(scrollY / DEPTH_STEP) * DEPTH_STEP;
+
+      if (depth !== lastDepth) {
+        lastDepth = depth;
+        depthNode.textContent = `Y ${String(depth).padStart(5, '0')}`;
+      }
+    });
+  }, []);
 
   return (
-    <p ref={ref} className="mt-1 font-mono text-[0.5625rem] tracking-[0.1em] text-dust uppercase" />
+    <div aria-hidden="true" className="mt-3">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="font-mono text-[0.5625rem] tracking-[0.14em] text-dust uppercase">
+          {label}
+        </span>
+        <span ref={readingRef} className={`${READING} text-star`}>
+          100%
+        </span>
+      </div>
+
+      <span className="mt-1.5 block h-px w-full bg-horizon/70">
+        <span ref={barRef} className={`${BAR} bg-star`} />
+      </span>
+
+      <p
+        ref={depthRef}
+        className="mt-1.5 font-mono text-[0.5rem] tracking-[0.14em] text-dust uppercase tabular-nums"
+      >
+        Y 00000
+      </p>
+    </div>
   );
 });
