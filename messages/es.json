@@ -67,7 +67,8 @@
     },
     "stackTitle": "Stack",
     "viewSource": "Ver el código",
-    "viewLive": "Ver en vivo"
+    "viewLive": "Ver en vivo",
+    "moreRepositories": "Ver más repositorios"
   },
   "constellations": {
     "label": "04 / Constelaciones",
