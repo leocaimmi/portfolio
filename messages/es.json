@@ -72,15 +72,10 @@
   "constellations": {
     "label": "04 / Constelaciones",
     "title": "Stack técnico",
-    "description": "Agrupado por área, con la frecuencia real con la que uso cada cosa. Diario es lo que toco en producción casi todos los días.",
+    "description": "Agrupado por área, y dentro de cada una en el orden en que suelo alcanzarlas.",
     "filterLabel": "Filtrar por sector",
     "empty": "No hay ningún sector encendido.",
-    "showAll": "Mostrar todo",
-    "level": {
-      "1": "Diario",
-      "2": "Frecuente",
-      "3": "Base"
-    }
+    "showAll": "Mostrar todo"
   },
   "contact": {
     "label": "05 / Transmisión",

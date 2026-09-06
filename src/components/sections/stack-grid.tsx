@@ -4,19 +4,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { TechnologyIcon } from '@/components/ui/brand-icon';
-import type { Skill, SkillMagnitude } from '@/content';
+import type { TechnologyId } from '@/content';
 import { constellations, technologyName } from '@/content';
 import { cn } from '@/lib/cn';
-
-/**
- * Level is stated in words on every card, so colour is reinforcement rather
- * than the only carrier of the meaning.
- */
-const LEVEL_TONE: Record<SkillMagnitude, string> = {
-  1: 'text-star',
-  2: 'text-nebula-glow',
-  3: 'text-dust',
-};
 
 /**
  * The stack, sector by sector, laid out side by side.
@@ -87,12 +77,8 @@ export function StackGrid() {
               </p>
 
               <ul className="mt-4 space-y-2">
-                {sector.skills.map((skill) => (
-                  <SkillCard
-                    key={skill.technology}
-                    skill={skill}
-                    level={t(`level.${skill.magnitude}`)}
-                  />
+                {sector.skills.map((id) => (
+                  <SkillCard key={id} id={id} />
                 ))}
               </ul>
             </section>
@@ -158,26 +144,13 @@ function Meteor({ isOn }: { isOn: boolean }) {
   );
 }
 
-/**
- * One line per technology: the mark, the name, and the level held.
- *
- * On a single row rather than stacked, because four columns of two-line cards
- * put the section back at the height the columns were meant to save.
- */
-function SkillCard({ skill, level }: { skill: Skill; level: string }) {
+/** One line per technology: the mark and the name. */
+function SkillCard({ id }: { id: TechnologyId }) {
   return (
     <li className="flex items-center gap-2.5 rounded-xl border border-horizon/70 bg-deep/40 px-3 py-2 transition-colors duration-300 ease-orbital hover:border-star/40">
-      <TechnologyIcon id={skill.technology} className="size-4 text-moondust" />
+      <TechnologyIcon id={id} className="size-4 text-moondust" />
 
-      <span className="min-w-0 flex-1 truncate text-sm text-starlight">
-        {technologyName(skill.technology)}
-      </span>
-
-      <span
-        className={`shrink-0 font-mono text-[0.5625rem] tracking-[0.12em] uppercase ${LEVEL_TONE[skill.magnitude]}`}
-      >
-        {level}
-      </span>
+      <span className="min-w-0 flex-1 truncate text-sm text-starlight">{technologyName(id)}</span>
     </li>
   );
 }

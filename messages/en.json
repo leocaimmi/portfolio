@@ -72,15 +72,10 @@
   "constellations": {
     "label": "04 / Constellations",
     "title": "Technical stack",
-    "description": "Grouped by area, with how often each thing is actually reached for. Daily is what gets touched in production most days.",
+    "description": "Grouped by area, and within each one in the order they usually get reached for.",
     "filterLabel": "Filter by domain",
     "empty": "No domain is switched on.",
-    "showAll": "Show all",
-    "level": {
-      "1": "Daily",
-      "2": "Regular",
-      "3": "Basic"
-    }
+    "showAll": "Show all"
   },
   "contact": {
     "label": "05 / Transmission",
