@@ -31,8 +31,8 @@ export function HeroSection() {
     <section id="top" className="relative flex min-h-dvh items-center overflow-hidden">
       <CosmicScene activeId={activeSection} />
 
-      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-[58vh] md:py-28">
-        <div className="pointer-events-auto max-w-xl">
+      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-[58vh] md:py-28">
+        <div className="pointer-events-auto max-w-2xl">
           <p className="telemetry">{t('label')}</p>
 
           <p className="glass mt-6 inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[0.6875rem] tracking-wide text-moondust">

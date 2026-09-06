@@ -32,7 +32,7 @@ export function Section({ id, label, title, description, children, className }: 
       aria-labelledby={headingId}
       className={cn('scroll-mt-24 py-20 sm:py-28', className)}
     >
-      <div className="mx-auto w-full max-w-6xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-6">
         <Reveal>
           <header className="max-w-2xl">
             <p className="telemetry">{label}</p>

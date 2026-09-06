@@ -55,14 +55,14 @@ function computeLayout(width: number, height: number): Layout {
     height,
     scale,
     origin: {
-      x: width * (isNarrow ? 0.44 : 0.62),
+      x: width * (isNarrow ? 0.44 : 0.66),
       y: height * 0.5,
     },
     blackHole: {
-      x: width * (isNarrow ? 1.05 : 0.98),
-      y: height * (isNarrow ? 0.45 : 0.4),
+      x: width * (isNarrow ? 1.02 : 0.93),
+      y: height * (isNarrow ? 0.42 : 0.38),
     },
-    blackHoleRadius: scale * (isNarrow ? 0.11 : 0.07),
+    blackHoleRadius: scale * (isNarrow ? 0.09 : 0.062),
     starRadius: scale * (isNarrow ? 0.055 : 0.038),
     trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
   };
