@@ -4,9 +4,10 @@ import { ActionLink } from '@/components/ui/action-link';
 import { Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
+import { SocialIcon } from '@/components/ui/social-icon';
 import { TechTagList } from '@/components/ui/tech-tag';
 import type { Project } from '@/content';
-import { projects } from '@/content';
+import { profile, projects } from '@/content';
 import type { Locale } from '@/i18n/routing';
 
 const STATUS_DOT = {
@@ -27,10 +28,16 @@ const STATUS_DOT = {
  * The site's own solar system already indexes the sections, so this one stays a
  * plain grid — a second orbital diagram here would compete with the navigation
  * rather than add to it.
+ *
+ * Three entries is what is worth writing up; the rest of the work is readable
+ * as code, so the section ends with the way through to it.
  */
 export function MissionsSection() {
   const t = useTranslations('missions');
+  const common = useTranslations('common');
   const locale = useLocale();
+
+  const github = profile.socials.find((social) => social.platform === 'github');
 
   return (
     <Section id="missions" label={t('label')} title={t('title')} description={t('description')}>
@@ -43,6 +50,15 @@ export function MissionsSection() {
           </li>
         ))}
       </ul>
+
+      {github ? (
+        <Reveal delay={200} className="mt-10 flex justify-center">
+          <ActionLink href={github.url} external newTabLabel={common('opensInNewTab')}>
+            <SocialIcon platform="github" />
+            {t('moreRepositories')}
+          </ActionLink>
+        </Reveal>
+      ) : null}
     </Section>
   );
 }
