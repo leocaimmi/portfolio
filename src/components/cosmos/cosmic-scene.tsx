@@ -13,7 +13,7 @@ import type { Palette } from './palette';
 import { readPalette } from './palette';
 import type { ScenePoint } from './scene-geometry';
 import { isInFront, planetPosition, PLANETS } from './scene-geometry';
-import { computeLayout, systemState, VISIBILITY_THRESHOLD } from './scene-layout';
+import { computeLayout, STILL_SECONDS, systemState, VISIBILITY_THRESHOLD } from './scene-layout';
 
 /** How often a trail point is recorded. Below the frame rate, and plenty smooth. */
 const SAMPLE_INTERVAL = 1 / 24;
@@ -131,7 +131,9 @@ export function CosmicScene({ activeId }: CosmicSceneProps) {
     };
 
     const drawFrame = () => {
-      const seconds = prefersReducedMotion ? 0 : (performance.now() - startedAt) / 1000;
+      // Not zero: at phase zero the system has not left the edge yet, so a
+      // frozen scene would be an empty sky with an unreachable navigation in it.
+      const seconds = prefersReducedMotion ? STILL_SECONDS : (performance.now() - startedAt) / 1000;
       const activeSection = activeIdRef.current;
 
       const drift = DRIFT_RATE * layout.scale;
