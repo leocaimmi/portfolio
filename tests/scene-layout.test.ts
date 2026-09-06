@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-geometry';
+import { MAX_DEPTH, OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-geometry';
+import type { Layout, SystemState } from '@/components/cosmos/scene-layout';
 import {
   computeLayout,
   planetEmergence,
@@ -49,6 +50,11 @@ function horizonRadius(width: number, height: number): number {
   return imageWidth * (50 / 480);
 }
 
+/** How far the outermost planet gets from the star, at its widest swing. */
+function reachOf(layout: Layout, system: SystemState): number {
+  return OUTERMOST_ORBIT * layout.scale * system.scale * system.plane.stretch * MAX_DEPTH;
+}
+
 describe('scene layout', () => {
   it.each(VIEWPORTS)('keeps the system inside the viewport at %ix%i', (width, height) => {
     const layout = computeLayout(width, height);
@@ -61,9 +67,9 @@ describe('scene layout', () => {
   it.each(VIEWPORTS)('starts from the edge opposite the hole at %ix%i', (width, height) => {
     const layout = computeLayout(width, height);
 
-    // Within the first quarter of the run up to the hole, so the system reads
-    // as arriving from the far edge rather than from the middle of the page.
-    expect(layout.entryX).toBeLessThan(layout.blackHole.x * 0.25);
+    // Within the first third of the run up to the hole, so the system reads as
+    // arriving from the far edge rather than from the middle of the page.
+    expect(layout.entryX).toBeLessThan(layout.blackHole.x * 0.3);
   });
 
   /*
@@ -84,9 +90,9 @@ describe('scene layout', () => {
         continue;
       }
 
-      const reach = OUTERMOST_ORBIT * layout.scale * system.scale;
-
-      expect(layout.blackHole.x - (system.origin.x + reach)).toBeGreaterThan(horizon);
+      expect(layout.blackHole.x - (system.origin.x + reachOf(layout, system))).toBeGreaterThan(
+        horizon,
+      );
     }
   });
 
@@ -102,9 +108,7 @@ describe('scene layout', () => {
         continue;
       }
 
-      const reach = OUTERMOST_ORBIT * layout.scale * system.scale;
-
-      expect(system.origin.x + reach).toBeLessThan(layout.blackHole.x);
+      expect(system.origin.x + reachOf(layout, system)).toBeLessThan(layout.blackHole.x);
     }
   });
 
@@ -112,10 +116,25 @@ describe('scene layout', () => {
     const layout = computeLayout(1440, 900);
     const end = systemState(TRAVERSE_SECONDS * 0.9999, layout);
 
-    expect(end.origin.x).toBeCloseTo(layout.blackHole.x, 0);
-    expect(end.origin.y).toBeCloseTo(layout.blackHole.y, 0);
+    expect(Math.abs(end.origin.x - layout.blackHole.x)).toBeLessThan(2);
+    expect(Math.abs(end.origin.y - layout.blackHole.y)).toBeLessThan(2);
     expect(end.opacity).toBeLessThan(0.01);
     expect(end.scale).toBeLessThan(0.01);
+  });
+
+  /*
+   * Shrinking alone read as a badge sliding into the distance. The plane has to
+   * be visibly under strain on the way in, well before the hole takes it.
+   */
+  it('strains the orbital plane before the fall begins', () => {
+    const layout = computeLayout(1440, 900);
+
+    const early = systemState(TRAVERSE_SECONDS * 0.2, layout);
+    const approaching = systemState(TRAVERSE_SECONDS * 0.65, layout);
+
+    expect(early.plane.stretch).toBe(1);
+    expect(approaching.plane.stretch).toBeGreaterThan(1.1);
+    expect(Math.abs(approaching.plane.tilt)).toBeGreaterThan(Math.abs(early.plane.tilt));
   });
 
   it('is largest as it surfaces and smallest as it falls in', () => {

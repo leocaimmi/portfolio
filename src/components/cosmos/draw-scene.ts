@@ -107,6 +107,11 @@ export function drawSceneStars(
  * shader — a corona that breathes on two out-of-phase cycles so the rhythm
  * never repeats visibly, a pair of slowly counter-rotating flare arcs, and a
  * limb that darkens towards its edge the way a real photosphere does.
+ *
+ * `stretch` is the tidal draw of the black hole. The whole star, corona
+ * included, is pulled out along the same axis as its planets and squeezed
+ * across it, so what falls in is visibly being pulled apart rather than simply
+ * getting smaller.
  */
 export function drawStar(
   context: CanvasRenderingContext2D,
@@ -114,7 +119,15 @@ export function drawStar(
   radius: number,
   palette: Palette,
   seconds: number,
+  stretch = 1,
 ): void {
+  context.save();
+  context.translate(origin.x, origin.y);
+  // Squeezed across the pull as it is drawn out along it, so the star keeps
+  // roughly the area it had rather than simply growing sideways.
+  context.scale(stretch, stretch ** -0.35);
+  context.translate(-origin.x, -origin.y);
+
   // Two incommensurable periods, so the pulse never settles into a loop the
   // eye can predict.
   const pulse = 1 + 0.07 * Math.sin(seconds * 0.83) + 0.035 * Math.sin(seconds * 2.17 + 1.1);
@@ -158,6 +171,8 @@ export function drawStar(
   context.beginPath();
   context.arc(origin.x, origin.y, radius, 0, TAU);
   context.fill();
+
+  context.restore();
 }
 
 /** Faint arcs turning around the star, at odds with each other so it churns. */

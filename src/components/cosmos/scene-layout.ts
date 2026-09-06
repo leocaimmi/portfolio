@@ -1,5 +1,5 @@
-import type { ScenePoint } from './scene-geometry';
-import { OUTERMOST_ORBIT, PLANETS } from './scene-geometry';
+import type { OrbitPlane, ScenePoint } from './scene-geometry';
+import { MAX_DEPTH, OUTERMOST_ORBIT, PLANETS, RESTING_PLANE } from './scene-geometry';
 
 /**
  * Where everything in the hero scene sits, and where it is going.
@@ -21,12 +21,12 @@ export const TRAIL_SECONDS_COMPACT = 6;
 export const TRAVERSE_SECONDS = 140;
 
 /**
- * Size of the system as it clears the left edge, and again as the crossing
- * ends. Above 1 at the near edge and half that at the far one, so the journey
- * reads as distance rather than as a shape sliding across a flat backdrop.
+ * Size of the system as it surfaces, and again as the crossing ends. Above 1 at
+ * the near edge and half that at the far one, so the journey reads as distance
+ * rather than as a shape sliding across a flat backdrop.
  */
-export const ENTRY_SCALE = 1.16;
-export const ARRIVAL_SCALE = 0.52;
+const ENTRY_SCALE = 1.1;
+const ARRIVAL_SCALE = 0.5;
 
 /** Where the crossing ends and the fall begins, as a fraction of the journey. */
 const CAPTURE_PHASE = 0.75;
@@ -48,6 +48,26 @@ const APPROACH_EASING = 1.45;
  * the horizon clear of anything a visitor can still see or click.
  */
 const PLUNGE_EASING = 3;
+
+/**
+ * When the hole starts to show in the system's shape, well before it starts to
+ * take it. Shrinking alone read as a badge sliding into the distance; the plane
+ * has to be visibly under strain on the way in.
+ */
+const TIP_PHASE = 0.38;
+
+/** How far the plane rolls out of its resting tilt as it falls, in radians. */
+const TILT_ROLL = -0.34;
+
+/** How far the system is drawn out along its own axis by the time it arrives. */
+const STRETCH_GAIN = 0.34;
+
+/**
+ * The most the outermost orbit can extend beyond its nominal radius: the near
+ * side of the ellipse under perspective, drawn out by the tidal stretch. The
+ * clearance in front of the hole is derived from it, so the two cannot drift.
+ */
+const MAX_REACH = MAX_DEPTH * (1 + STRETCH_GAIN);
 
 /** Fraction of the journey spent surfacing at the left edge. */
 const EMERGE_SPAN = 0.11;
@@ -101,12 +121,18 @@ export interface SystemState {
   opacity: number;
   /** How much of the system has surfaced, 0 to 1. */
   emergence: number;
+  /** The orbital plane, increasingly strained as the hole takes hold. */
+  plane: OrbitPlane;
   /** Which pass of the journey this is, so a wrap can be detected. */
   cycle: number;
 }
 
 function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));
+}
+
+function smoothstep(value: number): number {
+  return value * value * (3 - 2 * value);
 }
 
 /**
@@ -119,19 +145,20 @@ function clamp01(value: number): number {
  */
 export function planetEmergence(index: number, emergence: number): number {
   const span = 1 - (PLANETS.length - 1) * ORBIT_LAG;
-  const local = clamp01((emergence - index * ORBIT_LAG) / span);
 
-  return local * local * (3 - 2 * local);
+  return smoothstep(clamp01((emergence - index * ORBIT_LAG) / span));
 }
 
 /**
  * The system's journey, in two acts.
  *
  * It surfaces at the far left of the sky, large and close, and crosses towards
- * the hole — easing off and shrinking as the distance opens up. Past the
- * capture phase the hole has it: the crossing becomes a plunge that accelerates
- * all the way to the centre while the system folds in on itself and goes out.
- * It arrives as nothing, and begins again at the edge it came from.
+ * the hole — easing off and shrinking as the distance opens up. From the middle
+ * of the crossing the hole starts to tell on it: the plane rolls out of its
+ * resting tilt and the whole system is drawn out along its own axis. Past the
+ * capture phase the hole has it outright, and the crossing becomes a plunge
+ * that accelerates to the centre while the system folds in and goes out. It
+ * arrives as nothing, and begins again at the edge it came from.
  *
  * Nothing ever comes back out. The plunge is cubic and the collapse steep, so
  * the system is spent well before it is anywhere near the horizon, and the next
@@ -151,6 +178,7 @@ export function systemState(seconds: number, layout: Layout): SystemState {
   const capture = clamp01((phase - CAPTURE_PHASE) / (1 - CAPTURE_PHASE));
   const plunge = capture ** PLUNGE_EASING;
 
+  const fall = smoothstep(clamp01((phase - TIP_PHASE) / (1 - TIP_PHASE)));
   const arrival = clamp01(phase / FADE_IN_PHASE);
   const distance = ENTRY_SCALE + (ARRIVAL_SCALE - ENTRY_SCALE) * travel;
 
@@ -169,6 +197,12 @@ export function systemState(seconds: number, layout: Layout): SystemState {
     scale: distance * (1 - capture) ** CAPTURE_COLLAPSE,
     opacity: arrival * (1 - capture),
     emergence: clamp01(phase / EMERGE_SPAN),
+    plane: {
+      flatten: RESTING_PLANE.flatten,
+      tilt: RESTING_PLANE.tilt + TILT_ROLL * fall,
+      stretch: 1 + STRETCH_GAIN * fall,
+      perspective: RESTING_PLANE.perspective,
+    },
     cycle,
   };
 }
@@ -186,14 +220,15 @@ export function computeLayout(width: number, height: number): Layout {
   const blackHoleWidth = isNarrow ? width * 0.98 : scale * 0.78;
   const horizonRadius = blackHoleWidth * (50 / 480);
 
-  // Room for the horizon, the outermost orbit at the size it crosses at, and a
-  // margin. Derived rather than tuned, so the fall always begins with the whole
-  // system still in clear sky whatever the viewport.
-  const clearance = horizonRadius * 2.1 + OUTERMOST_ORBIT * scale * ARRIVAL_SCALE + scale * 0.03;
+  // Room for the horizon, the outermost orbit at its widest reach in the state
+  // it crosses in, and a margin. Derived rather than tuned, so the fall always
+  // begins with the whole system still in clear sky whatever the viewport.
+  const clearance =
+    horizonRadius * 2.1 + OUTERMOST_ORBIT * scale * ARRIVAL_SCALE * MAX_REACH + scale * 0.03;
 
   // As far from the hole as the width allows. The system has to look like it is
   // coming from somewhere, and the only somewhere on offer is the far edge.
-  const entryX = width * (isNarrow ? 0.16 : 0.1);
+  const entryX = width * 0.12;
 
   return {
     width,
