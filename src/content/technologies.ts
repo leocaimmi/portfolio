@@ -40,6 +40,8 @@ export const technologies = {
   react: { name: 'React', category: 'framework' },
   angular: { name: 'Angular', category: 'framework' },
   nextjs: { name: 'Next.js', category: 'framework' },
+  astro: { name: 'Astro', category: 'framework' },
+  tauri: { name: 'Tauri', category: 'framework' },
   expo: { name: 'Expo', category: 'framework' },
   'react-native': { name: 'React Native', category: 'framework' },
   tailwindcss: { name: 'Tailwind CSS', category: 'framework' },
@@ -60,12 +62,14 @@ export const technologies = {
 
   // Tooling
   git: { name: 'Git', category: 'tool' },
+  github: { name: 'GitHub', category: 'tool' },
   docker: { name: 'Docker', category: 'tool' },
   postman: { name: 'Postman', category: 'tool' },
   swagger: { name: 'Swagger', category: 'tool' },
   jira: { name: 'Jira', category: 'tool' },
   miro: { name: 'Miro', category: 'tool' },
   'claude-code': { name: 'Claude Code', category: 'tool' },
+  codex: { name: 'Codex', category: 'tool' },
 
   // Engineering practices
   'rest-api': { name: 'REST APIs', category: 'practice' },

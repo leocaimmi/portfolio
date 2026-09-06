@@ -42,6 +42,14 @@ export const experience: Experience[] = [
         en: 'Integrated the ARCA electronic invoicing web services (WSAA and WSFE) to issue and validate fiscal receipts.',
       },
       {
+        es: 'Integración de cobros con la API de Mercado Pago Checkout Pro dentro del circuito de venta.',
+        en: 'Integrated payments through the Mercado Pago Checkout Pro API inside the sales flow.',
+      },
+      {
+        es: 'Landing institucional del producto construida con Astro.',
+        en: 'Built the product’s marketing site with Astro.',
+      },
+      {
         es: 'Integración de servicios de inteligencia artificial dentro del producto.',
         en: 'Integrated AI services into the product.',
       },
@@ -52,9 +60,11 @@ export const experience: Experience[] = [
       'typescript',
       'expo',
       'react-native',
+      'astro',
       'postgresql',
       'supabase',
       'row-level-security',
+      'mercado-pago',
       'arca',
       'openai-api',
     ],
@@ -134,6 +144,7 @@ export const experience: Experience[] = [
     stack: [
       'typescript',
       'react',
+      'tauri',
       'angular',
       'java',
       'spring-boot',
