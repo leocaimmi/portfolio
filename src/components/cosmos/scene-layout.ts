@@ -49,10 +49,10 @@ const PLUNGE_EASING = 3;
 const TIP_PHASE = 0.38;
 
 /** How far the plane rolls out of its resting tilt as it falls, in radians. */
-const TILT_ROLL = -0.34;
+const TILT_ROLL = -0.14;
 
-/** How far the system is drawn out along its own axis by the time it arrives. */
-const STRETCH_GAIN = 0.34;
+/** How far the system is drawn out towards the hole by the time it arrives. */
+const STRETCH_GAIN = 0.28;
 
 /**
  * The most the outermost orbit can extend beyond its nominal radius, which is
@@ -120,6 +120,8 @@ export interface SystemState {
   emergence: number;
   /** The orbital plane, increasingly strained as the hole takes hold. */
   plane: OrbitPlane;
+  /** How hard the hole is pulling, 0 to 1. Drives the star's own plume. */
+  pull: number;
   /** Which pass of the journey this is, so a wrap can be detected. */
   cycle: number;
 }
@@ -194,6 +196,7 @@ export function systemState(seconds: number, layout: Layout): SystemState {
     scale: distance * (1 - capture) ** CAPTURE_COLLAPSE,
     opacity: arrival * (1 - capture),
     emergence: clamp01(phase / EMERGE_SPAN),
+    pull: fall,
     plane: {
       flatten: RESTING_PLANE.flatten,
       tilt: RESTING_PLANE.tilt + TILT_ROLL * fall,

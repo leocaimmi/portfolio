@@ -108,10 +108,11 @@ export function drawSceneStars(
  * never repeats visibly, a pair of slowly counter-rotating flare arcs, and a
  * limb that darkens towards its edge the way a real photosphere does.
  *
- * `stretch` is the tidal draw of the black hole. The whole star, corona
- * included, is pulled out along the same axis as its planets and squeezed
- * across it, so what falls in is visibly being pulled apart rather than simply
- * getting smaller.
+ * `pull` is how hard the hole has hold of it, and it is answered with a plume
+ * drawn towards the hole rather than with a change of shape. Scaling the star
+ * itself made it an oval, which reads as a squashed sun and not as a star being
+ * taken: what a star losing material looks like is a round body with something
+ * streaming off it.
  */
 export function drawStar(
   context: CanvasRenderingContext2D,
@@ -119,14 +120,12 @@ export function drawStar(
   radius: number,
   palette: Palette,
   seconds: number,
-  stretch = 1,
+  pull = 0,
+  angleToHole = 0,
 ): void {
-  context.save();
-  context.translate(origin.x, origin.y);
-  // Squeezed across the pull as it is drawn out along it, so the star keeps
-  // roughly the area it had rather than simply growing sideways.
-  context.scale(stretch, stretch ** -0.35);
-  context.translate(-origin.x, -origin.y);
+  if (pull > 0.01) {
+    drawPlume(context, origin, radius, palette, pull, angleToHole);
+  }
 
   // Two incommensurable periods, so the pulse never settles into a loop the
   // eye can predict.
@@ -170,6 +169,42 @@ export function drawStar(
   context.fillStyle = core;
   context.beginPath();
   context.arc(origin.x, origin.y, radius, 0, TAU);
+  context.fill();
+}
+
+/**
+ * The star's own matter, streaming off towards the hole.
+ *
+ * A teardrop leaving the limb and thinning to nothing, painted under the body
+ * so the star stays a star and only what it is losing is out of shape.
+ */
+function drawPlume(
+  context: CanvasRenderingContext2D,
+  origin: ScenePoint,
+  radius: number,
+  palette: Palette,
+  pull: number,
+  angleToHole: number,
+): void {
+  const length = radius * (1.6 + pull * 9);
+  const mouth = radius * 0.85;
+
+  context.save();
+  context.translate(origin.x, origin.y);
+  context.rotate(angleToHole);
+  context.globalCompositeOperation = 'lighter';
+
+  const stream = context.createLinearGradient(0, 0, length, 0);
+  stream.addColorStop(0, rgba(palette.solar, 0.55 * pull));
+  stream.addColorStop(0.45, rgba(palette.comet, 0.22 * pull));
+  stream.addColorStop(1, rgba(palette.comet, 0));
+
+  context.fillStyle = stream;
+  context.beginPath();
+  context.moveTo(0, -mouth);
+  context.quadraticCurveTo(length * 0.55, -mouth * 0.32, length, 0);
+  context.quadraticCurveTo(length * 0.55, mouth * 0.32, 0, mouth);
+  context.closePath();
   context.fill();
 
   context.restore();

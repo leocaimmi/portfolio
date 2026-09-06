@@ -142,6 +142,10 @@ export function CosmicScene() {
       const drift = DRIFT_RATE * layout.scale;
       const system = systemState(seconds, layout);
       const origin = system.origin;
+      // History is shortened as the hole takes hold: a system collapsing to a
+      // point with eleven seconds of full-size loops still behind it reads as
+      // two different objects.
+      const trailSeconds = layout.trailSeconds * (1 - system.pull * 0.55);
       const orbitScale = layout.scale * system.scale;
       const trailWidth = Math.max(1, layout.scale * 0.003);
 
@@ -172,7 +176,7 @@ export function CosmicScene() {
         lastSampleAt = seconds;
         starTrail.push({ ...origin, bornAt: seconds });
 
-        while (seconds - (starTrail[0]?.bornAt ?? seconds) > layout.trailSeconds) {
+        while (seconds - (starTrail[0]?.bornAt ?? seconds) > trailSeconds) {
           starTrail.shift();
         }
       }
@@ -192,7 +196,7 @@ export function CosmicScene() {
         if (history && shouldSample) {
           history.push({ ...position, bornAt: seconds });
 
-          while (seconds - (history[0]?.bornAt ?? seconds) > layout.trailSeconds) {
+          while (seconds - (history[0]?.bornAt ?? seconds) > trailSeconds) {
             history.shift();
           }
         }
@@ -241,7 +245,8 @@ export function CosmicScene() {
         layout.starRadius * system.scale,
         palette,
         seconds,
-        system.plane.stretch,
+        system.pull,
+        Math.atan2(layout.blackHole.y - origin.y, layout.blackHole.x - origin.x),
       );
 
       PLANETS.forEach((planet, index) => {
