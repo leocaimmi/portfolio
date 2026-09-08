@@ -59,7 +59,7 @@ export const technologies = {
   railway: { name: 'Railway', category: 'platform' },
   'mercado-pago': { name: 'Mercado Pago Checkout Pro', category: 'platform' },
   'whatsapp-api': { name: 'WhatsApp Business API', category: 'platform' },
-  arca: { name: 'ARCA (AFIP)', category: 'platform' },
+  arca: { name: 'ARCA (ex AFIP)', category: 'platform' },
   'openai-api': { name: 'OpenAI API', category: 'platform' },
 
   // Tooling
