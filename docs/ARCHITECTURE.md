@@ -7,7 +7,7 @@ site _says_, see [CONTENT.md](CONTENT.md).
 
 ```
 Request
-  └─ middleware.ts ......... resolves the locale, skips assets and metadata images
+  └─ proxy.ts ............... resolves the locale, skips assets and metadata images
        └─ app/[locale]/layout.tsx
             ├─ backdrop, star field, docked chart  (decoration, aria-hidden)
             ├─ header + footer                      (chrome)
