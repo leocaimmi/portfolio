@@ -76,7 +76,7 @@ export const experience: Experience[] = [
   },
   {
     id: 'utn-teaching-assistant',
-    organization: 'UTN FRMDP',
+    organization: 'Universidad Tecnológica Nacional de Mar del Plata',
     role: {
       es: 'Ayudante de Cátedra',
       en: 'Teaching Assistant',
@@ -84,8 +84,8 @@ export const experience: Experience[] = [
     kind: 'teaching',
     period: { start: '2025-03', end: null },
     location: {
-      es: 'Mar del Plata, Argentina',
-      en: 'Mar del Plata, Argentina',
+      es: 'Mar del Plata, Argentina · Presencial',
+      en: 'Mar del Plata, Argentina · On-site',
     },
     summary: {
       es: 'Acompañamiento a estudiantes en seis materias que cubren desde punteros en C hasta arquitectura de aplicaciones con Spring Boot.',
@@ -150,6 +150,7 @@ export const experience: Experience[] = [
       'typescript',
       'react',
       'tauri',
+      'rust',
       'angular',
       'java',
       'spring-boot',
