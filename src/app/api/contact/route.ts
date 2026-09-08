@@ -40,6 +40,31 @@ function buildEmail(message: ContactMessage) {
 }
 
 /**
+ * Pulls the provider's error name and message out of a failed response.
+ *
+ * Deliberately narrow: two known fields, each bounded, and nothing if the body
+ * is not the shape expected. Whatever else the response carries stays out.
+ */
+async function readProviderError(response: Response): Promise<string> {
+  try {
+    const body: unknown = await response.json();
+
+    if (typeof body !== 'object' || body === null) {
+      return '';
+    }
+
+    const { name, message } = body as { name?: unknown; message?: unknown };
+    const parts = [name, message]
+      .filter((value): value is string => typeof value === 'string')
+      .map((value) => value.slice(0, 200));
+
+    return parts.length > 0 ? `Provider said: ${parts.join(' - ')}` : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
  * Contact endpoint.
  *
  * Layered on purpose, cheapest check first: configuration, then size, then
@@ -109,9 +134,20 @@ export async function POST(request: Request): Promise<Response> {
     });
 
     if (!response.ok) {
-      // Log the status only. The body can quote the submission back at us,
-      // and a contact message is personal data that does not belong in logs.
-      console.error(`Contact delivery failed with status ${String(response.status)}.`);
+      /*
+       * The provider's own complaint, and nothing else.
+       *
+       * Logging the status alone made a misconfiguration undiagnosable: a 403
+       * says the send was refused but not that the sender's domain is
+       * unverified, which is the only thing the operator can act on. Only the
+       * error's name and message are taken, never the body wholesale — a
+       * contact message is personal data and does not belong in a log.
+       */
+      const reason = await readProviderError(response);
+
+      console.error(
+        `Contact delivery failed with status ${String(response.status)}. ${reason}`.trim(),
+      );
 
       return NextResponse.json({ error: 'delivery_failed' }, { status: 502 });
     }
