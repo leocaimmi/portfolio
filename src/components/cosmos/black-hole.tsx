@@ -30,7 +30,8 @@ import { cn } from '@/lib/cn';
  * so that a media query inside the file can stop it for a visitor who asked for
  * less motion — SMIL could not have been.
  *
- * Regenerate with `scripts/build-gargantua.py`.
+ * Provenance and the two changes made to the upstream figure are in
+ * `docs/ARCHITECTURE.md`.
  */
 export function BlackHole({ className }: { className?: string }) {
   return (
