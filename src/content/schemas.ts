@@ -73,16 +73,16 @@ export const socialLinkSchema = z.object({
 });
 
 /**
- * The downloadable CV.
+ * The downloadable CV, one document per language.
  *
- * `language` is the language the document itself is written in, which is not
- * necessarily the one the page is being read in. Stating it lets the interface
- * warn an English reader that the file they are about to open is in Spanish,
- * rather than letting them find out after downloading it.
+ * Shaped like a localised string because that is what it is: the reader gets
+ * the version written in the language they are reading the site in, and the
+ * type makes a missing translation a build error rather than a link to a
+ * document nobody can read.
  */
 export const resumeSchema = z.object({
-  href: z.string().startsWith('/'),
-  language: z.enum(['es', 'en']),
+  es: z.string().startsWith('/'),
+  en: z.string().startsWith('/'),
 });
 
 export type Resume = z.infer<typeof resumeSchema>;

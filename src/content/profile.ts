@@ -67,7 +67,7 @@ export const profile: Profile = {
   availability: 'open',
 
   resume: {
-    href: '/leonardo-caimmi-cv.pdf',
-    language: 'es',
+    es: '/leonardo-caimmi-cv-es.pdf',
+    en: '/leonardo-caimmi-cv-en.pdf',
   },
 };
