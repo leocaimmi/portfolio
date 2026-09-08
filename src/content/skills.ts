@@ -22,7 +22,7 @@ export const constellations: Constellation[] = [
       es: 'Lo que efectivamente se escribe. Todo lo demás son herramientas alrededor de estos.',
       en: 'What the code is actually written in. Everything else is tooling around these.',
     },
-    skills: ['java', 'typescript', 'python', 'javascript', 'c'],
+    skills: ['java', 'typescript', 'python', 'javascript', 'c', 'rust'],
   },
   {
     id: 'backend',
