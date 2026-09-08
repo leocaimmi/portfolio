@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 import { NebulaBackdrop } from '@/components/cosmos/nebula-backdrop';
 import { Starfield } from '@/components/cosmos/starfield';
 import { SystemNavigator } from '@/components/cosmos/system-navigator';
+import { BackToTop } from '@/components/layout/back-to-top';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { profile } from '@/content';
@@ -85,6 +86,7 @@ export default async function LocaleLayout({
           <SiteFooter />
 
           <SystemNavigator />
+          <BackToTop />
         </NextIntlClientProvider>
       </body>
     </html>
