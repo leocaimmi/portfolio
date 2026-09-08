@@ -37,6 +37,71 @@ describe('contact payload', () => {
     );
   });
 
+  it('holds every field to the same ceiling', () => {
+    expect(CONTACT_LIMITS.nameMax).toBe(500);
+    expect(CONTACT_LIMITS.messageMax).toBe(500);
+    // Below the shared ceiling: the standard's own hard bound on an address.
+    expect(CONTACT_LIMITS.emailMax).toBe(254);
+
+    for (const field of ['name', 'message'] as const) {
+      const atLimit = { ...valid, [field]: 'a'.repeat(500) };
+      const past = { ...valid, [field]: 'a'.repeat(501) };
+
+      expect(contactMessageSchema.safeParse(atLimit).success).toBe(true);
+      expect(contactMessageSchema.safeParse(past).success).toBe(false);
+    }
+  });
+
+  /*
+   * Names are not ASCII. A pattern allowing only A-Z turns away most of the
+   * people this form exists for, so the rule is Unicode-aware and excludes
+   * control characters rather than alphabets.
+   */
+  it.each([
+    'Ada Lovelace',
+    'Ángela Ruiz Robles',
+    "O'Neill",
+    'Иван Петров',
+    '山田 太郎',
+    'Jean-Luc Picard',
+    'Ada M. Byron',
+  ])('accepts %s as a name', (name) => {
+    expect(contactMessageSchema.safeParse({ ...valid, name }).success).toBe(true);
+  });
+
+  /*
+   * The newline is the one that matters: the name is interpolated into the
+   * subject line, and a second line there is somewhere to put a header.
+   */
+  it.each([
+    ['a newline', 'Ada\nBcc: someone@example.com'],
+    ['a carriage return', 'Ada\rSubject: other'],
+    ['a tab', 'Ada\tLovelace'],
+    ['markup', '<script>alert(1)</script>'],
+    ['a leading digit', '1337'],
+  ])('rejects %s in a name', (_label, name) => {
+    expect(contactMessageSchema.safeParse({ ...valid, name }).success).toBe(false);
+  });
+
+  it('lets a message have paragraphs but not control characters', () => {
+    const paragraphs = { ...valid, message: 'First line.\n\nSecond line, after a blank one.' };
+    // Built rather than typed: a literal control character in a source file is
+    // invisible to whoever reads it next.
+    const control = {
+      ...valid,
+      message: `A message with a null ${String.fromCodePoint(0)} in the middle of it.`,
+    };
+
+    expect(contactMessageSchema.safeParse(paragraphs).success).toBe(true);
+    expect(contactMessageSchema.safeParse(control).success).toBe(false);
+  });
+
+  it('rejects a message with no letters in it at all', () => {
+    const punctuation = { ...valid, message: '!!! ??? ... --- ... ??? !!! ... --- !!!' };
+
+    expect(contactMessageSchema.safeParse(punctuation).success).toBe(false);
+  });
+
   /*
    * The honeypot must parse rather than fail. Rejecting it would answer an
    * automated sender with a 400 that says "this payload was wrong"; letting it

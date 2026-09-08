@@ -99,6 +99,7 @@
       "rateLimited": "Too many attempts in a row. Wait a moment before retrying.",
       "required": "This field is required.",
       "invalidEmail": "Enter a valid email address.",
+      "invalidCharacters": "This field contains characters I cannot accept.",
       "tooShort": "This message is too short.",
       "tooLong": "This message is too long.",
       "disabled": "The form is not configured in this environment yet. Use the direct channels."

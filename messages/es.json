@@ -99,6 +99,7 @@
       "rateLimited": "Demasiados intentos seguidos. Esperá un momento antes de reintentar.",
       "required": "Este campo es obligatorio.",
       "invalidEmail": "Ingresá un correo electrónico válido.",
+      "invalidCharacters": "Hay caracteres que no puedo aceptar en este campo.",
       "tooShort": "El mensaje es demasiado corto.",
       "tooLong": "El mensaje es demasiado largo.",
       "disabled": "El formulario todavía no está configurado en este entorno. Usá los canales directos."

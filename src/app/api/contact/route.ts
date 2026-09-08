@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import type { ContactMessage } from '@/lib/contact-schema';
 import { contactMessageSchema, MIN_FILL_DURATION_MS } from '@/lib/contact-schema';
-import { isContactDeliveryConfigured, serverEnv } from '@/lib/env/server';
+import { contactInbox, isContactDeliveryConfigured, serverEnv } from '@/lib/env/server';
 import { createRateLimiter } from '@/lib/rate-limit';
 
 /** Five submissions per address per hour is generous for a personal inbox. */
@@ -31,7 +31,7 @@ function clientKey(request: Request): string {
 function buildEmail(message: ContactMessage) {
   return {
     from: serverEnv.CONTACT_SENDER,
-    to: [serverEnv.CONTACT_INBOX],
+    to: [contactInbox],
     reply_to: message.email,
     subject: `Portfolio · ${message.name}`,
     // Plain text only. Nothing the sender writes is ever interpreted as markup.
