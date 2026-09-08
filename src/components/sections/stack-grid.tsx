@@ -9,6 +9,12 @@ import { constellations, technologyName } from '@/content';
 import { cn } from '@/lib/cn';
 
 /**
+ * The group with far more entries than the rest, which is given the room for
+ * them rather than being allowed to set the height of every other column.
+ */
+const WIDE_SECTOR = 'tools';
+
+/**
  * The stack, sector by sector, laid out side by side.
  *
  * A column per group rather than bands stacked down the page: the same
@@ -62,9 +68,28 @@ export function StackGrid() {
           </button>
         </p>
       ) : (
-        <div className="mt-10 grid items-start gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-10 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 xl:grid-rows-[auto_auto_auto] xl:gap-y-0">
+          {/*
+            Three rows shared across every column — heading, description, list
+            — so the cards start at the same height whatever the description
+            above them runs to. Without it each column began wherever its own
+            paragraph happened to end, which read as a misalignment rather than
+            as prose of different lengths.
+
+            Six columns at the widest size rather than five: tooling has two or
+            three times the entries of any other group, so it takes two of them
+            and lays its cards out in two, which is what stops one long list
+            setting the height of the whole section.
+          */}
           {visible.map((sector) => (
-            <section key={sector.id} aria-labelledby={`sector-${sector.id}`}>
+            <section
+              key={sector.id}
+              aria-labelledby={`sector-${sector.id}`}
+              className={cn(
+                'xl:row-span-3 xl:grid xl:grid-rows-subgrid',
+                sector.id === WIDE_SECTOR && 'xl:col-span-2',
+              )}
+            >
               <h3
                 id={`sector-${sector.id}`}
                 className="font-display text-base font-semibold text-starlight"
@@ -76,7 +101,13 @@ export function StackGrid() {
                 {sector.description[locale]}
               </p>
 
-              <ul className="mt-4 space-y-2">
+              <ul
+                className={cn(
+                  'mt-4 space-y-2',
+                  sector.id === WIDE_SECTOR &&
+                    'xl:grid xl:grid-cols-2 xl:space-y-0 xl:gap-x-3 xl:gap-y-2',
+                )}
+              >
                 {sector.skills.map((id) => (
                   <SkillCard key={id} id={id} />
                 ))}
