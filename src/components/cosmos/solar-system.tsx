@@ -4,43 +4,8 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/cn';
 
-import { OUTERMOST_ORBIT, planetPosition, PLANETS, RESTING_PLANE } from './scene-geometry';
-
-/**
- * How much of the box the outermost orbit takes, as a percentage of its width.
- * The rest is the rim the sweep runs around.
- */
-const OUTER_RADIUS = 40;
-
-/** Turns an orbit radius from the shared geometry into a percentage of the box. */
-const SCALE = OUTER_RADIUS / OUTERMOST_ORBIT;
-
-const CENTRE = { x: 50, y: 50 };
-
-const TILT_DEGREES = (RESTING_PLANE.tilt * 180) / Math.PI;
-
-/**
- * The system as the chart draws it, measured once at module load.
- *
- * Taken from the same definitions the hero animates: the same orbit radii, the
- * same golden-angle spacing, the same tilt, the same colours. The chart used to
- * carry its own copy of all four, and they had drifted apart to the point where
- * the map and the thing it maps no longer looked related.
- *
- * Frozen at the start of a revolution rather than turning: a target meant to be
- * hit precisely should not also be moving.
- */
-const NODES = PLANETS.map((planet) => {
-  const point = planetPosition(planet, 0, CENTRE, SCALE);
-
-  return {
-    id: planet.id,
-    color: `var(--color-${planet.color})`,
-    orbit: planet.orbit * SCALE,
-    left: point.x,
-    top: point.y,
-  };
-});
+import { BlackHole } from './black-hole';
+import { CHART_FLATTEN, CHART_NODES, CHART_TILT_DEGREES } from './chart-nodes';
 
 interface SolarSystemProps {
   /** Section currently under the reader; lights up its planet. */
@@ -68,16 +33,22 @@ export function SolarSystem({ activeId, className }: SolarSystemProps) {
       aria-label={t('systemMap')}
       className={cn('relative aspect-square w-full select-none', className)}
     >
+      {/*
+        The hole the system is falling into, cropped by the chart's own rim.
+        The same asset the hero uses, so the browser has it already.
+      */}
+      <BlackHole className="top-[46%] left-[86%] w-[150%] opacity-70" />
+
       {/* The plane, seen at the angle the hero sees it from. */}
-      {NODES.map((node) => (
+      {CHART_NODES.map((node) => (
         <span
           key={`orbit-${node.id}`}
           aria-hidden="true"
           className="absolute top-1/2 left-1/2 rounded-[50%] border border-horizon/45"
           style={{
             width: `${String(node.orbit * 2)}%`,
-            height: `${String(node.orbit * 2 * RESTING_PLANE.flatten)}%`,
-            transform: `translate(-50%, -50%) rotate(${String(TILT_DEGREES)}deg)`,
+            height: `${String(node.orbit * 2 * CHART_FLATTEN)}%`,
+            transform: `translate(-50%, -50%) rotate(${String(CHART_TILT_DEGREES)}deg)`,
           }}
         />
       ))}
@@ -110,7 +81,7 @@ export function SolarSystem({ activeId, className }: SolarSystemProps) {
         meant for it.
       */}
       <ul className="pointer-events-none absolute inset-0">
-        {NODES.map((node) => {
+        {CHART_NODES.map((node) => {
           const isActive = node.id === activeId;
 
           return (

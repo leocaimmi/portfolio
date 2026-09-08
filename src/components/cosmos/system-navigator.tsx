@@ -7,6 +7,7 @@ import { useActiveSection } from '@/hooks/use-active-section';
 import { cn } from '@/lib/cn';
 import { subscribeToFrames } from '@/lib/reading-position';
 
+import { chartPosition, formatCoordinate } from './chart-nodes';
 import { SolarSystem } from './solar-system';
 
 /** Fraction of the viewport the reader passes before the navigator comes up. */
@@ -63,6 +64,8 @@ export function SystemNavigator() {
     [],
   );
 
+  const here = chartPosition(activeSection);
+
   return (
     <div
       inert={!isDocked}
@@ -95,14 +98,23 @@ export function SystemNavigator() {
         {activeSection ? t(activeSection) : readout('scanning')}
       </p>
 
-      <DescentGauge label={readout('horizon')} />
+      {/*
+        The station's own coordinates on the chart above. They change once per
+        section rather than once per frame, so React can hold them.
+      */}
+      <p
+        aria-hidden="true"
+        className="mt-1 font-mono text-[0.625rem] tracking-[0.08em] text-star tabular-nums"
+      >
+        {`X ${formatCoordinate(here.x)} · Y ${formatCoordinate(here.y)}`}
+      </p>
+
+      <DescentGauge />
     </div>
   );
 }
 
 /** Base classes for the two parts the gauge recolours as the hole closes. */
-const READING =
-  'font-mono text-[0.625rem] tabular-nums transition-colors duration-700 ease-orbital';
 const BAR = 'block h-full origin-left transition-colors duration-700 ease-orbital';
 
 /**
@@ -110,13 +122,13 @@ const BAR = 'block h-full origin-left transition-colors duration-700 ease-orbita
  *
  * Bands rather than a continuous ramp, because the palette has three tones that
  * mean those three things and a gradient between them passes through colours
- * that mean nothing. Crossing a band is also the only moment anything has to be
- * written to the DOM.
+ * that mean nothing. Crossing a band is also the only moment the bar has to be
+ * written to.
  */
 const BANDS = [
-  { until: 0.55, reading: 'text-star', bar: 'bg-star' },
-  { until: 0.85, reading: 'text-solar', bar: 'bg-solar' },
-  { until: Infinity, reading: 'text-comet', bar: 'bg-comet' },
+  { until: 0.55, bar: 'bg-star' },
+  { until: 0.85, bar: 'bg-solar' },
+  { until: Infinity, bar: 'bg-comet' },
 ] as const;
 
 function bandAt(progress: number): number {
@@ -127,34 +139,35 @@ function bandAt(progress: number): number {
  * How far the reader has left before the hole has them, written straight to the
  * DOM.
  *
- * Distance and depth change on almost every frame of a scroll, and rendering
- * them through React meant re-rendering the whole navigator — chart included —
- * a few hundred times to move a counter. Memoised with no props but the label,
- * so React mounts it once and never touches its numbers again; the subscription
- * owns them from then on, and each of the three writes is guarded by the value
- * that would change it.
+ * A bar that empties and a depth that counts up. It said a percentage too, and
+ * a number counting down to nothing beside a set of coordinates was two answers
+ * to the same question; the bar carries it now, and the colour it turns says
+ * how close the end is.
+ *
+ * Both change on almost every frame of a scroll, and rendering them through
+ * React meant re-rendering the whole navigator — chart included — a few hundred
+ * times to move a counter. Memoised with no props, so React mounts it once and
+ * never touches its contents again; the subscription owns them from then on,
+ * and each write is guarded by the value that would change it.
  *
  * Hidden from assistive technology on purpose. It is an instrument reading of
  * the scroll position, which a screen reader already knows better than this
  * does, and announcing it on every step would be noise over the navigation it
  * sits inside.
  */
-const DescentGauge = memo(function DescentGauge({ label }: { label: string }) {
-  const readingRef = useRef<HTMLSpanElement>(null);
+const DescentGauge = memo(function DescentGauge() {
   const barRef = useRef<HTMLSpanElement>(null);
   const depthRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     let lastBand = -1;
-    let lastRemaining = -1;
     let lastDepth = -1;
 
     return subscribeToFrames(({ scrollY, progress }) => {
       const bar = barRef.current;
-      const reading = readingRef.current;
       const depthNode = depthRef.current;
 
-      if (!bar || !reading || !depthNode) {
+      if (!bar || !depthNode) {
         return;
       }
 
@@ -165,38 +178,21 @@ const DescentGauge = memo(function DescentGauge({ label }: { label: string }) {
 
       if (band !== lastBand) {
         lastBand = band;
-        reading.className = `${READING} ${BANDS[band]?.reading ?? ''}`;
         bar.className = `${BAR} ${BANDS[band]?.bar ?? ''}`;
-      }
-
-      const remaining = Math.round((1 - progress) * 100);
-
-      if (remaining !== lastRemaining) {
-        lastRemaining = remaining;
-        reading.textContent = `${String(remaining).padStart(2, '0')}%`;
       }
 
       const depth = Math.round(scrollY / DEPTH_STEP) * DEPTH_STEP;
 
       if (depth !== lastDepth) {
         lastDepth = depth;
-        depthNode.textContent = `Y ${String(depth).padStart(5, '0')}`;
+        depthNode.textContent = `DPT ${String(depth).padStart(5, '0')}`;
       }
     });
   }, []);
 
   return (
-    <div aria-hidden="true" className="mt-3">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-[0.5625rem] tracking-[0.14em] text-dust uppercase">
-          {label}
-        </span>
-        <span ref={readingRef} className={`${READING} text-star`}>
-          100%
-        </span>
-      </div>
-
-      <span className="mt-1.5 block h-px w-full bg-horizon/70">
+    <div aria-hidden="true" className="mt-2.5">
+      <span className="block h-px w-full bg-horizon/70">
         <span ref={barRef} className={`${BAR} bg-star`} />
       </span>
 
@@ -204,7 +200,7 @@ const DescentGauge = memo(function DescentGauge({ label }: { label: string }) {
         ref={depthRef}
         className="mt-1.5 font-mono text-[0.5rem] tracking-[0.14em] text-dust uppercase tabular-nums"
       >
-        Y 00000
+        DPT 00000
       </p>
     </div>
   );

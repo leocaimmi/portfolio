@@ -34,8 +34,7 @@
     "radar": "Radar de navegación"
   },
   "radar": {
-    "scanning": "Rastreando",
-    "horizon": "Gargantua"
+    "scanning": "Rastreando"
   },
   "hero": {
     "primaryAction": "Ver misiones",

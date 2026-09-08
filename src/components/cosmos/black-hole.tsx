@@ -4,6 +4,8 @@
  * pipeline, which would flatten the filters this whole thing is made of.
  */
 
+import { cn } from '@/lib/cn';
+
 /**
  * The black hole the system is falling towards.
  *
@@ -30,7 +32,7 @@
  *
  * Regenerate with `scripts/build-gargantua.py`.
  */
-export function BlackHole() {
+export function BlackHole({ className }: { className?: string }) {
   return (
     <img
       src="/gargantua.svg"
@@ -41,7 +43,12 @@ export function BlackHole() {
       // Above the fold and the focal point of the hero, so never deferred.
       loading="eager"
       decoding="async"
-      className="pointer-events-none absolute top-[46%] left-[92%] w-[98vw] max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen brightness-[1.45] saturate-[1.08] select-none md:top-[48%] md:left-[97%] md:w-[78vmin]"
+      className={cn(
+        'pointer-events-none absolute max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen brightness-[1.45] saturate-[1.08] select-none',
+        // Position and size are the caller's: the hero puts it off the right
+        // edge of the sky, the docked chart crops it inside a circle.
+        className ?? 'top-[46%] left-[92%] w-[98vw] md:top-[48%] md:left-[97%] md:w-[78vmin]',
+      )}
     />
   );
 }

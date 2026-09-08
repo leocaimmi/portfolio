@@ -34,8 +34,7 @@
     "radar": "Navigation radar"
   },
   "radar": {
-    "scanning": "Scanning",
-    "horizon": "Gargantua"
+    "scanning": "Scanning"
   },
   "hero": {
     "primaryAction": "View missions",
