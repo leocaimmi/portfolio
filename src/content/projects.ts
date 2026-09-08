@@ -50,7 +50,7 @@ export const projects: Project[] = [
     year: 2026,
     status: 'production',
     visibility: 'private',
-    stack: ['typescript', 'react', 'tauri', 'postgresql', 'supabase', 'rest-api'],
+    stack: ['typescript', 'react', 'tauri', 'rust', 'postgresql', 'supabase', 'rest-api'],
     links: {},
   },
   {

@@ -30,6 +30,7 @@ export const technologies = {
   javascript: { name: 'JavaScript', category: 'language' },
   python: { name: 'Python', category: 'language' },
   c: { name: 'C', category: 'language' },
+  rust: { name: 'Rust', category: 'language' },
   sql: { name: 'SQL', category: 'language' },
   html: { name: 'HTML', category: 'language' },
   css: { name: 'CSS', category: 'language' },

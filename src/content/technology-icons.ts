@@ -22,6 +22,7 @@ import {
   siPython,
   siRailway,
   siReact,
+  siRust,
   siSpringboot,
   siSqlite,
   siSupabase,
@@ -77,6 +78,7 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   javascript: { path: siJavascript.path },
   python: { path: siPython.path },
   c: { path: siC.path },
+  rust: { path: siRust.path },
   html: { path: siHtml5.path },
   css: { path: siCss.path },
 
