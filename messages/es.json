@@ -96,6 +96,7 @@
       "success": "Mensaje recibido. Te respondo a la brevedad.",
       "error": "No se pudo enviar el mensaje. Probá de nuevo o escribime directo por correo.",
       "rateLimited": "Demasiados intentos seguidos. Esperá un momento antes de reintentar.",
+      "humanCheck": "Falta confirmar que no sos un bot. Esperá un momento y volvé a enviar.",
       "required": "Este campo es obligatorio.",
       "invalidEmail": "Ingresá un correo electrónico válido.",
       "invalidCharacters": "Hay caracteres que no puedo aceptar en este campo.",

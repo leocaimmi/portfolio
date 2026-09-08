@@ -96,6 +96,7 @@
       "success": "Message received. I will get back to you shortly.",
       "error": "The message could not be sent. Try again or email me directly.",
       "rateLimited": "Too many attempts in a row. Wait a moment before retrying.",
+      "humanCheck": "The human check has not gone through yet. Wait a moment and send again.",
       "required": "This field is required.",
       "invalidEmail": "Enter a valid email address.",
       "invalidCharacters": "This field contains characters I cannot accept.",

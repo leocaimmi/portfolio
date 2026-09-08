@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { securityHeaders } from '@/lib/security-headers';
 
-const asRecord = (isDevelopment: boolean) =>
-  Object.fromEntries(securityHeaders(isDevelopment).map(({ key, value }) => [key, value]));
+const asRecord = (isDevelopment: boolean, allowsHumanCheck = false) =>
+  Object.fromEntries(
+    securityHeaders(isDevelopment, allowsHumanCheck).map(({ key, value }) => [key, value]),
+  );
 
 describe('security headers', () => {
   it('locks down the directives that have no legitimate use here', () => {
@@ -20,6 +22,28 @@ describe('security headers', () => {
     const csp = asRecord(false)['Content-Security-Policy'] ?? '';
 
     expect(csp).not.toMatch(/https?:\/\//);
+  });
+
+  /*
+   * The one origin the site is allowed to talk to, and only when it is
+   * actually being used. A policy that names an origin nobody calls has been
+   * widened for nothing.
+   */
+  it('opens the policy to the human check only when it is switched on', () => {
+    const without = asRecord(false)['Content-Security-Policy'] ?? '';
+    const with_ = asRecord(false, true)['Content-Security-Policy'] ?? '';
+
+    expect(without).not.toContain('challenges.cloudflare.com');
+    expect(without).not.toContain('frame-src');
+
+    expect(with_).toContain("script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com");
+    expect(with_).toContain('frame-src https://challenges.cloudflare.com');
+    expect(with_).toContain("connect-src 'self' https://challenges.cloudflare.com");
+
+    // Everything else is still shut.
+    expect(with_).toContain("default-src 'self'");
+    expect(with_).toContain("object-src 'none'");
+    expect(with_).toContain("frame-ancestors 'none'");
   });
 
   /*

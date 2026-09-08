@@ -28,11 +28,13 @@ working proof of concept.
 - HSTS in production, with `includeSubDomains` and `preload`
 - Environment variables parsed at startup; a malformed value fails the build
 - Server secrets behind a `server-only` import, so a client import breaks the build
-- Contact endpoint: body size cap, rate limit, schema validation, honeypot and a minimum
+- Contact endpoint: body size cap, rate limit, schema validation, honeypot, an optional
+  human check verified server-side against Cloudflare, and a minimum
   fill time — each failing with a bare status code that never says which check rejected
   the request
 - No user-supplied content is rendered anywhere on the site
-- Fonts and icons self-hosted; no external origin is allowed by the policy
+- Fonts and icons self-hosted. The policy names no external origin unless the human
+  check is switched on, and then only Cloudflare's, for the script and its frame
 - Dependabot weekly, CodeQL on every push and weekly, `npm audit` in CI
 
 ## Known trade-offs

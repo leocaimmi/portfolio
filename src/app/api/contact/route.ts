@@ -40,6 +40,52 @@ function buildEmail(message: ContactMessage) {
 }
 
 /**
+ * Asks Cloudflare whether the token in front of it is one they issued.
+ *
+ * The token is worthless on its own: it is Cloudflare that knows whether a
+ * challenge was solved, so it is Cloudflare that is asked. A failure here is
+ * answered with a status the form can act on rather than the silence given to
+ * the honeypot — a person whose challenge expired deserves to be told, where a
+ * bot that filled a hidden field does not.
+ */
+async function passesHumanCheck(token: string | undefined, address: string): Promise<boolean> {
+  const secret = serverEnv.TURNSTILE_SECRET_KEY;
+
+  if (secret === undefined) {
+    return true;
+  }
+
+  if (token === undefined || token.length === 0) {
+    return false;
+  }
+
+  const body = new URLSearchParams({ secret, response: token });
+
+  if (address !== 'unknown') {
+    body.set('remoteip', address);
+  }
+
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+
+    const result: unknown = await response.json();
+
+    return (
+      typeof result === 'object' &&
+      result !== null &&
+      (result as { success?: unknown }).success === true
+    );
+  } catch {
+    console.error('The human check could not be reached.');
+
+    return false;
+  }
+}
+
+/**
  * Pulls the provider's error name and message out of a failed response.
  *
  * Deliberately narrow: two known fields, each bounded, and nothing if the body
@@ -121,6 +167,10 @@ export async function POST(request: Request): Promise<Response> {
 
   if (message.elapsedMs < MIN_FILL_DURATION_MS) {
     return new Response(null, { status: 204 });
+  }
+
+  if (!(await passesHumanCheck(message.turnstileToken, clientKey(request)))) {
+    return NextResponse.json({ error: 'human_check_failed' }, { status: 400 });
   }
 
   try {

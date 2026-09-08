@@ -7,7 +7,9 @@ import { cn } from '@/lib/cn';
 import type { ContactErrorKey, ContactField } from '@/lib/contact-schema';
 import { CONTACT_LIMITS, contactMessageSchema, toFieldErrors } from '@/lib/contact-schema';
 
-type SubmitState = 'idle' | 'sending' | 'sent' | 'error' | 'rateLimited';
+import { HUMAN_CHECK_FIELD, HumanCheck, isHumanCheckEnabled } from './human-check';
+
+type SubmitState = 'idle' | 'sending' | 'sent' | 'error' | 'rateLimited' | 'humanCheck';
 
 const FIELD_BASE =
   'mt-2 w-full rounded-lg border bg-deep/60 px-3.5 py-2.5 text-sm text-starlight placeholder:text-dust/70 transition-colors duration-200 focus:border-star/70 focus:outline-none';
@@ -32,9 +34,11 @@ function readTextField(formData: FormData, name: string): string {
  * `aria-describedby`, and the submit outcome is announced in a live region so
  * it reaches a screen reader without a focus jump.
  *
- * Spam is handled without a third-party captcha: a honeypot field, a minimum
- * fill time, and a rate limit on the endpoint. That keeps the visitor's data
- * out of an external service and the page free of an external script.
+ * Spam is handled by a honeypot field, a minimum fill time and a rate limit on
+ * the endpoint — and, where it is configured, a human check in front of all
+ * three. The first three cost the visitor nothing and no third party anything;
+ * the fourth is a deliberate trade, made because none of the others can tell a
+ * patient script from a person.
  */
 export function ContactForm() {
   const t = useTranslations('contact.form');
@@ -66,7 +70,16 @@ export function ContactForm() {
       message: readTextField(formData, 'message'),
       website: readTextField(formData, 'website'),
       elapsedMs: Date.now() - mountedAt.current,
+      turnstileToken: readTextField(formData, HUMAN_CHECK_FIELD) || undefined,
     };
+
+    // Said here rather than left to a rejection from the endpoint: the check
+    // not being solved yet is the one failure the visitor can do something
+    // about, and a generic apology would not tell them what.
+    if (isHumanCheckEnabled && payload.turnstileToken === undefined) {
+      setState('humanCheck');
+      return;
+    }
 
     const parsed = contactMessageSchema.safeParse(payload);
 
@@ -93,7 +106,18 @@ export function ContactForm() {
         return;
       }
 
-      setState(response.status === 429 ? 'rateLimited' : 'error');
+      if (response.status === 429) {
+        setState('rateLimited');
+        return;
+      }
+
+      const failed: unknown = await response.json().catch(() => null);
+      const isHumanCheckFailure =
+        typeof failed === 'object' &&
+        failed !== null &&
+        (failed as { error?: unknown }).error === 'human_check_failed';
+
+      setState(isHumanCheckFailure ? 'humanCheck' : 'error');
     } catch {
       setState('error');
     }
@@ -179,6 +203,8 @@ export function ContactForm() {
         />
       </div>
 
+      <HumanCheck />
+
       <button
         type="submit"
         disabled={state === 'sending'}
@@ -193,12 +219,13 @@ export function ContactForm() {
         className={cn(
           'text-sm',
           state === 'sent' && 'text-star',
-          (state === 'error' || state === 'rateLimited') && 'text-comet',
+          (state === 'error' || state === 'rateLimited' || state === 'humanCheck') && 'text-comet',
         )}
       >
         {state === 'sent' ? t('success') : null}
         {state === 'error' ? t('error') : null}
         {state === 'rateLimited' ? t('rateLimited') : null}
+        {state === 'humanCheck' ? t('humanCheck') : null}
       </p>
     </form>
   );

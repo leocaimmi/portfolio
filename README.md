@@ -62,12 +62,14 @@ form that cannot deliver.
 
 ### Environment
 
-| Variable               | Required | Purpose                                                |
-| ---------------------- | -------- | ------------------------------------------------------ |
-| `NEXT_PUBLIC_SITE_URL` | Yes      | Absolute origin. Canonical URLs, sitemap, social cards |
-| `RESEND_API_KEY`       | No       | Enables contact form delivery                          |
-| `CONTACT_INBOX`        | No       | Overrides the inbox. Defaults to the published address |
-| `CONTACT_SENDER`       | No       | Verified sender on your Resend domain                  |
+| Variable                         | Required | Purpose                                                |
+| -------------------------------- | -------- | ------------------------------------------------------ |
+| `NEXT_PUBLIC_SITE_URL`           | Yes      | Absolute origin. Canonical URLs, sitemap, social cards |
+| `RESEND_API_KEY`                 | No       | Enables contact form delivery                          |
+| `CONTACT_INBOX`                  | No       | Overrides the inbox. Defaults to the published address |
+| `CONTACT_SENDER`                 | No       | Verified sender on your Resend domain                  |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | No       | Public half of the contact form's human check          |
+| `TURNSTILE_SECRET_KEY`           | No       | Secret half. Set both or neither                       |
 
 Every variable is parsed at startup. A malformed value fails the build instead of
 surfacing as a 500 later, and server secrets sit behind a `server-only` import so an

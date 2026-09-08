@@ -92,6 +92,13 @@ export const contactMessageSchema = z.object({
    * the rate limit rather than standing in for them.
    */
   elapsedMs: z.number().int().nonnegative(),
+
+  /**
+   * Turnstile's answer, when the check is switched on. Bounded well above the
+   * token's real length and never trusted here: only Cloudflare can say
+   * whether it is genuine, and the endpoint asks them.
+   */
+  turnstileToken: z.string().max(2_048).optional(),
 });
 
 export type ContactMessage = z.infer<typeof contactMessageSchema>;

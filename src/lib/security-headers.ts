@@ -31,7 +31,15 @@ interface SecurityHeader {
  * If the site ever renders something a stranger wrote, this is the first
  * decision to revisit.
  */
-function buildContentSecurityPolicy(isDevelopment: boolean): string {
+/**
+ * Turnstile's script, and the frame it draws the challenge in.
+ *
+ * Added only when the check is switched on. A policy that names an origin the
+ * site never talks to is a policy that has been widened for nothing.
+ */
+const HUMAN_CHECK_ORIGIN = 'https://challenges.cloudflare.com';
+
+function buildContentSecurityPolicy(isDevelopment: boolean, allowsHumanCheck: boolean): string {
   const directives: Record<string, string[]> = {
     'default-src': ["'self'"],
     'base-uri': ["'none'"],
@@ -45,6 +53,12 @@ function buildContentSecurityPolicy(isDevelopment: boolean): string {
     'connect-src': ["'self'"],
     'manifest-src': ["'self'"],
   };
+
+  if (allowsHumanCheck) {
+    directives['script-src']?.push(HUMAN_CHECK_ORIGIN);
+    directives['frame-src'] = [HUMAN_CHECK_ORIGIN];
+    directives['connect-src']?.push(HUMAN_CHECK_ORIGIN);
+  }
 
   if (isDevelopment) {
     // React Fast Refresh compiles components at runtime and the dev server
@@ -60,11 +74,14 @@ function buildContentSecurityPolicy(isDevelopment: boolean): string {
   return isDevelopment ? policy : `${policy}; upgrade-insecure-requests`;
 }
 
-export function securityHeaders(isDevelopment: boolean): SecurityHeader[] {
+export function securityHeaders(
+  isDevelopment: boolean,
+  allowsHumanCheck = false,
+): SecurityHeader[] {
   const headers: SecurityHeader[] = [
     {
       key: 'Content-Security-Policy',
-      value: buildContentSecurityPolicy(isDevelopment),
+      value: buildContentSecurityPolicy(isDevelopment, allowsHumanCheck),
     },
     {
       /** Belt and braces alongside `frame-ancestors`, for older browsers. */

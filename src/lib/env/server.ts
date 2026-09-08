@@ -12,6 +12,8 @@ const serverEnvSchema = z.object({
   /** Overrides where messages land. Defaults to the published address. */
   CONTACT_INBOX: z.email().optional(),
   CONTACT_SENDER: z.email().optional(),
+  /** Secret half of the Turnstile pair. Absent turns the human check off. */
+  TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
 });
 
 const parsed = serverEnvSchema.safeParse(process.env);
