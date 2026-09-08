@@ -49,9 +49,15 @@ walk into.
 
 ## Commits
 
-[Conventional Commits](https://www.conventionalcommits.org), in English. A commit-msg hook
-enforces the format and the allowed scopes, which are listed in
-[`commitlint.config.mjs`](commitlint.config.mjs).
+[Conventional Commits](https://www.conventionalcommits.org), in English. Nothing enforces
+it, on purpose: a hook that refuses a commit is a hook people learn to skip with
+`--no-verify`, and it takes the rest of the checks down with it. The gate that matters runs
+in CI, where it cannot be skipped and cannot stop anyone saving work in progress.
+
+The scope is a top-level folder under `src/` — `api`, `app`, `content`, `cosmos`, `hooks`,
+`i18n`, `layout`, `lib`, `sections`, `styles`, `types`, `ui` — or one of the concerns that
+cut across them: `ci`, `config`, `deps`, `git`, `lint`, `security`, `seo`. Leave it off for
+anything repository-wide.
 
 ```
 feat(sections): add the skill constellations
