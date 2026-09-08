@@ -21,21 +21,21 @@ export const experience: Experience[] = [
       en: 'Argentina · Remote',
     },
     summary: {
-      es: 'Desarrollo de producto end to end: aplicaciones multiplataforma web y móviles sobre APIs propias y una base de datos gobernada por políticas de seguridad a nivel de fila.',
-      en: 'End-to-end product work: cross-platform web and mobile applications on top of in-house APIs and a database governed by row-level security policies.',
+      es: 'Desarrollo de producto end to end: aplicaciones multiplataforma web y mobile.',
+      en: 'End-to-end product work: cross-platform web and mobile applications.',
     },
     achievements: [
       {
-        es: 'Desarrollo multiplataforma con Expo, compartiendo una única base de código entre web, iOS y Android.',
-        en: 'Cross-platform development with Expo, sharing a single codebase across web, iOS and Android.',
+        es: 'Desarrollo multiplataforma con Expo, centralizando el código web y mobile para sostener su mantenimiento en el tiempo.',
+        en: 'Cross-platform development with Expo, centralising the web and mobile code so it stays maintainable over time.',
       },
       {
-        es: 'Diseño e implementación de APIs REST con FastAPI, con contratos documentados y validación de entrada en el borde.',
-        en: 'Designed and implemented REST APIs with FastAPI, with documented contracts and input validation at the edge.',
+        es: 'Diseño e implementación de APIs REST con FastAPI, con contratos documentados y seguridad por JWT.',
+        en: 'Designed and implemented REST APIs with FastAPI, with documented contracts and JWT-based security.',
       },
       {
-        es: 'Modelado de bases de datos PostgreSQL e implementación de Row Level Security, policies y triggers en Supabase, moviendo las reglas de acceso al motor en lugar de confiar en el cliente.',
-        en: 'Modelled PostgreSQL databases and implemented Row Level Security, policies and triggers in Supabase, pushing access rules into the engine instead of trusting the client.',
+        es: 'Modelado de bases de datos PostgreSQL e implementación de Row Level Security, policies y triggers en Supabase.',
+        en: 'Modelled PostgreSQL databases and implemented Row Level Security, policies and triggers in Supabase.',
       },
       {
         es: 'Integración con los Web Services de Facturación Electrónica de ARCA (WSAA y WSFE) para la emisión y validación de comprobantes fiscales.',
