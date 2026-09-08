@@ -21,11 +21,21 @@ import { SECTION_IDS } from '@/config/navigation';
  */
 
 /**
- * Distance below the top of the viewport at which a section counts as reached.
- * Just under the header, and matched to the scroll offset in `globals.css` so
- * that jumping to a section immediately marks that section.
+ * Where a section counts as reached, as a fraction of the viewport height.
+ *
+ * A third of the way down rather than just under the header. Measured at the
+ * header, a section only became current once its top had climbed almost off the
+ * screen — so a reader looking straight at the opening of a section was told
+ * nothing was there yet, for most of a screen's worth of scrolling.
+ *
+ * It is also the complement of the fraction at which the docked chart appears,
+ * and the hero is exactly one screen tall, so the chart arrives at the same
+ * moment the first section becomes current instead of a screen before it.
  */
-const ANCHOR_LINE = 96;
+const ANCHOR_FRACTION = 0.35;
+
+/** Never less than this, so the line clears the header on a short screen. */
+const MIN_ANCHOR_LINE = 96;
 
 export interface ReadingPosition {
   scrollY: number;
@@ -78,7 +88,7 @@ function remeasure(): void {
 
 /** The last section whose top has passed the line; none while in the hero. */
 function sectionAt(offset: number): SectionId | undefined {
-  const line = offset + ANCHOR_LINE;
+  const line = offset + Math.max(MIN_ANCHOR_LINE, viewportHeight * ANCHOR_FRACTION);
   let reached: SectionId | undefined;
 
   for (const section of sectionTops) {
