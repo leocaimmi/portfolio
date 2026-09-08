@@ -50,7 +50,7 @@ interface TechnologyIconProps {
  */
 export function TechnologyIcon({ id, className }: TechnologyIconProps) {
   const glyph = TECHNOLOGY_ICONS[id];
-  const classes = cn('size-3.5 shrink-0', className);
+  const classes = cn('size-4 shrink-0', className);
 
   if (glyph === undefined) {
     const letters = monogram(technologyName(id));

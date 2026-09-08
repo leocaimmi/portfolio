@@ -60,6 +60,24 @@ const JAVA_GLYPH: TechnologyIconGlyph = {
 };
 
 /**
+ * The ARCA mark — the ring, the A and the two diamonds — redrawn as a single
+ * monochrome path.
+ *
+ * The agency publishes no vector: what circulates, and what every logo site
+ * serves for it, is the same seventy-pixel favicon of the old AFIP emblem. A
+ * bitmap that small is soft at any size the rest of the row is drawn at, and it
+ * cannot take `currentColor`, so it would have been the one full-colour object
+ * among thirty flat ones.
+ *
+ * Drawn rather than traced, at the same weight as the marks beside it. It is
+ * the agency's emblem and is used here only to name the service integrated
+ * against.
+ */
+const ARCA_GLYPH: TechnologyIconGlyph = {
+  path: 'M12 1.6a10.4 10.4 0 100 20.8 10.4 10.4 0 100-20.8zm0 2.5a7.9 7.9 0 110 15.8 7.9 7.9 0 110-15.8zM12 5.9l5.2 12.4h-3l-.9-2.4h-2.6l-.9 2.4h-3zm0 4.4l-1.15 3.1h2.3zM2 10.4 3.6 12 2 13.6.4 12zM22 10.4 23.6 12 22 13.6 20.4 12z',
+};
+
+/**
  * Brand marks for the technology registry.
  *
  * Only the SVG path is stored, never the whole icon object, and every icon is
@@ -102,6 +120,7 @@ export const TECHNOLOGY_ICONS: Partial<Record<TechnologyId, TechnologyIconGlyph>
   vercel: { path: siVercel.path },
   railway: { path: siRailway.path },
   'mercado-pago': { path: siMercadopago.path },
+  arca: ARCA_GLYPH,
   'whatsapp-api': { path: siWhatsapp.path },
 
   git: { path: siGit.path },

@@ -148,7 +148,7 @@ function Meteor({ isOn }: { isOn: boolean }) {
 function SkillCard({ id }: { id: TechnologyId }) {
   return (
     <li className="flex items-center gap-2.5 rounded-xl border border-horizon/70 bg-deep/40 px-3 py-2 transition-colors duration-300 ease-orbital hover:border-star/40">
-      <TechnologyIcon id={id} className="size-4 text-moondust" />
+      <TechnologyIcon id={id} className="size-5 text-moondust" />
 
       <span className="min-w-0 flex-1 truncate text-sm text-starlight">{technologyName(id)}</span>
     </li>
