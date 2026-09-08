@@ -44,6 +44,8 @@ These are deliberate, and documented where they are made rather than left to be 
   renders no user-supplied content. See `src/lib/security-headers.ts`.
 - **The rate limiter is in-process.** On a multi-instance deployment the effective limit
   scales with the number of warm instances. Acceptable for a contact form whose purpose is
-  to blunt casual abuse; a shared store is the upgrade path. See `src/lib/rate-limit.ts`.
+  to blunt casual abuse, and it is the second layer rather than the only one: the deployed
+  site is expected to carry an edge rate limit in front of `/api/contact`, which is host
+  configuration rather than code. See `src/lib/rate-limit.ts` and the README.
 - **Forwarded headers are trusted for rate-limit bucketing only.** They are never used for
   authorisation, so a spoofed value costs the sender their own quota and nothing else.

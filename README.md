@@ -66,12 +66,31 @@ form that cannot deliver.
 | ---------------------- | -------- | ------------------------------------------------------ |
 | `NEXT_PUBLIC_SITE_URL` | Yes      | Absolute origin. Canonical URLs, sitemap, social cards |
 | `RESEND_API_KEY`       | No       | Enables contact form delivery                          |
-| `CONTACT_INBOX`        | No       | Address that receives messages                         |
+| `CONTACT_INBOX`        | No       | Overrides the inbox. Defaults to the published address |
 | `CONTACT_SENDER`       | No       | Verified sender on your Resend domain                  |
 
 Every variable is parsed at startup. A malformed value fails the build instead of
 surfacing as a 500 later, and server secrets sit behind a `server-only` import so an
 accidental client import breaks the build rather than shipping credentials to the browser.
+
+### Rate limiting at the edge
+
+The endpoint carries its own limiter, which is enough to blunt casual abuse but counts per
+instance. A limit that holds across instances has to be applied before the request reaches
+one, which on Vercel is a firewall rule rather than anything in this repository:
+
+**Project → Firewall → Custom Rules → New Rule**
+
+| Field     | Value                              |
+| --------- | ---------------------------------- |
+| Condition | Request Path equals `/api/contact` |
+| Action    | Rate Limit                         |
+| Requests  | 5                                  |
+| Window    | 1 hour                             |
+| Keyed by  | IP address                         |
+
+The in-process limiter stays as the second layer, so the endpoint is still defended when
+run anywhere else — locally, or on a host with no firewall of its own.
 
 ## Scripts
 
