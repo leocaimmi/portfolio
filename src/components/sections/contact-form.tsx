@@ -47,6 +47,7 @@ export function ContactForm() {
 
   const [state, setState] = useState<SubmitState>('idle');
   const [errors, setErrors] = useState<Partial<Record<ContactField, ContactErrorKey>>>({});
+  const [messageLength, setMessageLength] = useState(0);
 
   // Stamped from an effect rather than during render: reading the clock while
   // rendering is impure and would give a different value on every re-render.
@@ -102,6 +103,7 @@ export function ContactForm() {
       if (response.ok) {
         setState('sent');
         form.reset();
+        setMessageLength(0);
         mountedAt.current = Date.now();
         return;
       }
@@ -168,14 +170,34 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor={`${fieldId}-message`} className="telemetry">
-          {t('message')}
-        </label>
+        <div className="flex items-baseline justify-between gap-4">
+          <label htmlFor={`${fieldId}-message`} className="telemetry">
+            {t('message')}
+          </label>
+
+          {/*
+            Hidden from assistive technology. The field carries `maxlength`,
+            which a screen reader announces once on entering it; a count read
+            out again after every keystroke would be noise, not help.
+          */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              'font-mono text-[0.625rem] tabular-nums transition-colors duration-300',
+              messageLength > CONTACT_LIMITS.messageMax * 0.9 ? 'text-solar' : 'text-dust',
+            )}
+          >
+            {messageLength}/{CONTACT_LIMITS.messageMax}
+          </span>
+        </div>
         <textarea
           id={`${fieldId}-message`}
           name="message"
           rows={5}
           maxLength={CONTACT_LIMITS.messageMax}
+          onChange={(event) => {
+            setMessageLength(event.currentTarget.value.length);
+          }}
           placeholder={t('messagePlaceholder')}
           aria-invalid={errors.message !== undefined}
           aria-describedby={describe('message')}
