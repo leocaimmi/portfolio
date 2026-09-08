@@ -12,6 +12,18 @@ const clientEnvSchema = z.object({
 });
 
 /**
+ * The origin to assume while developing, and only while developing.
+ *
+ * Left as a fallback everywhere, a deployment that forgot to set the real one
+ * would build happily and publish a sitemap, a set of canonical URLs and a
+ * social card all pointing at localhost — wrong in the one way nobody notices
+ * until a search engine has already believed it. In production the value is
+ * required, and its absence fails the build like any other malformed setting.
+ */
+const developmentOrigin =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined;
+
+/**
  * Public configuration that is inlined into the browser bundle.
  *
  * Every variable is read as a literal `process.env.X` member expression: Next.js
@@ -19,7 +31,7 @@ const clientEnvSchema = z.object({
  * would silently yield `undefined` in the browser.
  */
 export const clientEnv = clientEnvSchema.parse({
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? developmentOrigin,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
 });
 

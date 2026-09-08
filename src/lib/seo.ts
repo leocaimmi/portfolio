@@ -101,8 +101,16 @@ export function buildPageMetadata({
  * entity instead of inferring it from prose. Built from the same content the
  * page renders, so the two cannot disagree.
  */
+/**
+ * Structured data, as a string destined for a `<script>` element.
+ *
+ * `JSON.stringify` leaves `<` alone, so a value containing `</script>` would
+ * close the element early and everything after it would be parsed as markup.
+ * Nothing in this content layer contains one today; escaping it is what keeps
+ * that from being a property of the current copy rather than of the code.
+ */
 export function buildPersonJsonLd(locale: Locale): string {
-  return JSON.stringify({
+  const payload = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: profile.name,
@@ -115,4 +123,6 @@ export function buildPersonJsonLd(locale: Locale): string {
       .map((social) => social.url),
     knowsLanguage: ['es', 'en'],
   });
+
+  return payload.replace(/</g, '\\u003c');
 }
