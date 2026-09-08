@@ -72,6 +72,21 @@ export const socialLinkSchema = z.object({
   url: z.url(),
 });
 
+/**
+ * The downloadable CV.
+ *
+ * `language` is the language the document itself is written in, which is not
+ * necessarily the one the page is being read in. Stating it lets the interface
+ * warn an English reader that the file they are about to open is in Spanish,
+ * rather than letting them find out after downloading it.
+ */
+export const resumeSchema = z.object({
+  href: z.string().startsWith('/'),
+  language: z.enum(['es', 'en']),
+});
+
+export type Resume = z.infer<typeof resumeSchema>;
+
 export const profileSchema = z.object({
   name: z.string().min(1),
   /** Short job title, rendered next to the name. */
@@ -87,6 +102,7 @@ export const profileSchema = z.object({
   socials: z.array(socialLinkSchema).min(1),
   /** Drives the availability badge; keep it honest. */
   availability: z.enum(['open', 'selective', 'unavailable']),
+  resume: resumeSchema,
 });
 
 export type Profile = z.infer<typeof profileSchema>;

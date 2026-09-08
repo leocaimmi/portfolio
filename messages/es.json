@@ -44,7 +44,9 @@
   "about": {
     "label": "01 / Perfil",
     "title": "Quién está detrás del código",
-    "educationTitle": "Formación"
+    "educationTitle": "Formación",
+    "downloadResume": "Descargar CV",
+    "resumeLanguage": "PDF · en español"
   },
   "trajectory": {
     "label": "02 / Trayectoria",

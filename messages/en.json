@@ -44,7 +44,9 @@
   "about": {
     "label": "01 / Profile",
     "title": "Who is behind the code",
-    "educationTitle": "Education"
+    "educationTitle": "Education",
+    "downloadResume": "Download CV",
+    "resumeLanguage": "PDF · in Spanish"
   },
   "trajectory": {
     "label": "02 / Trajectory",

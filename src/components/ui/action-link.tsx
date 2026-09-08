@@ -12,6 +12,8 @@ interface ActionLinkProps {
   external?: boolean;
   /** Localised "(opens in a new tab)" text, appended for screen readers only. */
   newTabLabel?: string;
+  /** Asks the browser to save the target rather than navigate to it. */
+  download?: boolean;
   className?: string;
 }
 
@@ -33,12 +35,14 @@ export function ActionLink({
   variant = 'ghost',
   external = false,
   newTabLabel,
+  download = false,
   className,
 }: ActionLinkProps) {
   return (
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      {...(download ? { download: '' } : {})}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5',
         'font-mono text-xs tracking-wide uppercase',

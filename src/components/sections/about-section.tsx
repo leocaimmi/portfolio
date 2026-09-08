@@ -1,5 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 
+import { ActionLink } from '@/components/ui/action-link';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { education, profile } from '@/content';
@@ -45,6 +46,23 @@ export function AboutSection() {
               </div>
             ))}
           </dl>
+
+          {/*
+            The same record as a document. The language of the file is stated
+            because it is not always the language of the page, and finding that
+            out after downloading it is finding out too late.
+          */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <ActionLink href={profile.resume.href} download>
+              {t('downloadResume')}
+            </ActionLink>
+
+            {profile.resume.language === locale ? null : (
+              <p className="font-mono text-[0.6875rem] tracking-wide text-dust">
+                {t('resumeLanguage')}
+              </p>
+            )}
+          </div>
         </Reveal>
       </div>
     </Section>
