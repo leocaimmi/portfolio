@@ -22,6 +22,7 @@ export const education: Education[] = [
       en: 'English · Level 3',
     },
     kind: 'language',
+    period: { start: '2026-03', end: null },
   },
   {
     id: 'programming-degree',
