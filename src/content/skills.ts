@@ -70,6 +70,12 @@ export const constellations: Constellation[] = [
       es: 'Todo lo que rodea al código: plataformas, despliegue, documentación de contratos y forma de trabajo.',
       en: 'Everything around the code: platforms, deployment, contract documentation and ways of working.',
     },
+    /*
+     * Ordered for the two columns this group is laid out in at the widest
+     * size, where the list fills left to right: the pairs that belong together
+     * land on a row together rather than wherever the count happened to put
+     * them.
+     */
     skills: [
       'git',
       'github',
@@ -77,11 +83,11 @@ export const constellations: Constellation[] = [
       'firebase',
       'vercel',
       'railway',
-      'docker',
-      'postman',
       'swagger',
-      'claude-code',
+      'postman',
       'codex',
+      'claude-code',
+      'docker',
       'jira',
       'kanban',
       'scrum',
