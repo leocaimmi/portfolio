@@ -20,8 +20,8 @@ export const profile: Profile = {
   },
 
   headline: {
-    es: 'Construyo productos de punta a punta, pensados para escalar: la interfaz que la gente toca, las APIs que la sostienen y el modelo de datos sobre el que todo se apoya.',
-    en: 'I build products end to end, built to scale: the interface people touch, the APIs that hold it up, and the data model everything else rests on.',
+    es: 'Construyo soluciones escalables end to end: la interfaz que la gente toca, las APIs que la sostienen y todo el camino desde el modelado hasta producción.',
+    en: 'I build scalable solutions end to end: the interface people touch, the APIs that hold it up, and everything from the data model through to production.',
   },
 
   biography: [
