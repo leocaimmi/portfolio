@@ -37,7 +37,15 @@ export function HeroSection() {
     <section id="top" className="relative flex min-h-dvh items-center overflow-hidden">
       <CosmicScene />
 
-      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 pt-20 pb-[52vh] md:py-24">
+      {/*
+        On a phone the copy is pushed clear of the header rather than starting
+        directly beneath it: the bar ends 4.5rem down, and 5rem of padding left
+        the name half a centimetre under a floating pane of glass, which reads
+        as a collision rather than as a heading. The bottom padding gives back
+        what the top takes, so the hero is the same height and the system below
+        it is framed exactly as before.
+      */}
+      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-[48vh] md:py-24">
         <div className="pointer-events-auto max-w-2xl">
           <h1 className="font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
             {profile.name}
