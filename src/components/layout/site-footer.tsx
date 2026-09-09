@@ -33,8 +33,16 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-horizon/40">
       <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-2">
+        {/*
+          Two columns from the narrowest screen up. The route through the site
+          and the three ways to reach him are short lists of short words, and
+          giving each its own full-width band stacked eight lines of two-word
+          links down a phone with two thirds of every line empty beside them.
+          They sit beside each other instead; the block that names who this is
+          keeps the full width, because that one is a sentence.
+        */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-x-10 lg:grid-cols-4">
+          <div className="col-span-2 sm:col-span-1 lg:col-span-2">
             <p className="font-display text-lg font-semibold text-starlight">{profile.name}</p>
             <p className="mt-1 text-sm text-moondust">{profile.role[locale]}</p>
 
