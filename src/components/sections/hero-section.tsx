@@ -45,7 +45,7 @@ export function HeroSection() {
         what the top takes, so the hero is the same height and the system below
         it is framed exactly as before.
       */}
-      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-[48vh] md:py-24">
+      <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-4 pt-28 pb-[48vh] sm:px-6 md:py-24">
         <div className="pointer-events-auto max-w-2xl">
           <h1 className="font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
             {profile.name}

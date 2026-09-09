@@ -32,7 +32,7 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-horizon/40">
-      <div className="mx-auto w-full max-w-7xl px-6 py-12 sm:py-14">
+      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <p className="font-display text-lg font-semibold text-starlight">{profile.name}</p>

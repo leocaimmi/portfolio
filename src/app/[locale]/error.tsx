@@ -28,7 +28,7 @@ export default function LocaleError({
   }, [error]);
 
   return (
-    <section className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col justify-center px-6 py-32">
+    <section className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col justify-center px-4 py-32 sm:px-6">
       <p className="telemetry">{t('label')}</p>
 
       <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-balance text-starlight sm:text-5xl">
