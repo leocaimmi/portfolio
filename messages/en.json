@@ -1,0 +1,127 @@
+{
+  "metadata": {
+    "title": "Leonardo Caimmi — Full Stack Developer",
+    "description": "Full Stack Developer specialised in backend engineering with Java and Spring Boot. REST APIs, PostgreSQL data modelling and applications built with React, Angular and Expo."
+  },
+  "common": {
+    "present": "Present",
+    "opensInNewTab": "(opens in a new tab)",
+    "skipToContent": "Skip to main content",
+    "availability": {
+      "open": "Available for new missions",
+      "selective": "Open to selected opportunities",
+      "unavailable": "Not available right now"
+    }
+  },
+  "locale": {
+    "label": "Language",
+    "switchTo": "View this site in Spanish",
+    "es": "ES",
+    "en": "EN"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "menu": "Menu",
+    "open": "Open the menu",
+    "close": "Close the menu",
+    "about": "Profile",
+    "trajectory": "Trajectory",
+    "missions": "Missions",
+    "constellations": "Stack",
+    "contact": "Contact",
+    "systemMap": "System map",
+    "radar": "Navigation radar"
+  },
+  "radar": {
+    "scanning": "Scanning"
+  },
+  "hero": {
+    "primaryAction": "View missions",
+    "secondaryAction": "Get in touch",
+    "scrollHint": "Descend through the system"
+  },
+  "about": {
+    "label": "01 / Profile",
+    "title": "Who is behind the code",
+    "educationTitle": "Education",
+    "downloadResume": "Download CV"
+  },
+  "trajectory": {
+    "label": "02 / Trajectory",
+    "title": "Mission log",
+    "description": "Where I have been, what I built, and what stayed running."
+  },
+  "missions": {
+    "label": "03 / Missions",
+    "title": "Systems in orbit",
+    "description": "Three systems, all in production. Client repositories are private; the detail of the work is in the timeline.",
+    "status": {
+      "production": "In production",
+      "development": "In development",
+      "archived": "Archived"
+    },
+    "visibility": {
+      "private": "Private repository",
+      "public": "Open source"
+    },
+    "stackTitle": "Stack",
+    "viewSource": "View the source",
+    "viewLive": "View live",
+    "moreRepositories": "More repositories"
+  },
+  "constellations": {
+    "label": "04 / Constellations",
+    "title": "Technical stack",
+    "description": "Grouped by area, and within each one in the order they usually get reached for.",
+    "filterLabel": "Filter by domain",
+    "empty": "No domain is switched on.",
+    "showAll": "Show all"
+  },
+  "contact": {
+    "label": "05 / Transmission",
+    "title": "Open a channel",
+    "description": "If you have a project, a role, or simply a technical question, write to me.",
+    "directTitle": "Direct channels",
+    "form": {
+      "title": "Send a message",
+      "name": "Name",
+      "namePlaceholder": "What should I call you",
+      "email": "Email",
+      "emailPlaceholder": "where I should reply",
+      "message": "Message",
+      "messagePlaceholder": "Tell me what you have in mind",
+      "submit": "Transmit",
+      "sending": "Transmitting…",
+      "success": "Message received. I will get back to you shortly.",
+      "error": "The message could not be sent. Try again or email me directly.",
+      "rateLimited": "Too many attempts in a row. Wait a moment before retrying.",
+      "humanCheck": "The human check has not gone through yet. Wait a moment and send again.",
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidCharacters": "This field contains characters I cannot accept.",
+      "tooShort": "This message is too short.",
+      "tooLong": "This message is too long.",
+      "disabled": "The form is not configured in this environment yet. Use the direct channels."
+    }
+  },
+  "footer": {
+    "navTitle": "Navigation",
+    "contactTitle": "Contact",
+    "sourceCode": "Source code",
+    "backToTop": "Back to top"
+  },
+  "notFound": {
+    "label": "Signal lost",
+    "title": "This orbit does not exist",
+    "description": "The page you were looking for is not on any known star chart.",
+    "action": "Return to base station"
+  },
+  "error": {
+    "label": "System failure",
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. You can retry or head back home.",
+    "retry": "Retry",
+    "home": "Back home"
+  }
+}
