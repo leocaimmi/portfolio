@@ -101,11 +101,17 @@ export function StackGrid() {
                 {sector.description[locale]}
               </p>
 
+              {/*
+                Two columns where a sector has the whole width to itself, one
+                where the sectors are already columns side by side. A phone
+                gave each of forty cards a line of its own and a third of that
+                line to a name eleven characters long, which is two and a half
+                thousand pixels of scroll spent mostly on air.
+              */}
               <ul
                 className={cn(
-                  'mt-4 space-y-2',
-                  sector.id === WIDE_SECTOR &&
-                    'xl:grid xl:grid-cols-2 xl:space-y-0 xl:gap-x-3 xl:gap-y-2',
+                  'mt-4 grid grid-cols-2 gap-2 sm:grid-cols-1',
+                  sector.id === WIDE_SECTOR && 'xl:grid-cols-2 xl:gap-x-3',
                 )}
               >
                 {sector.skills.map((id) => (
@@ -175,13 +181,24 @@ function Meteor({ isOn }: { isOn: boolean }) {
   );
 }
 
-/** One line per technology: the mark and the name. */
+/**
+ * One line per technology: the mark and the name.
+ *
+ * The name is clipped rather than wrapped wherever a card shares its row with
+ * another sector's cards, so a long one cannot set the height of a whole row of
+ * short ones. In the two-column layout a phone gets there is no such row to
+ * protect - the cards beside it belong to the same list - and half of 343
+ * pixels is not enough for "Row Level Security", so there it wraps. A clipped
+ * skill is a worse answer than a tall one.
+ */
 function SkillCard({ id }: { id: TechnologyId }) {
   return (
     <li className="flex items-center gap-2.5 rounded-xl border border-horizon/70 bg-deep/40 px-3 py-2 transition-colors duration-300 ease-orbital hover:border-star/40">
       <TechnologyIcon id={id} className="size-5 text-moondust" />
 
-      <span className="min-w-0 flex-1 truncate text-sm text-starlight">{technologyName(id)}</span>
+      <span className="min-w-0 flex-1 text-sm text-starlight sm:truncate">
+        {technologyName(id)}
+      </span>
     </li>
   );
 }
