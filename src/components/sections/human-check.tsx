@@ -18,9 +18,14 @@ export const HUMAN_CHECK_FIELD = 'cf-turnstile-response';
  * eventually found by patient scripts.
  *
  * Turnstile is the version of that trade worth making: it sets no tracking
- * cookie and asks the visitor to do nothing unless it is unsure, in which case
- * the widget appears. Absent a site key it renders nothing at all, and the form
- * behaves exactly as it did before.
+ * cookie and asks the visitor to do nothing unless it is unsure. Absent a site
+ * key it renders nothing at all, and the form behaves exactly as it did before.
+ *
+ * The widget is left visible rather than hidden until needed. It costs a band
+ * of Cloudflare's chrome under the message field, and it buys the one thing an
+ * invisible check cannot: the visitor can see that the form is protected, and
+ * that the protection passed. A form that silently decides whether to trust you
+ * is worse to use than one that shows its work.
  *
  * Left to the script rather than driven through its JavaScript API: given an
  * element of this class it renders the widget and writes the token into a
@@ -40,14 +45,7 @@ export function HumanCheck() {
         strategy="afterInteractive"
       />
 
-      <div
-        className="cf-turnstile mt-5"
-        data-sitekey={siteKey}
-        data-theme="dark"
-        // Shown only when Cloudflare wants the visitor to do something. Most
-        // people never see it; the token is issued either way.
-        data-appearance="interaction-only"
-      />
+      <div className="cf-turnstile mt-5" data-sitekey={siteKey} data-theme="dark" />
     </>
   );
 }
