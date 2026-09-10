@@ -38,7 +38,15 @@ export function TrajectorySection() {
 
   return (
     <Section id="trajectory" label={t('label')} title={t('title')} description={t('description')}>
-      <ol className="relative space-y-6 pl-8 sm:pl-10">
+      {/*
+        The rail sits on the left edge of this list and every entry is indented
+        past it. The indent, the marker's offset and the length of its hairline
+        are one measurement in three places: the marker is centred on the rail,
+        which puts its offset 0.3rem beyond the indent, and the hairline has to
+        stop before the card starts. Change one and the other two follow, or
+        the marker drifts off the line it is meant to be sitting on.
+      */}
+      <ol className="relative space-y-6 pl-6 sm:pl-10">
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 left-0 w-px"
@@ -52,12 +60,12 @@ export function TrajectorySection() {
           <li key={entry.id} className="relative">
             <span
               aria-hidden="true"
-              className="absolute top-7 -left-[2.3rem] block size-2.5 sm:-left-[2.8rem]"
+              className="absolute top-7 -left-[1.8rem] block size-2.5 sm:-left-[2.8rem]"
               style={{ color: KIND_TONE[entry.kind] }}
             >
               <span className="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current opacity-25" />
 
-              <span className="absolute top-1/2 left-full ml-2 h-px w-4 -translate-y-1/2 bg-current opacity-25 sm:w-6" />
+              <span className="absolute top-1/2 left-full ml-2 h-px w-2 -translate-y-1/2 bg-current opacity-25 sm:w-6" />
 
               <span
                 className="block size-full rounded-full bg-current ring-4 ring-void"
@@ -66,7 +74,7 @@ export function TrajectorySection() {
             </span>
 
             <Reveal delay={index * 80}>
-              <Panel className="p-6 sm:p-7">
+              <Panel className="p-5 sm:p-7">
                 {/* Numbered from the first entry, the way a log is kept. */}
                 <p className="font-mono text-[0.625rem] tracking-[0.22em] text-dust uppercase">
                   {`LOG ${String(experience.length - index).padStart(2, '0')}`}

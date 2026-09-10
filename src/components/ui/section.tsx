@@ -34,7 +34,14 @@ export function Section({ id, label, title, description, children, className }: 
       // an anchored jump lands on the heading rather than well above it.
       className={cn('-scroll-mt-16 py-20 sm:-scroll-mt-24 sm:py-28', className)}
     >
-      <div className="mx-auto w-full max-w-7xl px-6">
+      {/*
+        A 1rem gutter on a phone, matching the header, rather than the 1.5rem
+        the wider sizes get. Three quarters of an inch of margin on a
+        three-inch screen is a third of the measure spent on nothing, and what
+        it costs is paid by the text inside the cards: a timeline entry with
+        eight bullets in it runs for pages when each line holds six words.
+      */}
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <Reveal>
           <header className="max-w-2xl">
             <p className="telemetry">{label}</p>
