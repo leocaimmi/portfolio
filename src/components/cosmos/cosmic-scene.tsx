@@ -519,12 +519,15 @@ export function CosmicScene() {
                   name sits on and glides it round when that side is taken. The
                   marker starts transparent, so the five names do not flash up
                   in a pile in the corner before the first frame.
+
+                  The halo keeps a name legible where it crosses the star, or
+                  for a moment another name.
                 */}
                 <span
                   ref={(element) => {
                     labelsRef.current.set(planet.id, element);
                   }}
-                  className={`absolute top-1/2 left-1/2 font-mono text-[0.5625rem] tracking-[0.14em] whitespace-nowrap uppercase transition-colors duration-300 md:text-[0.625rem] md:tracking-[0.18em] ${
+                  className={`absolute top-1/2 left-1/2 font-mono text-[0.5625rem] tracking-[0.14em] whitespace-nowrap uppercase transition-colors duration-300 [text-shadow:0_0_2px_var(--color-void),0_0_0.5rem_var(--color-void)] md:text-[0.625rem] md:tracking-[0.18em] ${
                     planet.id === activeId
                       ? 'text-starlight'
                       : 'text-dust group-hover:text-starlight group-focus-visible:text-starlight'
