@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { OUTERMOST_ORBIT, PLANETS } from '@/components/cosmos/scene-geometry';
+import { OUTERMOST_ORBIT, planetPosition, PLANETS } from '@/components/cosmos/scene-geometry';
 import type { Layout, SystemState } from '@/components/cosmos/scene-layout';
 import {
   computeLayout,
@@ -71,6 +71,15 @@ describe('scene layout', () => {
     // Within the first third of the run up to the hole, so the system reads as
     // arriving from the far edge rather than from the middle of the page.
     expect(layout.entryX).toBeLessThan(layout.blackHole.x * 0.3);
+  });
+
+  /*
+   * On the edge itself, so the system rises out of it rather than appearing in
+   * clear sky a little way in. A phone used to start a seventh of the way
+   * across, and that is exactly how it looked.
+   */
+  it.each(VIEWPORTS)('surfaces at the far edge itself at %ix%i', (width, height) => {
+    expect(computeLayout(width, height).entryX).toBeLessThan(width * 0.05);
   });
 
   /*
@@ -230,6 +239,33 @@ describe('scene layout', () => {
       expect(planetEmergence(index, system.emergence)).toBe(1);
     }
   });
+
+  /*
+   * The still frame is the whole navigation for someone who asked for less
+   * motion, so every planet in it has to be far enough inside the scene to be
+   * reachable. A phone's system surfaces on the edge itself now, which leaves
+   * less room on that side than it used to have.
+   */
+  it.each(VIEWPORTS.filter(([width]) => width < NARROW_BREAKPOINT))(
+    'leaves every planet reachable in the still frame on a phone at %ix%i',
+    (width, height) => {
+      const layout = computeLayout(width, height);
+      const system = systemState(STILL_SECONDS, layout);
+
+      for (const planet of PLANETS) {
+        const { x, y } = planetPosition(
+          planet,
+          STILL_SECONDS,
+          system.origin,
+          layout.scale * system.scale,
+          system.plane,
+        );
+
+        // The scene makes a marker inert once it is within half its margin.
+        expect(Math.min(x, width - x, y, height - y)).toBeGreaterThan(layout.markerMargin / 2);
+      }
+    },
+  );
 
   it('starts a new journey rather than running backwards', () => {
     const layout = computeLayout(1440, 900);

@@ -237,8 +237,8 @@ export function computeLayout(width: number, height: number): Layout {
   // On the edge itself, so the system rises out of it rather than fading into
   // existence in clear sky a little way in. Its outer orbits are wider than the
   // margin, which is the point: they arrive from beyond the frame. A phone
-  // starts further in, where there is no room to spare for that.
-  const entryX = width * (isNarrow ? 0.14 : 0.03);
+  // used to start further in, and the system simply appeared there instead.
+  const entryX = width * 0.03;
 
   return {
     width,
