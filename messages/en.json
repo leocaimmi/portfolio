@@ -55,7 +55,7 @@
   "missions": {
     "label": "03 / Missions",
     "title": "Systems in orbit",
-    "description": "Three systems, all in production. Client repositories are private; the detail of the work is in the timeline.",
+    "description": "Two systems, both in production. Client repositories are private; the detail of the work is in the timeline.",
     "status": {
       "production": "In production",
       "development": "In development",

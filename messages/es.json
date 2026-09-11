@@ -55,7 +55,7 @@
   "missions": {
     "label": "03 / Misiones",
     "title": "Sistemas en órbita",
-    "description": "Tres sistemas, todos en producción. Los repositorios de clientes son privados; el detalle del trabajo está en la trayectoria.",
+    "description": "Dos sistemas, los dos en producción. Los repositorios de clientes son privados; el detalle del trabajo está en la trayectoria.",
     "status": {
       "production": "En producción",
       "development": "En desarrollo",
