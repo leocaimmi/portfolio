@@ -102,6 +102,7 @@ export function CosmicScene() {
     // frame puts every name straight where it belongs.
     let labelOffsets: ({ x: number; y: number } | undefined)[] = [];
     const labelTransforms: string[] = [];
+    const labelsShown: boolean[] = [];
     let labelsDrawnAt = 0;
 
     let frameId = 0;
@@ -202,6 +203,15 @@ export function CosmicScene() {
         if (labelTransforms[index] !== transform) {
           labelTransforms[index] = transform;
           label.style.transform = transform;
+        }
+
+        // A name is drawn only while its planet can be seen and reached. The
+        // placement leaves the rest alone, so as the system is swallowed, the
+        // faint names it no longer weighs would pile up on the hole.
+        if (labelsShown[index] !== candidate.eligible) {
+          labelsShown[index] = candidate.eligible;
+          label.style.opacity = candidate.eligible ? '' : '0';
+          label.style.pointerEvents = candidate.eligible ? '' : 'none';
         }
       });
     };
@@ -527,7 +537,7 @@ export function CosmicScene() {
                   ref={(element) => {
                     labelsRef.current.set(planet.id, element);
                   }}
-                  className={`absolute top-1/2 left-1/2 font-mono text-[0.5625rem] tracking-[0.14em] whitespace-nowrap uppercase transition-colors duration-300 [text-shadow:0_0_2px_var(--color-void),0_0_0.5rem_var(--color-void)] md:text-[0.625rem] md:tracking-[0.18em] ${
+                  className={`absolute top-1/2 left-1/2 font-mono text-[0.5625rem] tracking-[0.14em] whitespace-nowrap uppercase transition-[color,opacity] duration-300 [text-shadow:0_0_2px_var(--color-void),0_0_0.5rem_var(--color-void)] md:text-[0.625rem] md:tracking-[0.18em] ${
                     planet.id === activeId
                       ? 'text-starlight'
                       : 'text-dust group-hover:text-starlight group-focus-visible:text-starlight'
