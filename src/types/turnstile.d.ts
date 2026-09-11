@@ -14,7 +14,11 @@ interface TurnstileApi {
   /** Draws a widget into `container` and answers with its id. */
   render: (
     container: HTMLElement,
-    options: { sitekey: string; theme?: 'auto' | 'light' | 'dark' },
+    options: {
+      sitekey: string;
+      theme?: 'auto' | 'light' | 'dark';
+      size?: 'normal' | 'flexible' | 'compact';
+    },
   ) => string | undefined;
 
   /** Discards a widget and everything it had running. */

@@ -67,11 +67,11 @@ export const experience: Experience[] = [
       'astro',
       'postgresql',
       'supabase',
+      'openai-api',
       'row-level-security',
+      'arca',
       'mercado-pago',
       'whatsapp-api',
-      'arca',
-      'openai-api',
     ],
   },
   {
@@ -113,7 +113,7 @@ export const experience: Experience[] = [
         en: 'Computer Architecture and Operating Systems: systems fundamentals and concurrency.',
       },
     ],
-    stack: ['java', 'spring-boot', 'c', 'mysql', 'sql', 'design-patterns', 'data-modeling', 'uml'],
+    stack: ['java', 'spring-boot', 'c', 'mysql', 'sql', 'design-patterns', 'uml', 'data-modeling'],
   },
   {
     id: 'freelance',

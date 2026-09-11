@@ -35,6 +35,14 @@ describe('TechTagList', () => {
     expect(screen.getByText('SQL', { selector: 'span' })).toBeInTheDocument();
   });
 
+  /* Its initials would be RA, which names nothing. */
+  it('keeps the acronym a name leads with as its monogram', () => {
+    render(<TechTagList items={['rest-api']} />);
+
+    expect(screen.getByText('REST', { selector: 'span' })).toBeInTheDocument();
+    expect(screen.queryByText('RA')).not.toBeInTheDocument();
+  });
+
   it('renders nothing at all for an empty stack', () => {
     const { container } = render(<TechTagList items={[]} />);
 

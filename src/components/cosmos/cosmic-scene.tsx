@@ -10,6 +10,8 @@ import { usePrefersReducedMotion } from '@/hooks/use-prefers-reduced-motion';
 import { BlackHole } from './black-hole';
 import type { SceneStar } from './draw-scene';
 import { drawPlanet, drawSceneStars, drawStar, drawTrail } from './draw-scene';
+import type { LabelCandidate, LabelPlacement } from './label-placement';
+import { INITIAL_LABEL, labelOffset, placeLabels } from './label-placement';
 import type { Palette } from './palette';
 import { readPalette } from './palette';
 import type { ScenePoint } from './scene-geometry';
@@ -33,6 +35,9 @@ const MAX_PIXEL_RATIO = 2;
 /** One star per this many square pixels, capped so a wide screen stays cheap. */
 const STAR_AREA_PER_STAR = 5_600;
 const MAX_SCENE_STARS = 110;
+
+/** Time constant of a name gliding round its planet to a new side. */
+const LABEL_GLIDE_SECONDS = 0.12;
 
 interface TrailPoint extends ScenePoint {
   /** Seconds since the scene started, kept so old points can be aged out. */
@@ -60,6 +65,7 @@ export function CosmicScene() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const markersRef = useRef(new Map<SectionId, HTMLElement | null>());
+  const labelsRef = useRef(new Map<SectionId, HTMLElement | null>());
   const navRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -86,6 +92,18 @@ export function CosmicScene() {
     let starTrail: TrailPoint[] = [];
     let sceneStars: SceneStar[] = [];
     let lastSampleAt = -Infinity;
+
+    // Measured rather than assumed: the type is set in CSS, changes at the
+    // breakpoint and with the language, and the placement needs exact boxes.
+    let labelSizes = PLANETS.map(() => ({ width: 0, height: 0 }));
+    let labels: LabelPlacement[] = PLANETS.map(() => INITIAL_LABEL);
+    // Where each name is drawn relative to its planet. It glides towards the
+    // side it has been given rather than jumping there; empty until the next
+    // frame puts every name straight where it belongs.
+    let labelOffsets: ({ x: number; y: number } | undefined)[] = [];
+    const labelTransforms: string[] = [];
+    const labelsShown: boolean[] = [];
+    let labelsDrawnAt = 0;
 
     let frameId = 0;
     let isRunning = false;
@@ -119,6 +137,17 @@ export function CosmicScene() {
       });
     };
 
+    const measureLabels = () => {
+      labelSizes = PLANETS.map((planet) => {
+        const label = labelsRef.current.get(planet.id);
+
+        return { width: label?.offsetWidth ?? 0, height: label?.offsetHeight ?? 0 };
+      });
+
+      // Every offset depends on the name's size.
+      labelOffsets = [];
+    };
+
     const resize = () => {
       const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
       layout = computeLayout(container.clientWidth, container.clientHeight);
@@ -131,6 +160,60 @@ export function CosmicScene() {
       // Trail geometry is stored in pixels, so a resize invalidates all of it.
       resetTrails();
       sceneStars = createSceneStars();
+
+      // So are the labels', and a side that was clear may not be any more.
+      labels = PLANETS.map(() => INITIAL_LABEL);
+      measureLabels();
+    };
+
+    const renderLabels = (candidates: readonly LabelCandidate[], seconds: number) => {
+      const elapsed = seconds - labelsDrawnAt;
+      labelsDrawnAt = seconds;
+
+      // Independent of the frame rate. A still scene has no time to glide in,
+      // and a long gap, such as a tab brought back to the front, is not worth
+      // one either.
+      const glide =
+        prefersReducedMotion || elapsed <= 0 ? 1 : 1 - Math.exp(-elapsed / LABEL_GLIDE_SECONDS);
+
+      labels.forEach((placement, index) => {
+        const planet = PLANETS[index];
+        const label = planet ? labelsRef.current.get(planet.id) : undefined;
+        const candidate = candidates[index];
+
+        if (!label || !candidate) {
+          return;
+        }
+
+        const target = labelOffset(candidate, placement.side, {
+          width: layout.width,
+          gap: layout.labelGap,
+        });
+        const from = labelOffsets[index];
+        const offset = from
+          ? { x: from.x + (target.x - from.x) * glide, y: from.y + (target.y - from.y) * glide }
+          : target;
+
+        labelOffsets[index] = offset;
+
+        // Whole pixels, so a name at rest is crisp, and written only when it
+        // has actually moved.
+        const transform = `translate(${String(Math.round(offset.x))}px, ${String(Math.round(offset.y))}px)`;
+
+        if (labelTransforms[index] !== transform) {
+          labelTransforms[index] = transform;
+          label.style.transform = transform;
+        }
+
+        // A name is drawn only while its planet can be seen and reached. The
+        // placement leaves the rest alone, so as the system is swallowed, the
+        // faint names it no longer weighs would pile up on the hole.
+        if (labelsShown[index] !== candidate.eligible) {
+          labelsShown[index] = candidate.eligible;
+          label.style.opacity = candidate.eligible ? '' : '0';
+          label.style.pointerEvents = candidate.eligible ? '' : 'none';
+        }
+      });
     };
 
     const drawFrame = () => {
@@ -249,6 +332,10 @@ export function CosmicScene() {
         Math.atan2(layout.blackHole.y - origin.y, layout.blackHole.x - origin.x),
       );
 
+      // How visible and reachable each planet's link is, which is also whether
+      // its name is worth placing.
+      const reach = PLANETS.map(() => 0);
+
       PLANETS.forEach((planet, index) => {
         const position = positions[index];
 
@@ -283,11 +370,34 @@ export function CosmicScene() {
           );
           const edge = Math.min(1, Math.max(0, inset / layout.markerMargin));
 
+          reach[index] = visibility * edge;
           marker.style.transform = `translate3d(${String(Math.round(position.x))}px, ${String(Math.round(position.y))}px, 0)`;
-          marker.style.opacity = String(visibility * edge);
+          marker.style.opacity = String(reach[index]);
           marker.inert = edge < 0.5;
         }
       });
+
+      const candidates = PLANETS.map((planet, index): LabelCandidate => {
+        const position = positions[index];
+        const isVisible = system.opacity * (emerged[index] ?? 1) >= VISIBILITY_THRESHOLD;
+
+        return {
+          x: position?.x ?? 0,
+          y: position?.y ?? 0,
+          radius: position && isVisible ? planet.size * orbitScale * position.depth : 0,
+          width: labelSizes[index]?.width ?? 0,
+          height: labelSizes[index]?.height ?? 0,
+          eligible: (reach[index] ?? 0) >= 0.5,
+        };
+      });
+
+      labels = placeLabels(candidates, labels, {
+        width: layout.width,
+        height: layout.height,
+        gap: layout.labelGap,
+        seconds,
+      });
+      renderLabels(candidates, seconds);
 
       // While the system is being swallowed its links are neither visible nor
       // reachable. A focus ring landing on something nobody can see is worse
@@ -338,6 +448,20 @@ export function CosmicScene() {
     });
     resizeObserver.observe(container);
 
+    // A name changes size when the web font arrives, when the breakpoint
+    // changes its type and when the language changes its words, and the scene
+    // resizing is not a signal for any of the three.
+    const labelObserver = new ResizeObserver(() => {
+      measureLabels();
+      drawFrame();
+    });
+
+    labelsRef.current.forEach((label) => {
+      if (label) {
+        labelObserver.observe(label);
+      }
+    });
+
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
         isInViewport = entries[0]?.isIntersecting ?? true;
@@ -361,6 +485,7 @@ export function CosmicScene() {
       isRunning = false;
       window.cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
+      labelObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -395,17 +520,24 @@ export function CosmicScene() {
                 }}
                 href={`#${planet.id}`}
                 aria-current={planet.id === activeId ? 'true' : undefined}
-                className="group pointer-events-auto absolute top-0 left-0 -m-7 flex size-14 flex-col items-center justify-end p-1"
+                className="group pointer-events-auto absolute top-0 left-0 -m-7 size-14 opacity-0"
               >
                 {/*
-                  Read out rather than drawn below the breakpoint. Five labels
-                  this length will not fit across a phone without overlapping
-                  each other and running off the edge, and on that screen the
-                  same sections are one tap away in the menu. The name stays in
-                  the accessibility tree either way.
+                  Drawn at every size: a planet with no name on it does not read
+                  as a link, and on a phone that hid the navigation altogether.
+                  The scene decides every frame which side of its planet the
+                  name sits on and glides it round when that side is taken. The
+                  marker starts transparent, so the five names do not flash up
+                  in a pile in the corner before the first frame.
+
+                  The halo keeps a name legible where it crosses the star, or
+                  for a moment another name.
                 */}
                 <span
-                  className={`sr-only md:not-sr-only md:translate-y-6 md:font-mono md:text-[0.625rem] md:tracking-[0.18em] md:whitespace-nowrap md:uppercase md:transition-colors md:duration-300 ${
+                  ref={(element) => {
+                    labelsRef.current.set(planet.id, element);
+                  }}
+                  className={`absolute top-1/2 left-1/2 font-mono text-[0.5625rem] tracking-[0.14em] whitespace-nowrap uppercase transition-[color,opacity] duration-300 [text-shadow:0_0_2px_var(--color-void),0_0_0.5rem_var(--color-void)] md:text-[0.625rem] md:tracking-[0.18em] ${
                     planet.id === activeId
                       ? 'text-starlight'
                       : 'text-dust group-hover:text-starlight group-focus-visible:text-starlight'

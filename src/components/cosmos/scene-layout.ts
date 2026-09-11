@@ -108,6 +108,8 @@ export interface Layout {
   trailSeconds: number;
   /** How close to an edge a marker may sit before it is faded out. */
   markerMargin: number;
+  /** From a planet's centre to the near edge of its name. */
+  labelGap: number;
 }
 
 /** Where the system is, and in what state, at a given moment. */
@@ -235,8 +237,8 @@ export function computeLayout(width: number, height: number): Layout {
   // On the edge itself, so the system rises out of it rather than fading into
   // existence in clear sky a little way in. Its outer orbits are wider than the
   // margin, which is the point: they arrive from beyond the frame. A phone
-  // starts further in, where there is no room to spare for that.
-  const entryX = width * (isNarrow ? 0.14 : 0.03);
+  // used to start further in, and the system simply appeared there instead.
+  const entryX = width * 0.03;
 
   return {
     width,
@@ -250,8 +252,13 @@ export function computeLayout(width: number, height: number): Layout {
     blackHole,
     starRadius: scale * (isNarrow ? 0.04 : 0.027),
     trailSeconds: isNarrow ? TRAIL_SECONDS_COMPACT : TRAIL_SECONDS,
-    // Half a section label on a screen wide enough to show them; barely more
-    // than a planet on one where they are read out of the menu instead.
+    // Half a section label on a wide screen. A phone's names are smaller and
+    // are kept inside the frame by their own placement, so there the margin
+    // only has to clear the planet.
     markerMargin: isNarrow ? 14 : 60,
+    // Where the names already sat on a wide screen, clear of the planets as
+    // they surface at their largest. A phone's planets are a few pixels
+    // across, so there the names can sit close enough to read as theirs.
+    labelGap: isNarrow ? 9 : 33,
   };
 }

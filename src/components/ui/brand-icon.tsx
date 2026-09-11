@@ -14,12 +14,22 @@ import { cn } from '@/lib/cn';
  * A parenthetical is a gloss on the name rather than part of it, so it is
  * dropped first: "ARCA (AFIP)" was giving its initials as A and an open
  * bracket.
+ *
+ * A name that leads with an acronym has already been abbreviated by the people
+ * who named it, so the acronym is kept: "REST APIs" is REST, where its
+ * initials gave RA, which names nothing.
  */
 function monogram(fullName: string): string {
   const name = fullName.replace(/\([^)]*\)/g, ' ').trim();
 
   if (name.length <= 3) {
     return name.toUpperCase();
+  }
+
+  const acronym = /^[A-Z]{2,4}(?=\s)/.exec(name)?.[0];
+
+  if (acronym) {
+    return acronym;
   }
 
   const words = name.split(/[\s.]+/).filter(Boolean);
@@ -62,8 +72,13 @@ export function TechnologyIcon({ id, className }: TechnologyIconProps) {
           classes,
           'grid place-items-center rounded-[3px] border border-current/45 font-mono leading-none',
           // Three letters do not fit a square at the size two do, and the ones
-          // that overflowed sat off their own badge.
-          letters.length > 2 ? 'text-[0.4375rem] tracking-[-0.06em]' : 'text-[0.5rem]',
+          // that overflowed sat off their own badge. Four do not fit one at any
+          // size still worth reading, so that badge grows sideways instead.
+          letters.length > 3
+            ? 'w-auto px-[3px] text-[0.4375rem] tracking-[-0.02em]'
+            : letters.length > 2
+              ? 'text-[0.4375rem] tracking-[-0.06em]'
+              : 'text-[0.5rem]',
         )}
       >
         {letters}

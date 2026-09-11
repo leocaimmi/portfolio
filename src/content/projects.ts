@@ -11,35 +11,12 @@ import type { Project } from './schemas';
  * Each entry is deliberately a card's worth of text. What the work involved
  * belongs in the timeline, where it is told once as a role with its outcomes,
  * rather than twice in two different shapes.
+ *
+ * For the same reason, what is built in a job is not catalogued here at all.
+ * DESSA Tech's product had a card of its own, and it was the timeline's first
+ * entry told again with the same thirteen technologies under it.
  */
 export const projects: Project[] = [
-  {
-    id: 'dessa-tech',
-    name: 'DESSA Tech',
-    description: {
-      es: 'Producto multiplataforma en web y móvil, sobre APIs propias y una base PostgreSQL gobernada por políticas de seguridad. Integra la facturación electrónica de ARCA y los cobros con Mercado Pago Checkout Pro.',
-      en: 'A cross-platform product on web and mobile, over in-house APIs and a PostgreSQL database governed by security policies. It integrates ARCA electronic invoicing and Mercado Pago Checkout Pro payments.',
-    },
-    year: 2025,
-    status: 'production',
-    visibility: 'private',
-    stack: [
-      'python',
-      'fastapi',
-      'typescript',
-      'expo',
-      'react-native',
-      'astro',
-      'postgresql',
-      'supabase',
-      'row-level-security',
-      'mercado-pago',
-      'whatsapp-api',
-      'arca',
-      'openai-api',
-    ],
-    links: {},
-  },
   {
     id: 'utn-point-of-sale',
     name: 'POS',
