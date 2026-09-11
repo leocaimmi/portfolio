@@ -8,6 +8,9 @@ import { clientEnv } from '@/lib/env/client';
 /** The name Turnstile gives the hidden input it writes the token into. */
 export const HUMAN_CHECK_FIELD = 'cf-turnstile-response';
 
+/** The standard widget's fixed width, which it will not shrink below. */
+const WIDGET_WIDTH = 300;
+
 /**
  * Cloudflare Turnstile, rendered inside the contact form.
  *
@@ -61,6 +64,12 @@ export function HumanCheck() {
  * `onReady` is what makes that effect fire at the right moment: `next/script`
  * calls it once the script has run, and again on every later mount, cached
  * script and all.
+ *
+ * The size is chosen from the room the form actually has. The standard widget
+ * is three hundred pixels wide whatever its container, and on a phone narrower
+ * than about 380 the form is not: the widget held it open and pushed the whole
+ * page past the edge of the screen. The compact one is half as wide and fits
+ * any phone.
  */
 function TurnstileWidget({ siteKey }: { siteKey: string }) {
   const container = useRef<HTMLDivElement>(null);
@@ -73,7 +82,11 @@ function TurnstileWidget({ siteKey }: { siteKey: string }) {
       return;
     }
 
-    const widgetId = window.turnstile?.render(element, { sitekey: siteKey, theme: 'dark' });
+    const widgetId = window.turnstile?.render(element, {
+      sitekey: siteKey,
+      theme: 'dark',
+      size: element.clientWidth < WIDGET_WIDTH ? 'compact' : 'normal',
+    });
 
     return () => {
       if (widgetId !== undefined) {
