@@ -242,9 +242,6 @@ function drawCorona(
   context.restore();
 }
 
-/** Number of pieces a trail is stroked in. Higher is smoother and costs more. */
-const TRAIL_SEGMENTS = 18;
-
 /**
  * A planet's recent path.
  *
@@ -260,15 +257,17 @@ const TRAIL_SEGMENTS = 18;
  * its opacity — which reads as the trail snapping rather than curling round.
  *
  * Stroking in a fixed number of overlapping chunks instead makes opacity a
- * function of age, which is what it always meant. Fourteen chunks is smooth
+ * function of age, which is what it always meant. A dozen or so is smooth
  * enough to look continuous and still an order of magnitude cheaper than a
- * segment per sample.
+ * segment per sample, and the count is the layout's to choose: each chunk is
+ * two strokes, so it is also the cheapest thing to give up on a phone.
  */
 export function drawTrail(
   context: CanvasRenderingContext2D,
   points: readonly ScenePoint[],
   color: Rgb,
   width: number,
+  segments: number,
 ): void {
   if (points.length < 3) {
     return;
@@ -281,7 +280,7 @@ export function drawTrail(
   context.lineCap = 'butt';
   context.lineJoin = 'round';
 
-  const perChunk = Math.max(1, Math.ceil((points.length - 1) / TRAIL_SEGMENTS));
+  const perChunk = Math.max(1, Math.ceil((points.length - 1) / segments));
 
   for (let start = 0; start < points.length - 1; start += perChunk) {
     // One point of overlap, so consecutive chunks meet instead of leaving gaps.
