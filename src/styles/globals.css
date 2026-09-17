@@ -218,16 +218,8 @@
  * Three layers make the material read as glass rather than as a flat shape: a
  * faint tint, a specular rim that catches light from the top-left, and an
  * inner highlight along the top edge with a dark line at the bottom to suggest
- * thickness. The fourth — a blurred backdrop — is reserved for the surfaces
- * that float over content, below.
- *
- * It used to be on every panel, and it cost more than it showed. Measured on
- * one screen of this page: twelve blurred elements covering 2.15 megapixels,
- * two and a half times the viewport, almost all of it the section cards. A
- * backdrop filter is recomputed whenever what is behind it moves, so every
- * frame of a scroll re-blurred all of that — and what is behind a card here is
- * a star field, which a twenty-two pixel blur turns into an even smudge.
- * Paying for a smudge is paying for nothing.
+ * thickness. The obvious fourth — a blurred backdrop — is not here, and the
+ * note on the raised variant below says what it cost when it was.
  *
  * The rim is painted by a masked gradient border rather than a plain
  * `border-color`, because a single flat colour cannot vary around the shape,
@@ -273,25 +265,32 @@
  * Denser variant for surfaces that float over content — the header, the docked
  * navigator, the way back to the top. Those overlap running text, so the
  * material has to read as a separate object rather than as a smudge on the
- * paragraph beneath it, and they are the only surfaces here where a blurred
- * backdrop is visibly doing something: text slides under them.
+ * paragraph beneath it. Opacity is what makes that separation here, because a
+ * blur cannot be afforded.
  *
- * They are also small and fixed. All four together cover a fraction of what
- * the section cards did, which is what makes the filter affordable on them.
+ * It was afforded once, briefly, and the bill arrived in Lighthouse: the same
+ * page scored 82 on a phone without the filter and 67 with it. A backdrop is
+ * re-blurred whenever what sits behind it changes, and the surface that floats
+ * at the top of this page floats over a canvas that repaints forty times a
+ * second — so the backdrop is never twice the same, and the blur is recomputed
+ * for every one of those frames, for as long as the hero is on screen. Nineteen
+ * points of a phone's score for a soft edge behind a bar is not a trade worth
+ * making, and it is why the site shipped without it for months and nobody
+ * noticed.
+ *
+ * If it ever comes back, it belongs behind a condition: only once the reader
+ * has scrolled past the hero, which is also the only moment it shows anything.
  */
 @utility glass-raised {
   background-color: --alpha(var(--color-deep) / 82%);
-  backdrop-filter: blur(30px) saturate(190%);
 }
 
 /*
- * A phone blurs less, and pays a little more opacity for it.
+ * A phone carries a few more points of opacity.
  *
- * The cost of a backdrop filter goes with its radius, and a phone is the
- * device least able to pay it — while the header there floats over a hero that
- * animates, so its backdrop changes constantly. Fourteen pixels instead of
- * thirty reads as the same material at arm's length, and the extra points of
- * background colour cover what the shallower blur no longer hides.
+ * Its panels are small, its star field is dense behind them, and text on a
+ * phone is read closer to the eye than text on a laptop — so the surface has
+ * to hide a little more of what is under it to stay comfortable.
  *
  * Unlayered on purpose, so it wins over the utility above without depending on
  * which order Tailwind emits them in.
@@ -303,19 +302,6 @@
 
   .glass-raised {
     background-color: --alpha(var(--color-deep) / 88%);
-    backdrop-filter: blur(14px) saturate(160%);
-  }
-}
-
-/*
- * Without backdrop-filter the floating surfaces would be semi-transparent
- * shapes over running text, which is the one place here that is genuinely hard
- * to read. Those browsers get an opaque surface instead — less pretty, still
- * legible, which is the right way round.
- */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-raised {
-    background-color: --alpha(var(--color-deep) / 97%);
   }
 }
 
