@@ -25,6 +25,24 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: securityHeaders(isDevelopment, allowsHumanCheck),
       },
+      {
+        /*
+         * Files in `public/` are served with `max-age=0, must-revalidate`, so
+         * every visit pays a round trip to be told the artwork has not changed
+         * — and the black hole is the largest thing the hero paints.
+         *
+         * A day of freshness with a month of serving the stale copy while it
+         * revalidates, rather than a year of immutability: these URLs carry no
+         * content hash, so a year would be a year of no way to change them.
+         */
+        source: '/:asset(gargantua.svg|favicon.ico|icon.png|apple-icon.png)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=2592000',
+          },
+        ],
+      },
     ]);
   },
 };
