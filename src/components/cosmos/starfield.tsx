@@ -47,9 +47,15 @@ const METEOR_MAX_DELAY_MS = 18_000;
  *
  * A meteor is the exception: it crosses in about a second and stutters at
  * anything less than the full rate, so it gets it, for the second it lasts.
+ *
+ * The rate while the page moves was raised again after a scroll measurement:
+ * the header's blurred backdrop has to be recomputed on every repaint of what
+ * sits behind it, and this canvas is what sits behind it. Twenty frames a
+ * second for a field of drifting dots is indistinguishable from thirty, and it
+ * is a third fewer invalidations during the one thing a reader is doing.
  */
-const IDLE_FRAME_MS = 66;
-const MOVING_FRAME_MS = 32;
+const IDLE_FRAME_MS = 100;
+const MOVING_FRAME_MS = 50;
 
 interface Star {
   x: number;
