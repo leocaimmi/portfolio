@@ -41,8 +41,15 @@ export function BlackHole({ className }: { className?: string }) {
       aria-hidden="true"
       width={480}
       height={480}
-      // Above the fold and the focal point of the hero, so never deferred.
+      /*
+       * Above the fold and the focal point of the hero, so never deferred —
+       * and, being the largest thing the page paints, it is what Largest
+       * Contentful Paint measures. High priority is what Lighthouse asks for
+       * on that request, and it is the one image worth taking bandwidth from
+       * everything else.
+       */
       loading="eager"
+      fetchPriority="high"
       decoding="async"
       className={cn(
         'pointer-events-none absolute max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen brightness-[1.45] saturate-[1.08] select-none',

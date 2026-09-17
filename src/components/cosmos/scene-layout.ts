@@ -267,22 +267,26 @@ export function computeLayout(width: number, height: number): Layout {
     // across, so there the names can sit close enough to read as theirs.
     labelGap: isNarrow ? 9 : 33,
     /*
-     * What the scene costs to paint, which is a phone's problem and not a
-     * laptop's. Every one of these is the same trade: the system moves slowly
-     * and is made of soft light, so it survives being painted at fewer pixels,
-     * fewer times a second, in fewer pieces — and a phone that drops frames
-     * while someone scrolls does not survive any of it.
+     * What the scene costs to paint, at every size. This began as a phone's
+     * concession and Lighthouse said otherwise: on a laptop the page spent
+     * 4.9 seconds of its first ten blocking the main thread, in long tasks of
+     * fifty to seventy-six milliseconds each — one frame of this canvas,
+     * repeatedly, at a size where it is far larger than any phone's and has a
+     * blended image and a pane of blurred glass composited over it.
      *
-     * The pixel ratio is the heaviest of the three. At 3, a phone paints nine
-     * times the pixels of a laptop's 1 for a scene of gradients and glows, and
-     * they are gradients and glows either way.
+     * The three numbers are the same trade: the system crosses the sky over
+     * two minutes and is made of soft light, so it survives being painted at
+     * fewer pixels, fewer times a second and in fewer pieces.
      *
-     * Forty frames a second rather than sixty: the fastest thing on screen
-     * takes eighteen seconds to go round, and the header's glass has to blur
-     * whatever moves under it again on every one of those frames.
+     * Forty frames a second rather than sixty, since the fastest thing on
+     * screen takes eighteen seconds to go round; one and a half device pixels
+     * rather than two, for a scene of gradients and glows; twelve pieces to a
+     * trail rather than eighteen, each piece being two strokes across six
+     * trails. Together they ask for roughly a third of the paint work per
+     * second that the scene used to.
      */
-    maxPixelRatio: isNarrow ? 1.5 : 2,
-    frameInterval: isNarrow ? 25 : 0,
-    trailSegments: isNarrow ? 12 : 18,
+    maxPixelRatio: 1.5,
+    frameInterval: 25,
+    trailSegments: 12,
   };
 }

@@ -12,6 +12,16 @@ const allowsHumanCheck = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== undefine
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /*
+   * The stylesheet is eleven kilobytes and it blocked the first paint for a
+   * hundred and fifty milliseconds on a throttled phone: a whole round trip
+   * spent before anything could be drawn. Inlined, it arrives with the
+   * document. Small enough to be worth carrying in every response, and the
+   * policy already allows the inline styles this needs.
+   */
+  experimental: {
+    inlineCss: true,
+  },
   /** Avoid advertising the framework and its version to potential attackers. */
   poweredByHeader: false,
   images: {
@@ -24,6 +34,24 @@ const nextConfig: NextConfig = {
         // not a policy.
         source: '/:path*',
         headers: securityHeaders(isDevelopment, allowsHumanCheck),
+      },
+      {
+        /*
+         * Files in `public/` are served with `max-age=0, must-revalidate`, so
+         * every visit pays a round trip to be told the artwork has not changed
+         * — and the black hole is the largest thing the hero paints.
+         *
+         * A day of freshness with a month of serving the stale copy while it
+         * revalidates, rather than a year of immutability: these URLs carry no
+         * content hash, so a year would be a year of no way to change them.
+         */
+        source: '/:asset(gargantua.svg|favicon.ico|icon.png|apple-icon.png)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=2592000',
+          },
+        ],
       },
     ]);
   },

@@ -215,10 +215,19 @@
 /*
  * Liquid glass.
  *
- * Four layers make the material read as glass rather than as a translucent
- * rectangle: a blurred and saturated backdrop, a faint tint, a specular rim
- * that catches light from the top-left, and an inner highlight along the top
- * edge with a dark line at the bottom to suggest thickness.
+ * Three layers make the material read as glass rather than as a flat shape: a
+ * faint tint, a specular rim that catches light from the top-left, and an
+ * inner highlight along the top edge with a dark line at the bottom to suggest
+ * thickness. The fourth — a blurred backdrop — is reserved for the surfaces
+ * that float over content, below.
+ *
+ * It used to be on every panel, and it cost more than it showed. Measured on
+ * one screen of this page: twelve blurred elements covering 2.15 megapixels,
+ * two and a half times the viewport, almost all of it the section cards. A
+ * backdrop filter is recomputed whenever what is behind it moves, so every
+ * frame of a scroll re-blurred all of that — and what is behind a card here is
+ * a star field, which a twenty-two pixel blur turns into an even smudge.
+ * Paying for a smudge is paying for nothing.
  *
  * The rim is painted by a masked gradient border rather than a plain
  * `border-color`, because a single flat colour cannot vary around the shape,
@@ -228,8 +237,6 @@
   position: relative;
   isolation: isolate;
   background-color: --alpha(var(--color-orbit) / 52%);
-  backdrop-filter: blur(22px) saturate(175%);
-  -webkit-backdrop-filter: blur(22px) saturate(175%);
   box-shadow:
     inset 0 1px 0 0 --alpha(var(--color-starlight) / 14%),
     inset 0 -1px 0 0 --alpha(var(--color-void) / 45%),
@@ -263,55 +270,50 @@
 }
 
 /**
- * Denser variant for surfaces that float over content — the header and the
- * docked navigator. Those overlap running text, so the material has to read as
- * a separate object rather than as a smudge on the paragraph beneath it.
+ * Denser variant for surfaces that float over content — the header, the docked
+ * navigator, the way back to the top. Those overlap running text, so the
+ * material has to read as a separate object rather than as a smudge on the
+ * paragraph beneath it, and they are the only surfaces here where a blurred
+ * backdrop is visibly doing something: text slides under them.
+ *
+ * They are also small and fixed. All four together cover a fraction of what
+ * the section cards did, which is what makes the filter affordable on them.
  */
 @utility glass-raised {
   background-color: --alpha(var(--color-deep) / 82%);
   backdrop-filter: blur(30px) saturate(190%);
-  -webkit-backdrop-filter: blur(30px) saturate(190%);
 }
 
 /*
  * A phone blurs less, and pays a little more opacity for it.
  *
- * A backdrop filter is not painted once: the browser re-blurs whatever sits
- * behind the glass every time that changes, and on this site something behind
- * it is always moving — the star field repaints, and the header floats over a
- * hero that animates sixty times a second. The cost of that goes with the blur
- * radius, and a phone is the device least able to pay it.
+ * The cost of a backdrop filter goes with its radius, and a phone is the
+ * device least able to pay it — while the header there floats over a hero that
+ * animates, so its backdrop changes constantly. Fourteen pixels instead of
+ * thirty reads as the same material at arm's length, and the extra points of
+ * background colour cover what the shallower blur no longer hides.
  *
- * Ten pixels instead of twenty-two reads as the same material at arm's length;
- * the extra few points of background colour cover what the shallower blur no
- * longer hides. Unlayered on purpose, so it wins over the utility above
- * without depending on which order Tailwind emits them in.
+ * Unlayered on purpose, so it wins over the utility above without depending on
+ * which order Tailwind emits them in.
  */
 @media (width < 48rem) {
   .glass {
     background-color: --alpha(var(--color-orbit) / 62%);
-    backdrop-filter: blur(10px) saturate(150%);
-    -webkit-backdrop-filter: blur(10px) saturate(150%);
   }
 
   .glass-raised {
     background-color: --alpha(var(--color-deep) / 88%);
     backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
   }
 }
 
 /*
- * Without backdrop-filter the panels would be flat, semi-transparent shapes
- * over a star field: text sits directly on moving dots and becomes hard to
- * read. Those browsers get an opaque surface instead — less pretty, still
+ * Without backdrop-filter the floating surfaces would be semi-transparent
+ * shapes over running text, which is the one place here that is genuinely hard
+ * to read. Those browsers get an opaque surface instead — less pretty, still
  * legible, which is the right way round.
  */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background-color: --alpha(var(--color-orbit) / 94%);
-  }
-
   .glass-raised {
     background-color: --alpha(var(--color-deep) / 97%);
   }
