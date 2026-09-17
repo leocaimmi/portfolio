@@ -1,3 +1,5 @@
+import { TopLink } from './top-link';
+
 /**
  * The site's mark: Saturn beside the full name.
  *
@@ -20,7 +22,7 @@ export function Wordmark({ name }: { name: string }) {
   const [given, ...rest] = name.split(' ');
 
   return (
-    <a href="#top" className="group flex items-center gap-2.5">
+    <TopLink className="group flex items-center gap-2.5">
       <svg aria-hidden="true" viewBox="0 0 28 28" className="size-6 shrink-0 overflow-visible">
         <defs>
           <radialGradient id="wordmark-globe" cx="34%" cy="28%">
@@ -74,6 +76,6 @@ export function Wordmark({ name }: { name: string }) {
           {rest.join(' ')}
         </span>
       </span>
-    </a>
+    </TopLink>
   );
 }

@@ -30,8 +30,6 @@ const SAMPLE_INTERVAL = 1 / 24;
 /** Star field speed, as a fraction of the scene size per second. */
 const DRIFT_RATE = 0.055;
 
-const MAX_PIXEL_RATIO = 2;
-
 /** One star per this many square pixels, capped so a wide screen stays cheap. */
 const STAR_AREA_PER_STAR = 5_600;
 const MAX_SCENE_STARS = 110;
@@ -106,6 +104,7 @@ export function CosmicScene() {
     let labelsDrawnAt = 0;
 
     let frameId = 0;
+    let paintedAt = -Infinity;
     let isRunning = false;
     let isInViewport = true;
     let lastCycle = 0;
@@ -149,8 +148,8 @@ export function CosmicScene() {
     };
 
     const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
       layout = computeLayout(container.clientWidth, container.clientHeight);
+      const ratio = Math.min(window.devicePixelRatio || 1, layout.maxPixelRatio);
       palette = readPalette(document.documentElement);
 
       canvas.width = Math.max(1, Math.floor(layout.width * ratio));
@@ -290,14 +289,14 @@ export function CosmicScene() {
       if (!prefersReducedMotion) {
         // No artificial drift any more: the system genuinely travels, so the
         // stored history is the path it actually took.
-        drawTrail(context, starTrail, palette.solar, trailWidth * 2);
+        drawTrail(context, starTrail, palette.solar, trailWidth * 2, layout.trailSegments);
 
         PLANETS.forEach((planet, index) => {
           const history = trails[index];
 
           if (history) {
             context.globalAlpha = system.opacity * (emerged[index] ?? 1);
-            drawTrail(context, history, palette[planet.color], trailWidth);
+            drawTrail(context, history, palette[planet.color], trailWidth, layout.trailSegments);
           }
         });
 
@@ -411,12 +410,28 @@ export function CosmicScene() {
       context.globalAlpha = 1;
     };
 
+    /**
+     * Asks for every frame the display offers and paints on the ones the
+     * layout has room for: the scene is slow enough that a phone can be given
+     * forty rather than sixty, and every frame skipped is also one the
+     * header's glass does not have to blur its backdrop for.
+     *
+     * The request comes first, so a paint that overruns its budget cannot
+     * stall the chain behind it.
+     */
     const loop = () => {
-      drawFrame();
-
       if (isRunning) {
         frameId = window.requestAnimationFrame(loop);
       }
+
+      const now = performance.now();
+
+      if (now - paintedAt < layout.frameInterval) {
+        return;
+      }
+
+      paintedAt = now;
+      drawFrame();
     };
 
     /**

@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { subscribeToFrames } from '@/lib/reading-position';
 
+import { TopLink } from './top-link';
+
 /** Fraction of the viewport the reader passes before the way back appears. */
 const SHOW_AFTER = 0.65;
 
@@ -34,8 +36,7 @@ export function BackToTop() {
   );
 
   return (
-    <a
-      href="#top"
+    <TopLink
       inert={!isVisible}
       className={cn(
         'glass fixed right-5 bottom-5 z-40 grid size-12 place-items-center rounded-full glass-raised transition-all duration-500 ease-orbital xl:hidden',
@@ -58,6 +59,6 @@ export function BackToTop() {
       </svg>
 
       <span className="sr-only">{t('backToTop')}</span>
-    </a>
+    </TopLink>
   );
 }

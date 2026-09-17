@@ -110,6 +110,12 @@ export interface Layout {
   markerMargin: number;
   /** From a planet's centre to the near edge of its name. */
   labelGap: number;
+  /** Ceiling on the canvas's pixel ratio. */
+  maxPixelRatio: number;
+  /** Shortest gap between two painted frames, in milliseconds. */
+  frameInterval: number;
+  /** Pieces each trail is stroked in. */
+  trailSegments: number;
 }
 
 /** Where the system is, and in what state, at a given moment. */
@@ -260,5 +266,23 @@ export function computeLayout(width: number, height: number): Layout {
     // they surface at their largest. A phone's planets are a few pixels
     // across, so there the names can sit close enough to read as theirs.
     labelGap: isNarrow ? 9 : 33,
+    /*
+     * What the scene costs to paint, which is a phone's problem and not a
+     * laptop's. Every one of these is the same trade: the system moves slowly
+     * and is made of soft light, so it survives being painted at fewer pixels,
+     * fewer times a second, in fewer pieces — and a phone that drops frames
+     * while someone scrolls does not survive any of it.
+     *
+     * The pixel ratio is the heaviest of the three. At 3, a phone paints nine
+     * times the pixels of a laptop's 1 for a scene of gradients and glows, and
+     * they are gradients and glows either way.
+     *
+     * Forty frames a second rather than sixty: the fastest thing on screen
+     * takes eighteen seconds to go round, and the header's glass has to blur
+     * whatever moves under it again on every one of those frames.
+     */
+    maxPixelRatio: isNarrow ? 1.5 : 2,
+    frameInterval: isNarrow ? 25 : 0,
+    trailSegments: isNarrow ? 12 : 18,
   };
 }

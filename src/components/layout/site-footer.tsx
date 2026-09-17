@@ -5,6 +5,7 @@ import { SECTION_IDS } from '@/config/navigation';
 import { profile } from '@/content';
 
 import { CurrentYear } from './current-year';
+import { TopLink } from './top-link';
 
 const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
   open: 'bg-star',
@@ -117,9 +118,9 @@ export function SiteFooter() {
               <span className="sr-only"> {common('opensInNewTab')}</span>
             </a>
 
-            <a href="#top" className="transition-colors duration-200 hover:text-star">
+            <TopLink className="transition-colors duration-200 hover:text-star">
               {t('backToTop')}
-            </a>
+            </TopLink>
           </div>
         </div>
       </div>

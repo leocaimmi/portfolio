@@ -86,6 +86,21 @@ export function buildPageMetadata({
       title,
       description,
     },
+    /*
+     * Declared here, from files in `public/`, rather than left to the `app/`
+     * file convention. That convention appends a build hash to every icon URL,
+     * and Google asks for a favicon at an address that stays put: a new one on
+     * every deploy is one way a site ends up with a globe beside its name in
+     * the results instead of its own mark. It also emits its own link tags,
+     * which alongside these would be two links to one icon at two URLs.
+     */
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+      ],
+      apple: { url: '/apple-icon.png', sizes: '180x180' },
+    },
     robots: {
       index: true,
       follow: true,
@@ -95,33 +110,54 @@ export function buildPageMetadata({
 }
 
 /**
- * Structured data describing the author.
+ * Structured data describing the site and the person behind it.
  *
- * Lets a search engine connect the name, the role and the profiles into one
- * entity instead of inferring it from prose. Built from the same content the
- * page renders, so the two cannot disagree.
- */
-/**
- * Structured data, as a string destined for a `<script>` element.
+ * Two things in one graph, because a search engine is being told two different
+ * facts. The `WebSite` node is what a result can call this site: without it,
+ * Google falls back to the bare domain, and the result above the title read
+ * "leonardocaimmi.com.ar" rather than a name. The `Person` node connects the
+ * name, the role and the profiles into one entity instead of leaving it to be
+ * inferred from prose, and the site names it as its publisher so the two are
+ * read as related rather than as two strangers on the same page.
  *
- * `JSON.stringify` leaves `<` alone, so a value containing `</script>` would
- * close the element early and everything after it would be parsed as markup.
- * Nothing in this content layer contains one today; escaping it is what keeps
- * that from being a property of the current copy rather than of the code.
+ * Both are built from the content the page itself renders, so they cannot
+ * disagree with it, and both carry an `@id` so the reference between them is a
+ * reference and not a repeated copy.
+ *
+ * Returned as a string destined for a `<script>` element. `JSON.stringify`
+ * leaves `<` alone, so a value containing `</script>` would close the element
+ * early and everything after it would be parsed as markup. Nothing in this
+ * content layer contains one today; escaping it is what keeps that from being a
+ * property of the current copy rather than of the code.
  */
-export function buildPersonJsonLd(locale: Locale): string {
+export function buildSiteJsonLd(locale: Locale): string {
+  const person = `${siteUrl}/#person`;
+
   const payload = JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: profile.name,
-    jobTitle: profile.role[locale],
-    description: profile.headline[locale],
-    email: `mailto:${profile.email}`,
-    url: siteUrl,
-    sameAs: profile.socials
-      .filter((social) => social.platform !== 'email')
-      .map((social) => social.url),
-    knowsLanguage: ['es', 'en'],
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${siteUrl}/#website`,
+        url: siteUrl,
+        name: profile.name,
+        inLanguage: locale,
+        publisher: { '@id': person },
+      },
+      {
+        '@type': 'Person',
+        '@id': person,
+        name: profile.name,
+        jobTitle: profile.role[locale],
+        description: profile.headline[locale],
+        email: `mailto:${profile.email}`,
+        url: siteUrl,
+        sameAs: profile.socials
+          .filter((social) => social.platform !== 'email')
+          .map((social) => social.url),
+        knowsLanguage: ['es', 'en'],
+      },
+    ],
   });
 
   return payload.replace(/</g, '\\u003c');
