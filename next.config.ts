@@ -12,6 +12,16 @@ const allowsHumanCheck = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== undefine
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /*
+   * The stylesheet is eleven kilobytes and it blocked the first paint for a
+   * hundred and fifty milliseconds on a throttled phone: a whole round trip
+   * spent before anything could be drawn. Inlined, it arrives with the
+   * document. Small enough to be worth carrying in every response, and the
+   * policy already allows the inline styles this needs.
+   */
+  experimental: {
+    inlineCss: true,
+  },
   /** Avoid advertising the framework and its version to potential attackers. */
   poweredByHeader: false,
   images: {
