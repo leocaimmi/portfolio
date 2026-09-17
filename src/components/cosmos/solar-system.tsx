@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
+import { TopLink } from '@/components/layout/top-link';
 import { cn } from '@/lib/cn';
 
 import { BlackHole } from './black-hole';
@@ -63,8 +64,7 @@ export function SolarSystem({ activeId, className }: SolarSystemProps) {
         className="absolute top-1/2 left-1/2 h-full w-px -translate-x-1/2 -translate-y-1/2 bg-horizon/35"
       />
 
-      <a
-        href="#top"
+      <TopLink
         className="absolute top-1/2 left-1/2 size-[15%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
@@ -73,7 +73,7 @@ export function SolarSystem({ activeId, className }: SolarSystemProps) {
         }}
       >
         <span className="sr-only">{t('home')}</span>
-      </a>
+      </TopLink>
 
       {/*
         Transparent to the pointer except on the planets themselves: the list
