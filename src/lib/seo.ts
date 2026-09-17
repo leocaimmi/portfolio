@@ -86,6 +86,21 @@ export function buildPageMetadata({
       title,
       description,
     },
+    /*
+     * Declared here, from files in `public/`, rather than left to the `app/`
+     * file convention. That convention appends a build hash to every icon URL,
+     * and Google asks for a favicon at an address that stays put: a new one on
+     * every deploy is one way a site ends up with a globe beside its name in
+     * the results instead of its own mark. It also emits its own link tags,
+     * which alongside these would be two links to one icon at two URLs.
+     */
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+      ],
+      apple: { url: '/apple-icon.png', sizes: '180x180' },
+    },
     robots: {
       index: true,
       follow: true,
