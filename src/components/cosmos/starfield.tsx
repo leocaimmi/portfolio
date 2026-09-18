@@ -40,19 +40,17 @@ const METEOR_MAX_DELAY_MS = 18_000;
  * How often the field is actually repainted, at rest and while the page moves.
  *
  * It does not need a frame of its own sixty times a second. A twinkle takes
- * seconds to cross its cycle, and this canvas sits behind every pane of glass
- * on the site — each of which has to blur its backdrop again whenever the
- * canvas repaints. At sixty frames a second an idle star field was the most
- * expensive thing on a page that was only being read.
+ * seconds to cross its cycle, and this canvas is the size of the window and
+ * sits under everything else on the site. At sixty frames a second an idle
+ * star field was the most expensive thing on a page that was only being read.
  *
  * A meteor is the exception: it crosses in about a second and stutters at
  * anything less than the full rate, so it gets it, for the second it lasts.
  *
- * The rate while the page moves was raised again after a scroll measurement:
- * the header's blurred backdrop has to be recomputed on every repaint of what
- * sits behind it, and this canvas is what sits behind it. Twenty frames a
- * second for a field of drifting dots is indistinguishable from thirty, and it
- * is a third fewer invalidations during the one thing a reader is doing.
+ * The interval while the page moves was raised again after a scroll
+ * measurement. Twenty frames a second for a field of drifting dots is
+ * indistinguishable from thirty, and scrolling is already the most expensive
+ * thing this page asks a phone to do.
  */
 const IDLE_FRAME_MS = 100;
 const MOVING_FRAME_MS = 50;

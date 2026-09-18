@@ -412,9 +412,9 @@ export function CosmicScene() {
 
     /**
      * Asks for every frame the display offers and paints on the ones the
-     * layout has room for: the scene is slow enough that a phone can be given
-     * forty rather than sixty, and every frame skipped is also one the
-     * header's glass does not have to blur its backdrop for.
+     * layout has room for: the scene is slow enough that forty a second reads
+     * the same as sixty, and every frame skipped is a full repaint of the
+     * largest canvas on the page that nothing has to composite over.
      *
      * The request comes first, so a paint that overruns its budget cannot
      * stall the chain behind it.
