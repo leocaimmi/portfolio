@@ -45,4 +45,17 @@ export const projects: Project[] = [
       repository: 'https://github.com/leocaimmi/portfolio',
     },
   },
+  {
+    id: 'gestor-da-vinci',
+    name: 'Gestor da Vinci',
+    description: {
+      es: 'Gestión contable para una empresa: clientes y proveedores con sus movimientos, ventas de un lado, compras del otro y transferencias entre medio, más un reporte semanal del estado de las cuentas.',
+      en: 'Accounting management for a company: clients and suppliers with their own movements, sales on one side, purchases on the other and transfers in between, plus a weekly report on the state of the accounts.',
+    },
+    year: 2025,
+    status: 'production',
+    visibility: 'private',
+    stack: ['typescript', 'angular', 'java', 'spring-boot', 'mysql', 'railway', 'vercel'],
+    links: {},
+  },
 ];
