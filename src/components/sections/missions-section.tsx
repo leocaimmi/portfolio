@@ -19,7 +19,7 @@ const STATUS_DOT = {
 /**
  * Projects section: the catalogue.
  *
- * Two cards abreast, each one scannable in a glance — what the system is, what
+ * A card apiece, each one scannable in a glance — what the system is, what
  * it is built from, and whether its source can be read. The account of what
  * the work involved lives in the timeline, told once as a role with its
  * outcomes; when it was repeated here as well, every project had two versions
@@ -27,10 +27,11 @@ const STATUS_DOT = {
  *
  * The site's own solar system already indexes the sections, so this one stays a
  * plain grid — a second orbital diagram here would compete with the navigation
- * rather than add to it. It stops at two columns: a third, at the widest
- * sizes, left an empty slot beside the two systems there are.
+ * rather than add to it. Three columns from the wide breakpoint upwards, where the catalogue
+ * fills a row exactly; it stopped at two while there were only two systems and
+ * the third column was an empty slot beside them.
  *
- * Two entries is what is worth writing up; the rest of the work is readable as
+ * What is worth writing up is written up; the rest of the work is readable as
  * code, so the section ends with the way through to it.
  */
 export function MissionsSection() {
@@ -42,7 +43,7 @@ export function MissionsSection() {
 
   return (
     <Section id="missions" label={t('label')} title={t('title')} description={t('description')}>
-      <ul className="grid items-start gap-5 sm:grid-cols-2">
+      <ul className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
           <li key={project.id} className="h-full">
             <Reveal delay={index * 60} className="h-full">
