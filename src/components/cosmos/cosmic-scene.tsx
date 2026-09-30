@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import type { MouseEvent } from 'react';
 import { useEffect, useRef } from 'react';
 
 import type { SectionId } from '@/config/navigation';
@@ -14,6 +15,8 @@ import type { LabelCandidate, LabelPlacement } from './label-placement';
 import { INITIAL_LABEL, labelOffset, placeLabels } from './label-placement';
 import type { Palette } from './palette';
 import { readPalette } from './palette';
+import type { HitCandidate } from './planet-hit';
+import { planetAt } from './planet-hit';
 import type { ScenePoint } from './scene-geometry';
 import { isInFront, planetPosition, PLANETS } from './scene-geometry';
 import {
@@ -36,6 +39,13 @@ const MAX_SCENE_STARS = 110;
 
 /** Time constant of a name gliding round its planet to a new side. */
 const LABEL_GLIDE_SECONDS = 0.12;
+
+/**
+ * How present a planet has to be, from 0 to 1, to carry a name or take a
+ * click. One threshold for both, so a planet can never be clickable without
+ * being named, or named without being clickable.
+ */
+const REACHABLE = 0.5;
 
 interface TrailPoint extends ScenePoint {
   /** Seconds since the scene started, kept so old points can be aged out. */
@@ -386,7 +396,7 @@ export function CosmicScene() {
           radius: position && isVisible ? planet.size * orbitScale * position.depth : 0,
           width: labelSizes[index]?.width ?? 0,
           height: labelSizes[index]?.height ?? 0,
-          eligible: (reach[index] ?? 0) >= 0.5,
+          eligible: (reach[index] ?? 0) >= REACHABLE,
         };
       });
 
@@ -506,6 +516,59 @@ export function CosmicScene() {
     };
   }, [prefersReducedMotion]);
 
+  /**
+   * Sends a click on a planet to the planet it was meant for, rather than to
+   * whichever target happens to be painted on top: the one whose dot or name is
+   * nearest the pointer. The rule, and the measurements behind it, are in
+   * `planet-hit`.
+   *
+   * Only a plain pointer click is redirected. Keyboard and assistive activation
+   * carry no position — their `detail` is zero — and a modified click asks for
+   * that particular link; both keep the browser's own behaviour. So does the
+   * redirected click itself, which is how it avoids being redirected again.
+   */
+  const handlePlanetClick = (event: MouseEvent<HTMLElement>) => {
+    const clicked = event.target instanceof Element ? event.target.closest('a') : null;
+
+    if (
+      !clicked ||
+      event.detail === 0 ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const markers = PLANETS.map((planet) => markersRef.current.get(planet.id) ?? null);
+    const candidates = PLANETS.map((planet, index): HitCandidate => {
+      const marker = markers[index];
+
+      if (!marker) {
+        return { x: 0, y: 0, name: null, reachable: false };
+      }
+
+      const box = marker.getBoundingClientRect();
+      const name = labelsRef.current.get(planet.id)?.getBoundingClientRect() ?? null;
+
+      return {
+        x: box.left + box.width / 2,
+        y: box.top + box.height / 2,
+        name,
+        reachable: !marker.inert && Number(marker.style.opacity) >= REACHABLE,
+      };
+    });
+
+    const intended = markers[planetAt(candidates, event.clientX, event.clientY)];
+
+    if (intended && intended !== clicked) {
+      event.preventDefault();
+      intended.click();
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -525,6 +588,7 @@ export function CosmicScene() {
         ref={navRef}
         aria-label={t('systemMap')}
         className="pointer-events-none absolute inset-0 z-20"
+        onClick={handlePlanetClick}
       >
         <ul>
           {PLANETS.map((planet) => (
