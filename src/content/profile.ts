@@ -34,8 +34,8 @@ export const profile: Profile = {
       en: 'At DESSA Tech I build cross-platform web and mobile applications with Expo, FastAPI and Supabase, with integrations to the ARCA API for electronic invoicing, a WhatsApp bot straight through Meta, and payment automation with Mercado Pago Checkout Pro.',
     },
     {
-      es: 'En paralelo soy Ayudante de Cátedra en la UTN, actualmente en Arquitectura y Sistemas Operativos. Entre 2025 y 2026 pasé por el resto de las materias de la carrera, acompañando a los estudiantes en la resolución de problemas y en lo que hiciera falta.',
-      en: 'Alongside that I am a Teaching Assistant at UTN, currently on Computer Architecture and Operating Systems. Across 2025 and 2026 I worked through the rest of the courses on the programme, helping students reason problems out and with whatever else they needed.',
+      es: 'En paralelo soy Ayudante de Cátedra en la UTN, actualmente en Arquitectura y Sistemas Operativos. Entre 2025 y 2026 pasé por el resto de las materias de la carrera, acompañando a los estudiantes en la resolución de problemas.',
+      en: 'Alongside that I am a Teaching Assistant at UTN, currently on Computer Architecture and Operating Systems. Across 2025 and 2026 I worked through the rest of the courses on the programme, helping students reason problems out.',
     },
   ],
 
