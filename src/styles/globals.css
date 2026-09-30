@@ -310,24 +310,43 @@
  *
  * The star field already throws one across the sky every seven to eighteen
  * seconds, and this is the same event at the scale of a card: a streak that
- * traces the outline once and leaves the card still again for twelve seconds.
+ * goes round the outline twice and then leaves the card still for ten seconds.
  * That pause is the whole design. A light that went round and round would be a
  * spinner, and eight spinners on one page is a page that looks like it is
  * loading.
  *
+ * It went round once at first, and once was not enough to see. By the time the
+ * eye had found the movement the movement was over, which read as a glitch
+ * rather than as an event. Two laps at a slightly quicker pace is long enough
+ * to be watched and still short enough to be missed if you are reading.
+ *
  * The price was measured, not assumed, because the last decoration these panels
  * carried cost a fifth of the mobile score. Three Lighthouse runs a side on one
- * build, minutes apart: 70 against 71, and 495 milliseconds of blocked main
- * thread against 485 — the same number twice, inside the spread between runs of
- * the same thing. What it does add is style and paint, roughly a third more of
- * each across the trace, which is what eight elements that move every frame
- * cost. None of it lands in a long task, so nothing a reader is waiting on gets
- * slower. That is the trade, and it is a far better one than a filter that had
- * to recompute whenever anything behind it moved.
+ * build, on an idle machine: 82 against 83, and 153 milliseconds of blocked main
+ * thread against 159. The score is the same score and the main thread is if
+ * anything quieter, both well inside the spread between runs of the same thing.
+ *
+ * The machine has to be idle for any of that to mean anything. An earlier pass
+ * was taken with a dev server and a browser running the page alongside, and it
+ * read seven points of damage that were not there; the control came out worse
+ * than the thing being tested, which is how it gave itself away.
+ *
+ * What it does add is paint, which it roughly doubles: 485 milliseconds across
+ * the trace against 218, and some seventy per cent more style work. That is
+ * what eight elements moving every frame cost, and in absolute terms it is a
+ * twentieth of a ten-second trace. None of it lands in a long task, so nothing
+ * a reader waits on gets slower — which is the whole difference between this
+ * and a filter that had to recompute whenever anything behind it moved.
  *
  * `offset-rotate` is left at its default so the streak turns with the path and
  * leans through the corners, and the gradient puts the bright end at the front,
  * which is what makes the rest of it read as a tail rather than as a dash.
+ *
+ * The second lap is a distance of 200%, not a second animation. The path is
+ * closed, so the distance wraps and 100% and 0% are the same point on the rim:
+ * the streak crosses the seam without a seam. Two keyframed laps in a row would
+ * have had to rewind between them, and a frame landing in that rewind is a
+ * flash in the wrong place.
  *
  * Guarded by `@supports`: a browser without `rect()` drops the path and would
  * otherwise leave a lit streak parked in the corner of every card. The delay is
@@ -357,8 +376,9 @@
 }
 
 /*
- * Two and a half seconds of travel in fifteen. The fades at either end are
- * short on purpose: a meteor arrives already lit.
+ * Four and a half seconds of travel in fifteen, two laps inside it. The fades
+ * at either end are short on purpose: a meteor arrives already lit, and it
+ * burns out over the last stretch rather than being switched off.
  */
 @keyframes comet-rim {
   0% {
@@ -370,17 +390,17 @@
     opacity: 1;
   }
 
-  15% {
+  27% {
     opacity: 1;
   }
 
-  18% {
-    offset-distance: 100%;
+  30% {
+    offset-distance: 200%;
     opacity: 0;
   }
 
   100% {
-    offset-distance: 100%;
+    offset-distance: 200%;
     opacity: 0;
   }
 }
