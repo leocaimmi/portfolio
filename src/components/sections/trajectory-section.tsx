@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 
-import { COMET_DELAYS, Panel } from '@/components/ui/panel';
+import { COMET_RHYTHMS, Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { TechTagList } from '@/components/ui/tech-tag';
@@ -75,7 +75,7 @@ export function TrajectorySection() {
             </span>
 
             <Reveal delay={index * 80}>
-              <Panel className={cn('p-5 sm:p-7', COMET_DELAYS[index % COMET_DELAYS.length])}>
+              <Panel className={cn('p-5 sm:p-7', COMET_RHYTHMS[index % COMET_RHYTHMS.length])}>
                 {/* Numbered from the first entry, the way a log is kept. */}
                 <p className="font-mono text-[0.625rem] tracking-[0.22em] text-dust uppercase">
                   {`LOG ${String(experience.length - index).padStart(2, '0')}`}

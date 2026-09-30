@@ -1,7 +1,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { ActionLink } from '@/components/ui/action-link';
-import { COMET_DELAYS, Panel } from '@/components/ui/panel';
+import { COMET_RHYTHMS, Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { SocialIcon } from '@/components/ui/social-icon';
@@ -46,7 +46,10 @@ export function MissionsSection() {
     <Section id="missions" label={t('label')} title={t('title')} description={t('description')}>
       <ul className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
-          <li key={project.id} className={cn('h-full', COMET_DELAYS[index % COMET_DELAYS.length])}>
+          <li
+            key={project.id}
+            className={cn('h-full', COMET_RHYTHMS[index % COMET_RHYTHMS.length])}
+          >
             <Reveal delay={index * 60} className="h-full">
               <ProjectCard project={project} locale={locale} />
             </Reveal>
