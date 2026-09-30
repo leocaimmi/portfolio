@@ -306,6 +306,86 @@
 }
 
 /*
+ * A meteor along the rim.
+ *
+ * The star field already throws one across the sky every seven to eighteen
+ * seconds, and this is the same event at the scale of a card: a streak that
+ * traces the outline once and leaves the card still again for twelve seconds.
+ * That pause is the whole design. A light that went round and round would be a
+ * spinner, and eight spinners on one page is a page that looks like it is
+ * loading.
+ *
+ * The price was measured, not assumed, because the last decoration these panels
+ * carried cost a fifth of the mobile score. Three Lighthouse runs a side on one
+ * build, minutes apart: 70 against 71, and 495 milliseconds of blocked main
+ * thread against 485 — the same number twice, inside the spread between runs of
+ * the same thing. What it does add is style and paint, roughly a third more of
+ * each across the trace, which is what eight elements that move every frame
+ * cost. None of it lands in a long task, so nothing a reader is waiting on gets
+ * slower. That is the trade, and it is a far better one than a filter that had
+ * to recompute whenever anything behind it moved.
+ *
+ * `offset-rotate` is left at its default so the streak turns with the path and
+ * leans through the corners, and the gradient puts the bright end at the front,
+ * which is what makes the rest of it read as a tail rather than as a dash.
+ *
+ * Guarded by `@supports`: a browser without `rect()` drops the path and would
+ * otherwise leave a lit streak parked in the corner of every card. The delay is
+ * a variable, and the sections that render a row of these set it, because eight
+ * of them firing as one is the way this reads as a gimmick rather than weather.
+ */
+@utility comet-rim {
+  @supports (offset-path: rect(0 100% 100% 0 round 1rem)) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3.5rem;
+      height: 1.5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--color-star));
+      box-shadow: 0 0 6px --alpha(var(--color-star) / 50%);
+      offset-path: rect(0 100% 100% 0 round var(--radius-panel));
+      offset-distance: 0%;
+      opacity: 0;
+      pointer-events: none;
+      animation: comet-rim 15s linear infinite;
+      animation-delay: var(--comet-delay, 0s);
+    }
+  }
+}
+
+/*
+ * Two and a half seconds of travel in fifteen. The fades at either end are
+ * short on purpose: a meteor arrives already lit.
+ */
+@keyframes comet-rim {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+
+  2% {
+    opacity: 1;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  18% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/*
  * Respect the operating system's motion preference. Animation is decoration
  * here; nothing in the interface depends on it to convey meaning.
  */
