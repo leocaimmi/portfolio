@@ -306,6 +306,135 @@
 }
 
 /*
+ * A meteor along the rim.
+ *
+ * The star field already throws one across the sky every seven to eighteen
+ * seconds, and this is the same event at the scale of a card: a streak that
+ * goes round the outline twice and then leaves the card still for ten seconds
+ * or so, depending on which clock that card is keeping.
+ * That pause is the whole design. A light that went round and round would be a
+ * spinner, and eight spinners on one page is a page that looks like it is
+ * loading.
+ *
+ * It went round once at first, and once was not enough to see. By the time the
+ * eye had found the movement the movement was over, which read as a glitch
+ * rather than as an event. Two laps at a slightly quicker pace is long enough
+ * to be watched and still short enough to be missed if you are reading.
+ *
+ * The price was measured, not assumed, because the last decoration these panels
+ * carried cost a fifth of the mobile score. Three Lighthouse runs a side on one
+ * build, on an idle machine: 83 against 83, and 157 milliseconds of blocked main
+ * thread against 159. The same score and the same main thread, both well inside
+ * the spread between runs of the same thing.
+ *
+ * The machine has to be idle for any of that to mean anything. An earlier pass
+ * was taken with a dev server and a browser running the page alongside, and it
+ * read seven points of damage that were not there; the control came out worse
+ * than the thing being tested, which is how it gave itself away.
+ *
+ * What it does add is paint, which it roughly doubles: 432 milliseconds across
+ * the trace against 218, and some seventy per cent more style work. That is
+ * what eight elements moving every frame cost, and in absolute terms it is a
+ * twentieth of a ten-second trace. None of it lands in a long task, so nothing
+ * a reader waits on gets slower — which is the whole difference between this
+ * and a filter that had to recompute whenever anything behind it moved.
+ *
+ * `offset-rotate` is left at its default so the streak turns with the path and
+ * leans through the corners, and the gradient puts the bright end at the front,
+ * which is what makes the rest of it read as a tail rather than as a dash.
+ *
+ * The second lap is a distance of 200%, not a second animation. The path is
+ * closed, so the distance wraps and 100% and 0% are the same point on the rim:
+ * the streak crosses the seam without a seam. Two keyframed laps in a row would
+ * have had to rewind between them, and a frame landing in that rewind is a
+ * flash in the wrong place.
+ *
+ * Guarded by `@supports`: a browser without `rect()` drops the path and would
+ * otherwise leave a lit streak parked in the corner of every card.
+ *
+ * Both the delay and the period are variables, and the rows that render these
+ * set them. The period is what makes the pattern unpredictable: fourteen,
+ * fifteen and seventeen seconds share no factor, so which cards are lit at once
+ * only repeats after fifty-nine minutes. Three cards on the same clock would
+ * fire in the same order forever and read as a progress indicator; on three
+ * clocks the row is usually quiet, often has one running, sometimes two, and
+ * now and then all of them. Nobody can predict which, and that is the point.
+ */
+@utility comet-rim {
+  /*
+   * The streak is a rigid line on a path that turns a right angle over sixteen
+   * pixels, so near a corner part of it is necessarily outside the shape: it
+   * left the card as a small bright rectangle, which is the one thing a rim
+   * light must never do. Clipping is the only fix, because nothing can bend a
+   * straight element around a curve.
+   *
+   * `clip` rather than `hidden`: it clips to the same rounded border box
+   * without turning every card into a scroll container. The panels have no
+   * border, so that edge is the edge the eye sees.
+   */
+  overflow: clip;
+
+  @supports (offset-path: rect(0 100% 100% 0 round 1rem)) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3rem;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--color-star));
+      box-shadow: 0 0 5px --alpha(var(--color-star) / 50%);
+      /*
+       * Two pixels in from the edge rather than centred on it. Riding the line
+       * exactly would put half the glow outside the clip, and a soft glow cut
+       * by a hard edge is a straight bright line — the square flash again, in
+       * another form.
+       */
+      offset-path: rect(
+        2px calc(100% - 2px) calc(100% - 2px) 2px round calc(var(--radius-panel) - 2px)
+      );
+      offset-distance: 0%;
+      opacity: 0;
+      pointer-events: none;
+      animation: comet-rim var(--comet-duration, 15s) linear infinite;
+      animation-delay: var(--comet-delay, 0s);
+    }
+  }
+}
+
+/*
+ * Three tenths of the cycle is travel, with two laps inside it: four and a half
+ * seconds when the cycle is fifteen. The fades at either end are short on
+ * purpose — a meteor arrives already lit, and burns out over its last stretch
+ * rather than being switched off.
+ */
+@keyframes comet-rim {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+
+  2% {
+    opacity: 1;
+  }
+
+  27% {
+    opacity: 1;
+  }
+
+  30% {
+    offset-distance: 200%;
+    opacity: 0;
+  }
+
+  100% {
+    offset-distance: 200%;
+    opacity: 0;
+  }
+}
+
+/*
  * Respect the operating system's motion preference. Animation is decoration
  * here; nothing in the interface depends on it to convey meaning.
  */

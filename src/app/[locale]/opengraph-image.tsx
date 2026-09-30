@@ -8,7 +8,7 @@ import { routing } from '@/i18n/routing';
 
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-export const alt = 'Leonardo Caimmi — Full Stack Developer';
+export const alt = 'Leonardo Caimmi | Full Stack Developer';
 
 export function generateStaticParams(): LocaleRouteParams[] {
   return routing.locales.map((locale) => ({ locale }));

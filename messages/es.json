@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Leonardo Caimmi — Desarrollador Full Stack",
+    "title": "Leonardo Caimmi | Desarrollador Full Stack",
     "description": "Desarrollador Full Stack en Mar del Plata. Construyo aplicaciones web y móviles end to end: interfaces con React y Expo, APIs con FastAPI y datos en PostgreSQL."
   },
   "common": {
@@ -55,7 +55,7 @@
   "missions": {
     "label": "03 / Misiones",
     "title": "Sistemas en órbita",
-    "description": "Dos sistemas, los dos en producción. Los repositorios de clientes son privados; el detalle del trabajo está en la trayectoria.",
+    "description": "Tres sistemas, los tres en producción. Los repositorios de clientes son privados; el detalle del trabajo está en la trayectoria.",
     "status": {
       "production": "En producción",
       "development": "En desarrollo",

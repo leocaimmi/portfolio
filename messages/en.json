@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Leonardo Caimmi — Full Stack Developer",
+    "title": "Leonardo Caimmi | Full Stack Developer",
     "description": "Full Stack Developer in Mar del Plata, Argentina. I build web and mobile applications end to end: interfaces with React and Expo, APIs with FastAPI, data in PostgreSQL."
   },
   "common": {
@@ -55,7 +55,7 @@
   "missions": {
     "label": "03 / Missions",
     "title": "Systems in orbit",
-    "description": "Two systems, both in production. Client repositories are private; the detail of the work is in the timeline.",
+    "description": "Three systems, all three in production. Client repositories are private; the detail of the work is in the timeline.",
     "status": {
       "production": "In production",
       "development": "In development",

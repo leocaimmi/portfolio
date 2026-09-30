@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Panel } from '@/components/ui/panel';
+import { COMET_RHYTHMS, Panel } from '@/components/ui/panel';
 import { Reveal } from '@/components/ui/reveal';
 import { Section } from '@/components/ui/section';
 import { PLATFORM_LABEL, SocialIcon } from '@/components/ui/social-icon';
@@ -31,7 +31,7 @@ export function ContactSection({ isFormEnabled }: ContactSectionProps) {
     <Section id="contact" label={t('label')} title={t('title')} description={t('description')}>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Reveal>
-          <Panel className="h-full p-6 sm:p-7">
+          <Panel className={`h-full p-6 sm:p-7 ${COMET_RHYTHMS[1]}`}>
             <h3 className="telemetry">{t('directTitle')}</h3>
 
             <ul className="mt-5 space-y-3">
