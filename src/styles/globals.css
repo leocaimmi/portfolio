@@ -56,6 +56,7 @@
   --animate-scan: scan 3.5s var(--ease-orbital) infinite;
   --animate-reveal: reveal 0.7s var(--ease-orbital) both;
   --animate-arrive: arrive 0.7s var(--ease-orbital) backwards;
+  --animate-surface: surface 0.9s var(--ease-orbital) backwards;
 
   --animate-sonar-sweep: sonar-sweep 1.5s cubic-bezier(0.32, 0, 0.24, 1) 1 both;
   --animate-sonar-pulse: sonar-pulse 1.5s ease-out 1 both;
@@ -130,6 +131,14 @@
   from {
     opacity: 0.01;
     transform: translateY(0.9rem);
+  }
+}
+
+/* The same, for the bar that floats at the top: it settles down into place. */
+@keyframes surface {
+  from {
+    opacity: 0.01;
+    transform: translateY(-0.75rem);
   }
 }
 

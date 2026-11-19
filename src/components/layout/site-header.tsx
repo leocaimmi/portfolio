@@ -49,7 +49,13 @@ export function SiteHeader({ name }: { name: string }) {
   return (
     <header className="fixed inset-x-0 top-4 z-50 px-4 sm:px-6">
       <div className="relative mx-auto w-full max-w-7xl">
-        <div className="glass flex h-14 items-center gap-4 rounded-full glass-raised px-4 sm:px-5">
+        {/*
+          The bar settles into place with the hero's copy. The movement is on
+          the pane itself rather than on the header around it: an ancestor
+          that fades cuts the pane off from what is behind it, and the blur
+          would arrive flat and snap to glass only once the fade was over.
+        */}
+        <div className="glass flex h-14 animate-surface items-center gap-4 rounded-full glass-raised px-4 sm:px-5">
           <Wordmark name={name} />
 
           <nav aria-label={t('label')} className="ml-auto hidden md:block">
