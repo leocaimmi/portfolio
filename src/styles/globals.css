@@ -56,7 +56,7 @@
   --animate-scan: scan 3.5s var(--ease-orbital) infinite;
   --animate-reveal: reveal 0.7s var(--ease-orbital) both;
   --animate-arrive: arrive 0.7s var(--ease-orbital) backwards;
-  --animate-write: write 1s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+  --animate-write: write 1.6s cubic-bezier(0.45, 0, 0.25, 1) 0.25s backwards;
   --animate-surface: surface 0.9s var(--ease-orbital) backwards;
   --animate-ignite: ignite 1.6s var(--ease-orbital) backwards;
 
@@ -137,9 +137,16 @@
 }
 
 /*
- * The name is written in rather than faded in: uncovered from left to right, at
- * the pace of a hand rather than a slide. A clip moves nothing and lays nothing
- * out, so it costs a repaint of one heading per frame.
+ * The name is written in rather than faded in: uncovered from left to right,
+ * after a beat for the eye to land, and slowly enough to be watched.
+ *
+ * A clip, and not a mask or a letter at a time, for one reason: the compositor
+ * runs it. The main thread is exactly what is busy while a page opens —
+ * hydrating, swapping fonts in, waking the canvases — and a mask is repainted
+ * by it on every frame, so the writing stuttered whenever it had to wait its
+ * turn. A clip keeps moving through all of that. Splitting the name into a box
+ * per letter would have kept it smooth too, but as a dozen layers animating at
+ * once, which made the hero's canvas wait twice as long to start.
  *
  * The clip reaches a quarter of an em past the box above, below and before the
  * text, so the letters that overhang their line are not shaved while it runs,

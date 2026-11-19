@@ -7,20 +7,19 @@ import { profile } from '@/content';
 /**
  * When each line of the copy arrives, in milliseconds after the page opens.
  *
- * The name comes first and is written in, left to right, over a second. The
- * lines that qualify it follow while it is still being written, close enough
- * together to read as one movement rather than a list being dealt out, so the
- * whole hero is in place well under a second and a half after it opens and
- * nothing in it is ever waited for: every line is there, and works, from the
- * first frame.
+ * The name comes first and is written in, left to right, over a second and a
+ * half. The lines that qualify it follow once it is half written, close enough
+ * together to read as one movement rather than a list being dealt out. Nothing
+ * waits on any of it: every line is there, and works, from the first frame —
+ * the entrance only decides when each one becomes visible.
  */
 const ENTRANCE_DELAY = {
-  role: 380,
-  credential: 460,
-  availability: 520,
-  headline: 580,
-  actions: 660,
-  hint: 1000,
+  role: 1100,
+  credential: 1200,
+  availability: 1280,
+  headline: 1360,
+  actions: 1460,
+  hint: 2000,
 } as const;
 
 function entrance(delay: number) {
