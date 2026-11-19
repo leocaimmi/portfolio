@@ -151,179 +151,215 @@ function createMeteor(width: number, height: number): Meteor {
   };
 }
 
+/**
+ * Paints the sky onto `canvas` and keeps it moving until the returned function
+ * is called. Returns nothing when the browser will not give it a 2D context.
+ */
+function mountStarfield(
+  canvas: HTMLCanvasElement,
+  prefersReducedMotion: boolean,
+): (() => void) | undefined {
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    return undefined;
+  }
+
+  const sprites = createStarSprites();
+  const fallbackSprite = createStarSprite(STAR_COLORS[0]);
+
+  let width = 0;
+  let height = 0;
+  let stars: Star[] = [];
+  let meteor: Meteor | undefined;
+  let nextMeteorAt = performance.now() + randomBetween(METEOR_MIN_DELAY_MS, METEOR_MAX_DELAY_MS);
+  let scrollY = window.scrollY;
+  let frameId = 0;
+  let lastTime = performance.now();
+  let hasMoved = false;
+
+  const resize = () => {
+    const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = Math.floor(width * ratio);
+    canvas.height = Math.floor(height * ratio);
+    canvas.style.width = `${String(width)}px`;
+    canvas.style.height = `${String(height)}px`;
+
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    stars = createStars(width, height);
+  };
+
+  const drawStars = (time: number) => {
+    for (const star of stars) {
+      const twinkle = prefersReducedMotion
+        ? 1
+        : 0.65 + 0.35 * Math.sin(time * star.twinkleSpeed + star.twinklePhase);
+
+      const offset = scrollY * star.depth * PARALLAX_STRENGTH;
+      // Wrap vertically so the field never runs out as the page scrolls.
+      const y = (((star.y - offset) % height) + height) % height;
+      const diameter = star.size * 4;
+      const sprite = sprites.get(star.color) ?? fallbackSprite;
+
+      context.globalAlpha = star.baseAlpha * twinkle;
+      context.drawImage(sprite, star.x - diameter / 2, y - diameter / 2, diameter, diameter);
+    }
+
+    context.globalAlpha = 1;
+  };
+
+  const drawMeteor = (delta: number) => {
+    if (!meteor) {
+      return;
+    }
+
+    meteor.progress += delta;
+
+    const life = meteor.progress / meteor.duration;
+
+    if (life >= 1) {
+      meteor = undefined;
+      nextMeteorAt = performance.now() + randomBetween(METEOR_MIN_DELAY_MS, METEOR_MAX_DELAY_MS);
+      return;
+    }
+
+    const headX = meteor.x + meteor.velocityX * meteor.progress;
+    const headY = meteor.y + meteor.velocityY * meteor.progress;
+    const tailX = headX - meteor.velocityX * meteor.length;
+    const tailY = headY - meteor.velocityY * meteor.length;
+
+    // Fade in over the first fifth of the life, then out across the rest.
+    const alpha = life < 0.2 ? life / 0.2 : 1 - (life - 0.2) / 0.8;
+
+    const trail = context.createLinearGradient(tailX, tailY, headX, headY);
+    trail.addColorStop(0, 'rgba(34, 211, 238, 0)');
+    trail.addColorStop(1, `rgba(233, 237, 255, ${String(alpha.toFixed(3))})`);
+
+    context.strokeStyle = trail;
+    context.lineWidth = 1.4;
+    context.lineCap = 'round';
+    context.beginPath();
+    context.moveTo(tailX, tailY);
+    context.lineTo(headX, headY);
+    context.stroke();
+  };
+
+  const render = (time: number) => {
+    frameId = window.requestAnimationFrame(render);
+
+    const interval = meteor ? 0 : hasMoved ? MOVING_FRAME_MS : IDLE_FRAME_MS;
+    const delta = time - lastTime;
+
+    if (delta < interval) {
+      return;
+    }
+
+    lastTime = time;
+    hasMoved = false;
+
+    context.clearRect(0, 0, width, height);
+    drawStars(time);
+
+    if (!prefersReducedMotion) {
+      if (!meteor && time >= nextMeteorAt) {
+        meteor = createMeteor(width, height);
+      }
+
+      drawMeteor(delta);
+    }
+  };
+
+  const start = () => {
+    if (frameId !== 0) {
+      return;
+    }
+
+    lastTime = performance.now();
+    frameId = window.requestAnimationFrame(render);
+  };
+
+  const stop = () => {
+    if (frameId !== 0) {
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
+    }
+  };
+
+  const handleScroll = () => {
+    scrollY = window.scrollY;
+    hasMoved = true;
+
+    // With motion disabled there is no loop running, so repaint on demand.
+    if (prefersReducedMotion) {
+      context.clearRect(0, 0, width, height);
+      drawStars(performance.now());
+    }
+  };
+
+  /** A hidden tab must not burn battery on decoration. */
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      stop();
+    } else if (!prefersReducedMotion) {
+      start();
+    }
+  };
+
+  resize();
+
+  if (prefersReducedMotion) {
+    // A single static frame: the sky is still there, it just holds still.
+    drawStars(performance.now());
+  } else {
+    start();
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  return () => {
+    stop();
+    window.removeEventListener('resize', resize);
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}
+
 export function Starfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
 
-    if (!canvas || !context) {
+    if (!canvas) {
       return;
     }
 
-    const sprites = createStarSprites();
-    const fallbackSprite = createStarSprite(STAR_COLORS[0]);
+    let teardown: (() => void) | undefined;
 
-    let width = 0;
-    let height = 0;
-    let stars: Star[] = [];
-    let meteor: Meteor | undefined;
-    let nextMeteorAt = performance.now() + randomBetween(METEOR_MIN_DELAY_MS, METEOR_MAX_DELAY_MS);
-    let scrollY = window.scrollY;
-    let frameId = 0;
-    let lastTime = performance.now();
-    let hasMoved = false;
-
-    const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
-      width = window.innerWidth;
-      height = window.innerHeight;
-
-      canvas.width = Math.floor(width * ratio);
-      canvas.height = Math.floor(height * ratio);
-      canvas.style.width = `${String(width)}px`;
-      canvas.style.height = `${String(height)}px`;
-
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      stars = createStars(width, height);
-    };
-
-    const drawStars = (time: number) => {
-      for (const star of stars) {
-        const twinkle = prefersReducedMotion
-          ? 1
-          : 0.65 + 0.35 * Math.sin(time * star.twinkleSpeed + star.twinklePhase);
-
-        const offset = scrollY * star.depth * PARALLAX_STRENGTH;
-        // Wrap vertically so the field never runs out as the page scrolls.
-        const y = (((star.y - offset) % height) + height) % height;
-        const diameter = star.size * 4;
-        const sprite = sprites.get(star.color) ?? fallbackSprite;
-
-        context.globalAlpha = star.baseAlpha * twinkle;
-        context.drawImage(sprite, star.x - diameter / 2, y - diameter / 2, diameter, diameter);
-      }
-
-      context.globalAlpha = 1;
-    };
-
-    const drawMeteor = (delta: number) => {
-      if (!meteor) {
-        return;
-      }
-
-      meteor.progress += delta;
-
-      const life = meteor.progress / meteor.duration;
-
-      if (life >= 1) {
-        meteor = undefined;
-        nextMeteorAt = performance.now() + randomBetween(METEOR_MIN_DELAY_MS, METEOR_MAX_DELAY_MS);
-        return;
-      }
-
-      const headX = meteor.x + meteor.velocityX * meteor.progress;
-      const headY = meteor.y + meteor.velocityY * meteor.progress;
-      const tailX = headX - meteor.velocityX * meteor.length;
-      const tailY = headY - meteor.velocityY * meteor.length;
-
-      // Fade in over the first fifth of the life, then out across the rest.
-      const alpha = life < 0.2 ? life / 0.2 : 1 - (life - 0.2) / 0.8;
-
-      const trail = context.createLinearGradient(tailX, tailY, headX, headY);
-      trail.addColorStop(0, 'rgba(34, 211, 238, 0)');
-      trail.addColorStop(1, `rgba(233, 237, 255, ${String(alpha.toFixed(3))})`);
-
-      context.strokeStyle = trail;
-      context.lineWidth = 1.4;
-      context.lineCap = 'round';
-      context.beginPath();
-      context.moveTo(tailX, tailY);
-      context.lineTo(headX, headY);
-      context.stroke();
-    };
-
-    const render = (time: number) => {
-      frameId = window.requestAnimationFrame(render);
-
-      const interval = meteor ? 0 : hasMoved ? MOVING_FRAME_MS : IDLE_FRAME_MS;
-      const delta = time - lastTime;
-
-      if (delta < interval) {
-        return;
-      }
-
-      lastTime = time;
-      hasMoved = false;
-
-      context.clearRect(0, 0, width, height);
-      drawStars(time);
-
-      if (!prefersReducedMotion) {
-        if (!meteor && time >= nextMeteorAt) {
-          meteor = createMeteor(width, height);
-        }
-
-        drawMeteor(delta);
-      }
-    };
-
-    const start = () => {
-      if (frameId !== 0) {
-        return;
-      }
-
-      lastTime = performance.now();
-      frameId = window.requestAnimationFrame(render);
-    };
-
-    const stop = () => {
-      if (frameId !== 0) {
-        window.cancelAnimationFrame(frameId);
-        frameId = 0;
-      }
-    };
-
-    const handleScroll = () => {
-      scrollY = window.scrollY;
-      hasMoved = true;
-
-      // With motion disabled there is no loop running, so repaint on demand.
-      if (prefersReducedMotion) {
-        context.clearRect(0, 0, width, height);
-        drawStars(performance.now());
-      }
-    };
-
-    /** A hidden tab must not burn battery on decoration. */
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        stop();
-      } else if (!prefersReducedMotion) {
-        start();
-      }
-    };
-
-    resize();
-
-    if (prefersReducedMotion) {
-      // A single static frame: the sky is still there, it just holds still.
-      drawStars(performance.now());
-    } else {
-      start();
-    }
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    /*
+     * Set up in a task of its own rather than in the effect itself.
+     *
+     * Effects run together, in one task, straight after hydration, and this
+     * one is the most expensive of them: the page's first 2D contexts are made
+     * here, and making the first one wakes the whole canvas machinery. Run
+     * alongside the hero's own scene it held the main thread for one long
+     * stretch at exactly the moment a visitor first tries to use the page.
+     * Deferred, the two are separate tasks, each short enough not to block,
+     * and the sky arrives a frame later behind content that is already there.
+     */
+    const timer = window.setTimeout(() => {
+      teardown = mountStarfield(canvas, prefersReducedMotion);
+    }, 0);
 
     return () => {
-      stop();
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.clearTimeout(timer);
+      teardown?.();
     };
   }, [prefersReducedMotion]);
 

@@ -1,25 +1,8 @@
 import { z } from 'zod';
 
-/** The ceiling every field shares. Nothing sent here needs more room. */
-const FIELD_MAX = 500;
+import { CONTACT_LIMITS } from './contact-limits';
 
-/**
- * Field limits, shared by the form and the endpoint.
- *
- * Exported so the inputs can advertise the same `maxLength` the server
- * enforces, instead of letting someone write past the limit and discover it
- * only after pressing send.
- *
- * An address is capped below the shared ceiling because the standard puts a
- * hard bound at 254 characters: anything longer is not a long address, it is
- * not an address.
- */
-export const CONTACT_LIMITS = {
-  nameMax: FIELD_MAX,
-  emailMax: 254,
-  messageMin: 20,
-  messageMax: FIELD_MAX,
-} as const;
+export { CONTACT_LIMITS };
 
 /**
  * A name: a letter, then letters, marks, spaces and the punctuation names

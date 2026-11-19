@@ -28,14 +28,15 @@ const nextConfig: NextConfig = {
       {
         /*
          * Files in `public/` are served with `max-age=0, must-revalidate`, so
-         * every visit pays a round trip to be told the artwork has not changed
-         * — and the black hole is the largest thing the hero paints.
+         * every visit pays a round trip to be told the icons have not changed.
          *
          * A day of freshness with a month of serving the stale copy while it
          * revalidates, rather than a year of immutability: these URLs carry no
          * content hash, so a year would be a year of no way to change them.
+         * The black hole used to be here too; it is now imported, and served
+         * under a hashed name that can be cached for good.
          */
-        source: '/:asset(gargantua.svg|favicon.ico|icon.png|apple-icon.png)',
+        source: '/:asset(favicon.ico|icon.png|apple-icon.png)',
         headers: [
           {
             key: 'Cache-Control',

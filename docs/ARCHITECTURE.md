@@ -96,7 +96,7 @@ nothing owned the job of starting the loop afterwards.
 
 ### The black hole is borrowed, not written
 
-`public/gargantua.svg` is derived from [Diego Inácio's notebook][gargantua] (MIT). Two
+`src/components/cosmos/gargantua.svg` is derived from [Diego Inácio's notebook][gargantua] (MIT). Two
 attempts to reproduce it on canvas got closer each time and were never going to arrive:
 the effect is `feTurbulence` and per-channel colour matrices composited in `screen`, and
 canvas has no answer to either.
