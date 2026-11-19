@@ -5,18 +5,22 @@ import { ActionLink } from '@/components/ui/action-link';
 import { profile } from '@/content';
 
 /**
- * The order the copy arrives in, in milliseconds after the page opens: the
- * name first, then each line that qualifies it, close enough together to read
- * as one movement rather than a list being dealt out. The last line is in place
- * a second after the first.
+ * When each line of the copy arrives, in milliseconds after the page opens.
+ *
+ * The name comes first and is written in, left to right, over a second. The
+ * lines that qualify it follow while it is still being written, close enough
+ * together to read as one movement rather than a list being dealt out, so the
+ * whole hero is in place well under a second and a half after it opens and
+ * nothing in it is ever waited for: every line is there, and works, from the
+ * first frame.
  */
 const ENTRANCE_DELAY = {
-  role: 80,
-  credential: 140,
-  availability: 200,
-  headline: 260,
-  actions: 340,
-  hint: 700,
+  role: 380,
+  credential: 460,
+  availability: 520,
+  headline: 580,
+  actions: 660,
+  hint: 1000,
 } as const;
 
 function entrance(delay: number) {
@@ -66,7 +70,7 @@ export function HeroSection() {
       */}
       <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-4 pt-28 pb-[48vh] sm:px-6 md:py-24">
         <div className="pointer-events-auto max-w-2xl">
-          <h1 className="animate-arrive font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
+          <h1 className="animate-write font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
             {profile.name}
           </h1>
 

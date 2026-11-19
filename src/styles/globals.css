@@ -56,6 +56,7 @@
   --animate-scan: scan 3.5s var(--ease-orbital) infinite;
   --animate-reveal: reveal 0.7s var(--ease-orbital) both;
   --animate-arrive: arrive 0.7s var(--ease-orbital) backwards;
+  --animate-write: write 1s cubic-bezier(0.65, 0, 0.35, 1) backwards;
   --animate-surface: surface 0.9s var(--ease-orbital) backwards;
   --animate-ignite: ignite 1.6s var(--ease-orbital) backwards;
 
@@ -132,6 +133,24 @@
   from {
     opacity: 0.01;
     transform: translateY(0.9rem);
+  }
+}
+
+/*
+ * The name is written in rather than faded in: uncovered from left to right, at
+ * the pace of a hand rather than a slide. A clip moves nothing and lays nothing
+ * out, so it costs a repaint of one heading per frame.
+ *
+ * The clip reaches a quarter of an em past the box above, below and before the
+ * text, so the letters that overhang their line are not shaved while it runs,
+ * and it ends with the whole heading uncovered: when it lets go, nothing moves.
+ */
+@keyframes write {
+  from {
+    clip-path: inset(-0.25em 100% -0.25em -0.25em);
+  }
+  to {
+    clip-path: inset(-0.25em 0 -0.25em -0.25em);
   }
 }
 
