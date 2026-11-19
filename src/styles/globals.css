@@ -57,6 +57,7 @@
   --animate-reveal: reveal 0.7s var(--ease-orbital) both;
   --animate-arrive: arrive 0.7s var(--ease-orbital) backwards;
   --animate-surface: surface 0.9s var(--ease-orbital) backwards;
+  --animate-ignite: ignite 1.6s var(--ease-orbital) backwards;
 
   --animate-sonar-sweep: sonar-sweep 1.5s cubic-bezier(0.32, 0, 0.24, 1) 1 both;
   --animate-sonar-pulse: sonar-pulse 1.5s ease-out 1 both;
@@ -139,6 +140,22 @@
   from {
     opacity: 0.01;
     transform: translateY(-0.75rem);
+  }
+}
+
+/*
+ * The black hole lights up rather than fading in: it is at full strength within
+ * the first two fifths, and spends the rest of the time finishing the turn that
+ * brings it to rest. The light arriving early is what keeps the largest thing
+ * on screen from reading as late.
+ */
+@keyframes ignite {
+  from {
+    opacity: 0.01;
+    transform: scale(0.84) rotate(-12deg);
+  }
+  40% {
+    opacity: 1;
   }
 }
 
