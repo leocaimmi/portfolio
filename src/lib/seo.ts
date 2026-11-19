@@ -15,6 +15,22 @@ export function absoluteUrl(path: string): string {
 }
 
 /**
+ * The picture a search result should show beside this site.
+ *
+ * Not the social card. That one is mostly words at 1200×630, and Google crops
+ * its thumbnail to a small square: what survived was half a headline and a
+ * paragraph nobody could read. Its own guidance asks for the opposite — an image
+ * representative of the page, without text, and not at an extreme aspect ratio.
+ * So this is the black hole from the hero, rendered square on the page's own
+ * void and nebulae, and served from `public/` at an address that stays put.
+ */
+export const searchPreview = {
+  path: '/search-preview.jpg',
+  width: 1200,
+  height: 1200,
+} as const;
+
+/**
  * Builds the `<link rel="alternate" hreflang>` set for a route.
  *
  * Both locales are listed alongside an `x-default`, so a search engine knows
@@ -126,14 +142,22 @@ export function buildPageMetadata({
  * as its publisher so the two are read as related rather than as two strangers
  * on the same page.
  *
- * Both are built from the content the page itself renders, so they cannot
- * disagree with it, and both carry an `@id` so the reference between them is a
- * reference and not a repeated copy.
+ * The `WebPage` node is the page in the reader's language, and it exists to say
+ * one thing: which picture stands for it. `primaryImageOfPage` is the first of
+ * the sources Google lists for choosing a result's thumbnail, and it points at
+ * `searchPreview` rather than leaving the choice to the text-heavy social card.
+ * It lives in this graph, rendered by the layout, because the site is a single
+ * page; the layout and the home page are the same document.
  *
- * Both point at the home page as `https://host/`, with the slash. That is the
- * form Google's site-name guide asks for — the canonical home page, written the
- * way its own examples write it — and the form every crawler normalises the
- * bare origin to anyway, so the name is declared for the URL it is read from.
+ * All of it is built from the content the page itself renders, so it cannot
+ * disagree with it, and every node carries an `@id` so the references between
+ * them are references and not repeated copies.
+ *
+ * The site and the person point at the home page as `https://host/`, with the
+ * slash. That is the form Google's site-name guide asks for — the canonical
+ * home page, written the way its own examples write it — and the form every
+ * crawler normalises the bare origin to anyway, so the name is declared for the
+ * URL it is read from.
  *
  * Returned as a string destined for a `<script>` element. `JSON.stringify`
  * leaves `<` alone, so a value containing `</script>` would close the element
@@ -143,19 +167,39 @@ export function buildPageMetadata({
  */
 export function buildSiteJsonLd(locale: Locale): string {
   const home = absoluteUrl('/');
+  const page = absoluteUrl(getPathname({ href: '/', locale }));
+  const website = `${home}#website`;
   const person = `${home}#person`;
+  const image = `${home}#search-preview`;
 
   const payload = JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebSite',
-        '@id': `${home}#website`,
+        '@id': website,
         url: home,
         name: profile.name,
         alternateName: [profile.shortName],
         inLanguage: locale,
         publisher: { '@id': person },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${page}#webpage`,
+        url: page,
+        inLanguage: locale,
+        isPartOf: { '@id': website },
+        about: { '@id': person },
+        primaryImageOfPage: { '@id': image },
+      },
+      {
+        '@type': 'ImageObject',
+        '@id': image,
+        url: absoluteUrl(searchPreview.path),
+        contentUrl: absoluteUrl(searchPreview.path),
+        width: searchPreview.width,
+        height: searchPreview.height,
       },
       {
         '@type': 'Person',
