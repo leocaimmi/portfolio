@@ -124,6 +124,11 @@ export function buildPageMetadata({
  * disagree with it, and both carry an `@id` so the reference between them is a
  * reference and not a repeated copy.
  *
+ * Both point at the home page as `https://host/`, with the slash. That is the
+ * form Google's site-name guide asks for — the canonical home page, written the
+ * way its own examples write it — and the form every crawler normalises the
+ * bare origin to anyway, so the name is declared for the URL it is read from.
+ *
  * Returned as a string destined for a `<script>` element. `JSON.stringify`
  * leaves `<` alone, so a value containing `</script>` would close the element
  * early and everything after it would be parsed as markup. Nothing in this
@@ -131,15 +136,16 @@ export function buildPageMetadata({
  * property of the current copy rather than of the code.
  */
 export function buildSiteJsonLd(locale: Locale): string {
-  const person = `${siteUrl}/#person`;
+  const home = absoluteUrl('/');
+  const person = `${home}#person`;
 
   const payload = JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebSite',
-        '@id': `${siteUrl}/#website`,
-        url: siteUrl,
+        '@id': `${home}#website`,
+        url: home,
         name: profile.name,
         inLanguage: locale,
         publisher: { '@id': person },
@@ -151,7 +157,7 @@ export function buildSiteJsonLd(locale: Locale): string {
         jobTitle: profile.role[locale],
         description: profile.headline[locale],
         email: `mailto:${profile.email}`,
-        url: siteUrl,
+        url: home,
         sameAs: profile.socials
           .filter((social) => social.platform !== 'email')
           .map((social) => social.url),
