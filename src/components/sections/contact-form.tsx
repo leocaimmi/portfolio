@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { CONTACT_LIMITS } from '@/lib/contact-limits';
 import type { ContactErrorKey, ContactField } from '@/lib/contact-schema';
-import { CONTACT_LIMITS, contactMessageSchema, toFieldErrors } from '@/lib/contact-schema';
 
 import { HUMAN_CHECK_FIELD, HumanCheck, isHumanCheckEnabled } from './human-check';
 
@@ -23,6 +23,19 @@ function readTextField(formData: FormData, name: string): string {
   const value = formData.get(name);
 
   return typeof value === 'string' ? value : '';
+}
+
+/**
+ * The schema, fetched the first time it can be needed rather than with the page.
+ *
+ * It is built on a validation library that ships as one indivisible module of
+ * a third of a megabyte, and this form is the only thing in the browser that
+ * uses it. Most visitors never write; the ones who do start by focusing a
+ * field, which is when this begins loading, long before they can press send.
+ * The bundler caches the module, so every later call resolves at once.
+ */
+function loadSchema() {
+  return import('@/lib/contact-schema');
 }
 
 /**
@@ -82,6 +95,7 @@ export function ContactForm() {
       return;
     }
 
+    const { contactMessageSchema, toFieldErrors } = await loadSchema();
     const parsed = contactMessageSchema.safeParse(payload);
 
     if (!parsed.success) {
@@ -130,6 +144,9 @@ export function ContactForm() {
       noValidate
       onSubmit={(event) => {
         void handleSubmit(event);
+      }}
+      onFocus={() => {
+        void loadSchema();
       }}
       className="space-y-5"
     >
