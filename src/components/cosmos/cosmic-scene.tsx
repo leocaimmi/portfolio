@@ -117,6 +117,7 @@ export function CosmicScene() {
     let paintedAt = -Infinity;
     let isRunning = false;
     let isInViewport = true;
+    let isLit = false;
     let lastCycle = 0;
 
     const startedAt = performance.now();
@@ -226,6 +227,12 @@ export function CosmicScene() {
     };
 
     const drawFrame = () => {
+      // Transparent until its first frame, then faded in with the star field.
+      if (!isLit) {
+        isLit = true;
+        canvas.dataset.lit = '';
+      }
+
       // Not zero: at phase zero the system has not left the edge yet, so a
       // frozen scene would be an empty sky with an unreachable navigation in it.
       const seconds = prefersReducedMotion ? STILL_SECONDS : (performance.now() - startedAt) / 1000;
@@ -574,7 +581,11 @@ export function CosmicScene() {
       ref={containerRef}
       className="absolute inset-x-0 top-[46%] bottom-0 overflow-hidden md:inset-0"
     >
-      <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 ease-out data-lit:opacity-100"
+      />
 
       <BlackHole />
 
