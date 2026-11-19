@@ -45,6 +45,16 @@ function monogram(fullName: string): string {
   return name.slice(0, 2).toUpperCase();
 }
 
+/**
+ * The id a technology's mark is defined under in `TechnologyIconSprite`.
+ *
+ * One function for both ends of the reference, so the definition and every use
+ * of it cannot drift apart.
+ */
+export function technologyIconId(id: TechnologyId): string {
+  return `tech-icon-${id}`;
+}
+
 interface TechnologyIconProps {
   id: TechnologyId;
   className?: string;
@@ -57,6 +67,12 @@ interface TechnologyIconProps {
  * beside it, so announcing the mark as well would just repeat the label.
  * Painted in `currentColor` rather than the brand's own hue, which keeps a
  * row of thirty logos from turning into a colour chart.
+ *
+ * The mark itself is a reference to the page's sprite, not a copy of the path.
+ * The same logos repeat under every entry in the timeline and every project,
+ * and some of them run to five kilobytes of path data: inlined, they were a
+ * third of the document, and each copy was paid for twice — once in the HTML
+ * and again in the payload React hydrates from.
  */
 export function TechnologyIcon({ id, className }: TechnologyIconProps) {
   const glyph = TECHNOLOGY_ICONS[id];
@@ -93,7 +109,7 @@ export function TechnologyIcon({ id, className }: TechnologyIconProps) {
       fill="currentColor"
       className={classes}
     >
-      <path d={glyph.path} />
+      <use href={`#${technologyIconId(id)}`} />
     </svg>
   );
 }

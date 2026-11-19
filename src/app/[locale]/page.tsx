@@ -6,6 +6,7 @@ import { ContactSection } from '@/components/sections/contact-section';
 import { HeroSection } from '@/components/sections/hero-section';
 import { MissionsSection } from '@/components/sections/missions-section';
 import { TrajectorySection } from '@/components/sections/trajectory-section';
+import { TechnologyIconSprite } from '@/components/ui/technology-icon-sprite';
 import type { LocaleRouteParams } from '@/i18n/resolve-locale';
 import { resolveLocale } from '@/i18n/resolve-locale';
 import { isContactDeliveryConfigured } from '@/lib/env/server';
@@ -50,6 +51,7 @@ export default async function HomePage({ params }: { params: Promise<LocaleRoute
       <Activity>
         <ContactSection isFormEnabled={isContactDeliveryConfigured} />
       </Activity>
+      <TechnologyIconSprite />
     </>
   );
 }
