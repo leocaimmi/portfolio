@@ -106,6 +106,14 @@ path data is almost all of the weight and this file has to travel over a network
 SMIL animations were rewritten as CSS, because no media query can stop SMIL and the file
 has to hold still for a visitor who asked for less motion.
 
+`public/search-preview.jpg` is the same figure, still, for the thumbnail beside a search
+result. It is a 1200×1200 render of `gargantua.svg` at 1500px wide, centred on the void with
+the two nebulae and the survey grid behind it, blended in `screen` with the hero's
+brightness lift, captured with headless Chrome and saved as JPEG at quality 88. Square
+because Google crops the thumbnail to a square, and free of text because its guidance asks
+for that; the social card stays as it is for link previews. Re-render it if the black hole
+changes, and keep the dimensions in `searchPreview` (`src/lib/seo.ts`) in step.
+
 [gargantua]: https://github.com/diegoinacio/creative-coding-notebooks
 
 ### Reveals animate from the visible state

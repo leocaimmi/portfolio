@@ -9,6 +9,8 @@ import type { Profile } from './schemas';
 export const profile: Profile = {
   name: 'Leonardo Caimmi',
 
+  shortName: 'Leo Caimmi',
+
   role: {
     es: 'Desarrollador Full Stack',
     en: 'Full Stack Developer',

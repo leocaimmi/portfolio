@@ -89,6 +89,11 @@ export type Resume = z.infer<typeof resumeSchema>;
 
 export const profileSchema = z.object({
   name: z.string().min(1),
+  /**
+   * The shorter name the author also answers to. Offered to search engines as
+   * the site's alternate name, for when they will not settle on the full one.
+   */
+  shortName: z.string().min(1),
   /** Short job title, rendered next to the name. */
   role: localizedTextSchema,
   /** The qualification held, as it is stated under the name. */

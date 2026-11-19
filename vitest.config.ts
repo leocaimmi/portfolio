@@ -17,6 +17,14 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/**/*.test.{ts,tsx}'],
+    server: {
+      deps: {
+        // next-intl's ESM build imports `next/navigation` without an extension,
+        // which Node's resolver refuses outside a bundler. Inlining it hands the
+        // import to Vite, which resolves it the way Next.js does.
+        inline: ['next-intl'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

@@ -64,11 +64,11 @@ export default async function LocaleLayout({
         </a>
 
         {/*
-          Structured data naming the site and the author, so a search engine
-          reads two stated facts rather than inferring them from prose - the
-          name a result should call this site, and the person behind it. Built
-          from the same content the page renders, and inert: a JSON-LD script
-          tag is never executed.
+          Structured data naming the site, the author and the page's picture, so
+          a search engine reads stated facts rather than inferring them from
+          prose - the name a result should call this site, the person behind it,
+          and the image to show beside it. Built from the same content the page
+          renders, and inert: a JSON-LD script tag is never executed.
         */}
         <script
           type="application/ld+json"
