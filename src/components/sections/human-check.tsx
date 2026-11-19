@@ -49,6 +49,13 @@ export function HumanCheck() {
 }
 
 /**
+ * How far below the screen the form may still be when the widget starts
+ * loading: about a screen and a half of scroll, which is longer than the
+ * script and the challenge take to arrive.
+ */
+const LOAD_AHEAD = '0px 0px 150% 0px';
+
+/**
  * Split out so the hooks below only run where there is a key to render with:
  * they cannot sit behind the early return above, and the alternative — running
  * them anyway and asserting the key is there — trades a structural guarantee
@@ -80,7 +87,45 @@ export function HumanCheck() {
  */
 function TurnstileWidget({ siteKey }: { siteKey: string }) {
   const container = useRef<HTMLDivElement>(null);
+  const [isNear, setIsNear] = useState(false);
   const [isScriptReady, setIsScriptReady] = useState(false);
+
+  /*
+   * The script is not requested until the form is on its way into view.
+   *
+   * Requested with the page, it arrived with everything a challenge needs —
+   * two megabytes from Cloudflare, more than the whole site weighs — and ran it
+   * while the hero was still being put together, for a form at the very bottom
+   * that most visitors never reach. Its frame also logged a Content Security
+   * Policy complaint of its own on every load, which is not ours to fix but
+   * was ours to report.
+   *
+   * Every browser the site supports has IntersectionObserver — the floor in
+   * `browserslist` is well above it — so there is no fallback to write.
+   */
+  useEffect(() => {
+    const element = container.current;
+
+    if (element === null || isNear) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: LOAD_AHEAD },
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isNear]);
 
   useEffect(() => {
     const element = container.current;
@@ -104,13 +149,15 @@ function TurnstileWidget({ siteKey }: { siteKey: string }) {
 
   return (
     <>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        strategy="afterInteractive"
-        onReady={() => {
-          setIsScriptReady(true);
-        }}
-      />
+      {isNear ? (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onReady={() => {
+            setIsScriptReady(true);
+          }}
+        />
+      ) : null}
 
       <div ref={container} className="mt-5" />
     </>
