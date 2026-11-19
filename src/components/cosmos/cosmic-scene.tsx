@@ -474,9 +474,50 @@ export function CosmicScene() {
       }
     };
 
-    const resizeObserver = new ResizeObserver(() => {
+    let sizedFor = '';
+
+    /**
+     * Resizes only when the container has actually changed size. A resize
+     * reallocates the whole canvas, rereads the palette from the stylesheet
+     * and measures every name, and a resize observer reports the size it was
+     * attached at as if it were a change: the scene used to do all of that
+     * twice on the way in, for a size it already had.
+     */
+    const resizeIfChanged = (): boolean => {
+      const size = `${String(container.clientWidth)}x${String(container.clientHeight)}`;
+
+      if (size === sizedFor) {
+        return false;
+      }
+
+      sizedFor = size;
       resize();
-      drawFrame();
+      return true;
+    };
+
+    /** The same for the names: only a name that has changed size is news. */
+    const labelsChanged = (): boolean =>
+      PLANETS.some((planet, index) => {
+        const label = labelsRef.current.get(planet.id);
+        const size = labelSizes[index];
+
+        return (
+          (label?.offsetWidth ?? 0) !== (size?.width ?? 0) ||
+          (label?.offsetHeight ?? 0) !== (size?.height ?? 0)
+        );
+      });
+
+    const handleVisibilityChange = () => {
+      sync();
+    };
+
+    resizeIfChanged();
+    drawFrame();
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeIfChanged()) {
+        drawFrame();
+      }
     });
     resizeObserver.observe(container);
 
@@ -484,8 +525,10 @@ export function CosmicScene() {
     // changes its type and when the language changes its words, and the scene
     // resizing is not a signal for any of the three.
     const labelObserver = new ResizeObserver(() => {
-      measureLabels();
-      drawFrame();
+      if (labelsChanged()) {
+        measureLabels();
+        drawFrame();
+      }
     });
 
     labelsRef.current.forEach((label) => {
@@ -503,14 +546,7 @@ export function CosmicScene() {
     );
     intersectionObserver.observe(container);
 
-    const handleVisibilityChange = () => {
-      sync();
-    };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    resize();
-    drawFrame();
     sync();
 
     return () => {
