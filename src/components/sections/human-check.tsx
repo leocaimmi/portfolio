@@ -3,7 +3,16 @@
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
-import { clientEnv } from '@/lib/env/client';
+/**
+ * The public half of the Turnstile pair, read straight from the build.
+ *
+ * Not through `@/lib/env/client`, which validates it with a schema library the
+ * browser would otherwise have to download whole, for one optional string. The
+ * server reads the same variable through that module while rendering this page,
+ * so a malformed value still fails the build there; here it only has to be
+ * present. A literal `process.env` access, so Next.js can inline it.
+ */
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 /** The name Turnstile gives the hidden input it writes the token into. */
 export const HUMAN_CHECK_FIELD = 'cf-turnstile-response';
@@ -32,13 +41,11 @@ const WIDGET_WIDTH = 300;
  * is worse to use than one that shows its work.
  */
 export function HumanCheck() {
-  const siteKey = clientEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-
-  if (siteKey === undefined) {
+  if (SITE_KEY === undefined) {
     return null;
   }
 
-  return <TurnstileWidget siteKey={siteKey} />;
+  return <TurnstileWidget siteKey={SITE_KEY} />;
 }
 
 /**
@@ -111,4 +118,4 @@ function TurnstileWidget({ siteKey }: { siteKey: string }) {
 }
 
 /** Whether the form should refuse to submit without a solved check. */
-export const isHumanCheckEnabled = clientEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== undefined;
+export const isHumanCheckEnabled = SITE_KEY !== undefined;
