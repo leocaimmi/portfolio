@@ -1,18 +1,24 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-import { TechnologyIcon } from '@/components/ui/brand-icon';
-import type { TechnologyId } from '@/content';
-import { constellations, technologyName } from '@/content';
 import { cn } from '@/lib/cn';
 
-/**
- * The group with far more entries than the rest, which is given the room for
- * them rather than being allowed to set the height of every other column.
- */
-const WIDE_SECTOR = 'tools';
+/** One sector of the stack, already in the reader's language. */
+export interface StackSector {
+  id: string;
+  name: string;
+  description: string;
+  /**
+   * The group with far more entries than the rest, given the room for them
+   * rather than being allowed to set the height of every other column.
+   */
+  isWide: boolean;
+  /** The sector's cards, rendered on the server. */
+  skills: ReactNode;
+}
 
 /**
  * The stack, sector by sector, laid out side by side.
@@ -23,13 +29,18 @@ const WIDE_SECTOR = 'tools';
  *
  * What is held is the set of sectors switched *off*, so the initial state is an
  * empty array and "everything is shown" needs no special case anywhere.
+ *
+ * Only the switching lives in the browser. The sectors arrive as props, in one
+ * language, and their cards arrive already rendered: when this component read
+ * the content layer itself, the whole of it came along into the bundle —
+ * every project, every role, every brand mark and the schema library that
+ * validates them — and was parsed again on every visit to hide a column.
  */
-export function StackGrid() {
+export function StackGrid({ sectors }: { sectors: readonly StackSector[] }) {
   const t = useTranslations('constellations');
-  const locale = useLocale();
   const [muted, setMuted] = useState<readonly string[]>([]);
 
-  const visible = constellations.filter((sector) => !muted.includes(sector.id));
+  const visible = sectors.filter((sector) => !muted.includes(sector.id));
 
   const toggle = (id: string) => {
     setMuted((current) =>
@@ -42,10 +53,10 @@ export function StackGrid() {
       <div className="flex flex-wrap items-center justify-center gap-2.5">
         <h3 className="sr-only">{t('filterLabel')}</h3>
 
-        {constellations.map((sector) => (
+        {sectors.map((sector) => (
           <SectorToggle
             key={sector.id}
-            label={sector.name[locale]}
+            label={sector.name}
             isOn={!muted.includes(sector.id)}
             onToggle={() => {
               toggle(sector.id);
@@ -87,37 +98,21 @@ export function StackGrid() {
               aria-labelledby={`sector-${sector.id}`}
               className={cn(
                 'xl:row-span-3 xl:grid xl:grid-rows-subgrid',
-                sector.id === WIDE_SECTOR && 'xl:col-span-2',
+                sector.isWide && 'xl:col-span-2',
               )}
             >
               <h3
                 id={`sector-${sector.id}`}
                 className="font-display text-base font-semibold text-starlight"
               >
-                {sector.name[locale]}
+                {sector.name}
               </h3>
 
               <p className="mt-1.5 text-sm leading-relaxed text-pretty text-moondust">
-                {sector.description[locale]}
+                {sector.description}
               </p>
 
-              {/*
-                Two columns where a sector has the whole width to itself, one
-                where the sectors are already columns side by side. A phone
-                gave each of forty cards a line of its own and a third of that
-                line to a name eleven characters long, which is two and a half
-                thousand pixels of scroll spent mostly on air.
-              */}
-              <ul
-                className={cn(
-                  'mt-4 grid grid-cols-2 gap-2 sm:grid-cols-1',
-                  sector.id === WIDE_SECTOR && 'xl:grid-cols-2 xl:gap-x-3',
-                )}
-              >
-                {sector.skills.map((id) => (
-                  <SkillCard key={id} id={id} />
-                ))}
-              </ul>
+              {sector.skills}
             </section>
           ))}
         </div>
@@ -178,27 +173,5 @@ function Meteor({ isOn }: { isOn: boolean }) {
         )}
       />
     </span>
-  );
-}
-
-/**
- * One line per technology: the mark and the name.
- *
- * The name is clipped rather than wrapped wherever a card shares its row with
- * another sector's cards, so a long one cannot set the height of a whole row of
- * short ones. In the two-column layout a phone gets there is no such row to
- * protect - the cards beside it belong to the same list - and half of 343
- * pixels is not enough for "Row Level Security", so there it wraps. A clipped
- * skill is a worse answer than a tall one.
- */
-function SkillCard({ id }: { id: TechnologyId }) {
-  return (
-    <li className="flex items-center gap-2.5 rounded-xl border border-horizon/70 bg-deep/40 px-3 py-2 transition-colors duration-300 ease-orbital hover:border-star/40">
-      <TechnologyIcon id={id} className="size-5 text-moondust" />
-
-      <span className="min-w-0 flex-1 text-sm text-starlight sm:truncate">
-        {technologyName(id)}
-      </span>
-    </li>
   );
 }
