@@ -115,10 +115,16 @@ export function buildPageMetadata({
  * Two things in one graph, because a search engine is being told two different
  * facts. The `WebSite` node is what a result can call this site: without it,
  * Google falls back to the bare domain, and the result above the title read
- * "leonardocaimmi.com.ar" rather than a name. The `Person` node connects the
- * name, the role and the profiles into one entity instead of leaving it to be
- * inferred from prose, and the site names it as its publisher so the two are
- * read as related rather than as two strangers on the same page.
+ * "leonardocaimmi.com.ar" rather than a name. Declaring the name was not enough
+ * on its own: months later the result still showed the domain, which is what
+ * Google's guide says happens when it is not confident in the preferred name.
+ * The first remedy it lists is an `alternateName`, which it weighs heavily in
+ * exactly that case, so the node carries the shorter name too.
+ *
+ * The `Person` node connects the name, the role and the profiles into one
+ * entity instead of leaving it to be inferred from prose, and the site names it
+ * as its publisher so the two are read as related rather than as two strangers
+ * on the same page.
  *
  * Both are built from the content the page itself renders, so they cannot
  * disagree with it, and both carry an `@id` so the reference between them is a
@@ -147,6 +153,7 @@ export function buildSiteJsonLd(locale: Locale): string {
         '@id': `${home}#website`,
         url: home,
         name: profile.name,
+        alternateName: [profile.shortName],
         inLanguage: locale,
         publisher: { '@id': person },
       },
