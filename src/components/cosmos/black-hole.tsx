@@ -4,7 +4,21 @@
  * pipeline, which would flatten the filters this whole thing is made of.
  */
 
+import type { StaticImageData } from 'next/image';
+
 import { cn } from '@/lib/cn';
+
+import gargantuaAsset from './gargantua.svg';
+
+/**
+ * Imported rather than served from `public/`, so the bundler publishes it under
+ * a name that carries a hash of its contents. That is what lets it be cached
+ * for good: a file in `public/` keeps its address when it changes, so it could
+ * only ever be trusted for a day, and every return visit re-asked for the
+ * largest thing the hero paints. Next.js types every SVG import loosely, in
+ * case it is turned into a component, so the shape is stated here.
+ */
+const gargantua = gargantuaAsset as StaticImageData;
 
 /**
  * The black hole the system is falling towards.
@@ -36,11 +50,11 @@ import { cn } from '@/lib/cn';
 export function BlackHole({ className }: { className?: string }) {
   return (
     <img
-      src="/gargantua.svg"
+      src={gargantua.src}
       alt=""
       aria-hidden="true"
-      width={480}
-      height={480}
+      width={gargantua.width}
+      height={gargantua.height}
       /*
        * Above the fold and the focal point of the hero, so never deferred —
        * and, being the largest thing the page paints, it is what Largest
