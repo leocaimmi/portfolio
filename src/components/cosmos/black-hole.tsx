@@ -69,7 +69,10 @@ export function BlackHole({ className }: { className?: string }) {
         'pointer-events-none absolute max-w-none -translate-x-1/2 -translate-y-1/2 mix-blend-screen brightness-[1.45] saturate-[1.08] select-none',
         // Position and size are the caller's: the hero puts it off the right
         // edge of the sky, the docked chart crops it inside a circle.
-        className ?? 'top-[46%] left-[92%] w-[98vw] md:top-[48%] md:left-[97%] md:w-[78vmin]',
+        // The hero's also lights up as the page opens; the docked chart's
+        // copy is already in place by the time anyone scrolls to it.
+        className ??
+          'top-[46%] left-[92%] w-[98vw] animate-ignite md:top-[48%] md:left-[97%] md:w-[78vmin]',
       )}
     />
   );

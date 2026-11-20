@@ -117,6 +117,7 @@ export function CosmicScene() {
     let paintedAt = -Infinity;
     let isRunning = false;
     let isInViewport = true;
+    let isLit = false;
     let lastCycle = 0;
 
     const startedAt = performance.now();
@@ -226,6 +227,12 @@ export function CosmicScene() {
     };
 
     const drawFrame = () => {
+      // Transparent until its first frame, then faded in with the star field.
+      if (!isLit) {
+        isLit = true;
+        canvas.dataset.lit = '';
+      }
+
       // Not zero: at phase zero the system has not left the edge yet, so a
       // frozen scene would be an empty sky with an unreachable navigation in it.
       const seconds = prefersReducedMotion ? STILL_SECONDS : (performance.now() - startedAt) / 1000;
@@ -467,9 +474,50 @@ export function CosmicScene() {
       }
     };
 
-    const resizeObserver = new ResizeObserver(() => {
+    let sizedFor = '';
+
+    /**
+     * Resizes only when the container has actually changed size. A resize
+     * reallocates the whole canvas, rereads the palette from the stylesheet
+     * and measures every name, and a resize observer reports the size it was
+     * attached at as if it were a change: the scene used to do all of that
+     * twice on the way in, for a size it already had.
+     */
+    const resizeIfChanged = (): boolean => {
+      const size = `${String(container.clientWidth)}x${String(container.clientHeight)}`;
+
+      if (size === sizedFor) {
+        return false;
+      }
+
+      sizedFor = size;
       resize();
-      drawFrame();
+      return true;
+    };
+
+    /** The same for the names: only a name that has changed size is news. */
+    const labelsChanged = (): boolean =>
+      PLANETS.some((planet, index) => {
+        const label = labelsRef.current.get(planet.id);
+        const size = labelSizes[index];
+
+        return (
+          (label?.offsetWidth ?? 0) !== (size?.width ?? 0) ||
+          (label?.offsetHeight ?? 0) !== (size?.height ?? 0)
+        );
+      });
+
+    const handleVisibilityChange = () => {
+      sync();
+    };
+
+    resizeIfChanged();
+    drawFrame();
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeIfChanged()) {
+        drawFrame();
+      }
     });
     resizeObserver.observe(container);
 
@@ -477,8 +525,10 @@ export function CosmicScene() {
     // changes its type and when the language changes its words, and the scene
     // resizing is not a signal for any of the three.
     const labelObserver = new ResizeObserver(() => {
-      measureLabels();
-      drawFrame();
+      if (labelsChanged()) {
+        measureLabels();
+        drawFrame();
+      }
     });
 
     labelsRef.current.forEach((label) => {
@@ -496,14 +546,7 @@ export function CosmicScene() {
     );
     intersectionObserver.observe(container);
 
-    const handleVisibilityChange = () => {
-      sync();
-    };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    resize();
-    drawFrame();
     sync();
 
     return () => {
@@ -574,7 +617,11 @@ export function CosmicScene() {
       ref={containerRef}
       className="absolute inset-x-0 top-[46%] bottom-0 overflow-hidden md:inset-0"
     >
-      <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 ease-out data-lit:opacity-100"
+      />
 
       <BlackHole />
 

@@ -177,6 +177,7 @@ function mountStarfield(
   let frameId = 0;
   let lastTime = performance.now();
   let hasMoved = false;
+  let isLit = false;
 
   const resize = () => {
     const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
@@ -209,6 +210,13 @@ function mountStarfield(
     }
 
     context.globalAlpha = 1;
+
+    // The canvas is transparent until there is a sky on it, then fades in
+    // rather than having every star appear at once. See the markup.
+    if (!isLit) {
+      isLit = true;
+      canvas.dataset.lit = '';
+    }
   };
 
   const drawMeteor = (delta: number) => {
@@ -367,7 +375,11 @@ export function Starfield() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 h-dvh w-full"
+      // Faded in on its first frame instead of appearing in one go: it is drawn
+      // a moment after hydration, by which time the rest of the hero is
+      // already on screen, and a sky full of stars switching on at once read
+      // as something loading rather than something arriving.
+      className="pointer-events-none fixed inset-0 -z-10 h-dvh w-full opacity-0 transition-opacity duration-1000 ease-out data-lit:opacity-100"
     />
   );
 }

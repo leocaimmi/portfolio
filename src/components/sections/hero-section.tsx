@@ -4,6 +4,28 @@ import { CosmicScene } from '@/components/cosmos/cosmic-scene';
 import { ActionLink } from '@/components/ui/action-link';
 import { profile } from '@/content';
 
+/**
+ * When each line of the copy arrives, in milliseconds after the page opens.
+ *
+ * The name comes first and is written in, left to right, over a second and a
+ * half. The lines that qualify it follow once it is half written, close enough
+ * together to read as one movement rather than a list being dealt out. Nothing
+ * waits on any of it: every line is there, and works, from the first frame —
+ * the entrance only decides when each one becomes visible.
+ */
+const ENTRANCE_DELAY = {
+  role: 1100,
+  credential: 1200,
+  availability: 1280,
+  headline: 1360,
+  actions: 1460,
+  hint: 2000,
+} as const;
+
+function entrance(delay: number) {
+  return { animationDelay: `${String(delay)}ms` };
+}
+
 const AVAILABILITY_DOT: Record<typeof profile.availability, string> = {
   open: 'bg-star',
   selective: 'bg-solar',
@@ -47,15 +69,21 @@ export function HeroSection() {
       */}
       <div className="pointer-events-none relative z-10 mx-auto w-full max-w-7xl px-4 pt-28 pb-[48vh] sm:px-6 md:py-24">
         <div className="pointer-events-auto max-w-2xl">
-          <h1 className="font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
+          <h1 className="animate-write font-display text-5xl font-semibold tracking-tight text-balance text-starlight sm:text-6xl xl:text-7xl">
             {profile.name}
           </h1>
 
-          <p className="mt-3 font-display text-xl text-nebula-glow sm:text-2xl">
+          <p
+            className="mt-3 animate-arrive font-display text-xl text-nebula-glow sm:text-2xl"
+            style={entrance(ENTRANCE_DELAY.role)}
+          >
             {profile.role[locale]}
           </p>
 
-          <p className="mt-1.5 font-mono text-[0.6875rem] tracking-wide text-dust sm:text-xs">
+          <p
+            className="mt-1.5 animate-arrive font-mono text-[0.6875rem] tracking-wide text-dust sm:text-xs"
+            style={entrance(ENTRANCE_DELAY.credential)}
+          >
             {profile.credential[locale]}
           </p>
 
@@ -64,7 +92,10 @@ export function HeroSection() {
             far down that most of it fell off the fold, and the same statement
             is repeated in the footer, which a phone reaches quickly.
           */}
-          <p className="glass mt-5 hidden items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[0.6875rem] tracking-wide text-moondust md:inline-flex">
+          <p
+            className="glass mt-5 hidden animate-arrive items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[0.6875rem] tracking-wide text-moondust md:inline-flex"
+            style={entrance(ENTRANCE_DELAY.availability)}
+          >
             <span
               aria-hidden="true"
               className={`size-1.5 rounded-full ${AVAILABILITY_DOT[profile.availability]}`}
@@ -72,11 +103,17 @@ export function HeroSection() {
             {common(`availability.${profile.availability}`)}
           </p>
 
-          <p className="mt-5 text-base leading-relaxed text-pretty text-moondust sm:text-lg md:mt-6">
+          <p
+            className="mt-5 animate-arrive text-base leading-relaxed text-pretty text-moondust sm:text-lg md:mt-6"
+            style={entrance(ENTRANCE_DELAY.headline)}
+          >
             {profile.headline[locale]}
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3 md:mt-8">
+          <div
+            className="mt-7 flex animate-arrive flex-wrap items-center gap-3 md:mt-8"
+            style={entrance(ENTRANCE_DELAY.actions)}
+          >
             <ActionLink href="#missions" variant="primary">
               {t('primaryAction')}
             </ActionLink>
@@ -87,7 +124,8 @@ export function HeroSection() {
 
       <p
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-7 z-10 text-center font-mono text-[0.625rem] tracking-[0.3em] text-dust uppercase"
+        className="absolute inset-x-0 bottom-7 z-10 animate-arrive text-center font-mono text-[0.625rem] tracking-[0.3em] text-dust uppercase"
+        style={entrance(ENTRANCE_DELAY.hint)}
       >
         {t('scrollHint')}
       </p>
